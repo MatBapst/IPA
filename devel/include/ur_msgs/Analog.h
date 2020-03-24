@@ -25,12 +25,10 @@ struct Analog_
 
   Analog_()
     : pin(0)
-    , domain(0)
     , state(0.0)  {
     }
   Analog_(const ContainerAllocator& _alloc)
     : pin(0)
-    , domain(0)
     , state(0.0)  {
   (void)_alloc;
     }
@@ -40,26 +38,11 @@ struct Analog_
    typedef uint8_t _pin_type;
   _pin_type pin;
 
-   typedef uint8_t _domain_type;
-  _domain_type domain;
-
    typedef float _state_type;
   _state_type state;
 
 
 
-// reducing the odds to have name collisions with Windows.h 
-#if defined(_WIN32) && defined(VOLTAGE)
-  #undef VOLTAGE
-#endif
-#if defined(_WIN32) && defined(CURRENT)
-  #undef CURRENT
-#endif
-
-  enum {
-    VOLTAGE = 0u,
-    CURRENT = 1u,
-  };
 
 
   typedef boost::shared_ptr< ::ur_msgs::Analog_<ContainerAllocator> > Ptr;
@@ -73,10 +56,6 @@ typedef boost::shared_ptr< ::ur_msgs::Analog > AnalogPtr;
 typedef boost::shared_ptr< ::ur_msgs::Analog const> AnalogConstPtr;
 
 // constants requiring out of line definition
-
-   
-
-   
 
 
 
@@ -92,7 +71,6 @@ template<typename ContainerAllocator1, typename ContainerAllocator2>
 bool operator==(const ::ur_msgs::Analog_<ContainerAllocator1> & lhs, const ::ur_msgs::Analog_<ContainerAllocator2> & rhs)
 {
   return lhs.pin == rhs.pin &&
-    lhs.domain == rhs.domain &&
     lhs.state == rhs.state;
 }
 
@@ -150,12 +128,12 @@ struct MD5Sum< ::ur_msgs::Analog_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "f41c08a810adf63713aec88712cd553d";
+    return "341541c8828d055b6dcc443d40207a7d";
   }
 
   static const char* value(const ::ur_msgs::Analog_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0xf41c08a810adf637ULL;
-  static const uint64_t static_value2 = 0x13aec88712cd553dULL;
+  static const uint64_t static_value1 = 0x341541c8828d055bULL;
+  static const uint64_t static_value2 = 0x6dcc443d40207a7dULL;
 };
 
 template<class ContainerAllocator>
@@ -174,11 +152,7 @@ struct Definition< ::ur_msgs::Analog_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "uint8 VOLTAGE=0\n"
-"uint8 CURRENT=1\n"
-"\n"
-"uint8 pin\n"
-"uint8 domain # can be VOLTAGE or CURRENT\n"
+    return "uint8 pin\n"
 "float32 state\n"
 ;
   }
@@ -199,7 +173,6 @@ namespace serialization
     template<typename Stream, typename T> inline static void allInOne(Stream& stream, T m)
     {
       stream.next(m.pin);
-      stream.next(m.domain);
       stream.next(m.state);
     }
 
@@ -221,8 +194,6 @@ struct Printer< ::ur_msgs::Analog_<ContainerAllocator> >
   {
     s << indent << "pin: ";
     Printer<uint8_t>::stream(s, indent + "  ", v.pin);
-    s << indent << "domain: ";
-    Printer<uint8_t>::stream(s, indent + "  ", v.domain);
     s << indent << "state: ";
     Printer<float>::stream(s, indent + "  ", v.state);
   }

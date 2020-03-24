@@ -7,6 +7,8 @@ Robot Human Collaboration
 
 The new codes and launch files are in the package "seher"
 
+SIM BRANCH : working with a gazebo simulated ur5e robot.
+
 To launch the workcell setup :
 - build and source the repository
 - roslaunch seher workcell_setup.launch
