@@ -60,32 +60,6 @@ realsense-ros/realsense2_camera/CMakeFiles/realsense2_camera.dir/src/base_realse
  /opt/ros/melodic/include/image_transport/single_subscriber_publisher.h
  /opt/ros/melodic/include/image_transport/subscriber.h
  /opt/ros/melodic/include/image_transport/transport_hints.h
- /opt/ros/melodic/include/librealsense2/h/rs_advanced_mode_command.h
- /opt/ros/melodic/include/librealsense2/h/rs_config.h
- /opt/ros/melodic/include/librealsense2/h/rs_context.h
- /opt/ros/melodic/include/librealsense2/h/rs_device.h
- /opt/ros/melodic/include/librealsense2/h/rs_frame.h
- /opt/ros/melodic/include/librealsense2/h/rs_option.h
- /opt/ros/melodic/include/librealsense2/h/rs_pipeline.h
- /opt/ros/melodic/include/librealsense2/h/rs_processing.h
- /opt/ros/melodic/include/librealsense2/h/rs_record_playback.h
- /opt/ros/melodic/include/librealsense2/h/rs_sensor.h
- /opt/ros/melodic/include/librealsense2/h/rs_types.h
- /opt/ros/melodic/include/librealsense2/hpp/rs_context.hpp
- /opt/ros/melodic/include/librealsense2/hpp/rs_device.hpp
- /opt/ros/melodic/include/librealsense2/hpp/rs_frame.hpp
- /opt/ros/melodic/include/librealsense2/hpp/rs_options.hpp
- /opt/ros/melodic/include/librealsense2/hpp/rs_pipeline.hpp
- /opt/ros/melodic/include/librealsense2/hpp/rs_processing.hpp
- /opt/ros/melodic/include/librealsense2/hpp/rs_record_playback.hpp
- /opt/ros/melodic/include/librealsense2/hpp/rs_sensor.hpp
- /opt/ros/melodic/include/librealsense2/hpp/rs_serializable_device.hpp
- /opt/ros/melodic/include/librealsense2/hpp/rs_types.hpp
- /opt/ros/melodic/include/librealsense2/rs.h
- /opt/ros/melodic/include/librealsense2/rs.hpp
- /opt/ros/melodic/include/librealsense2/rs_advanced_mode.h
- /opt/ros/melodic/include/librealsense2/rs_advanced_mode.hpp
- /opt/ros/melodic/include/librealsense2/rsutil.h
  /opt/ros/melodic/include/nav_msgs/Odometry.h
  /opt/ros/melodic/include/nodelet/exception.h
  /opt/ros/melodic/include/nodelet/nodelet.h
@@ -252,32 +226,6 @@ realsense-ros/realsense2_camera/CMakeFiles/realsense2_camera.dir/src/realsense_n
  /opt/ros/melodic/include/image_transport/single_subscriber_publisher.h
  /opt/ros/melodic/include/image_transport/subscriber.h
  /opt/ros/melodic/include/image_transport/transport_hints.h
- /opt/ros/melodic/include/librealsense2/h/rs_advanced_mode_command.h
- /opt/ros/melodic/include/librealsense2/h/rs_config.h
- /opt/ros/melodic/include/librealsense2/h/rs_context.h
- /opt/ros/melodic/include/librealsense2/h/rs_device.h
- /opt/ros/melodic/include/librealsense2/h/rs_frame.h
- /opt/ros/melodic/include/librealsense2/h/rs_option.h
- /opt/ros/melodic/include/librealsense2/h/rs_pipeline.h
- /opt/ros/melodic/include/librealsense2/h/rs_processing.h
- /opt/ros/melodic/include/librealsense2/h/rs_record_playback.h
- /opt/ros/melodic/include/librealsense2/h/rs_sensor.h
- /opt/ros/melodic/include/librealsense2/h/rs_types.h
- /opt/ros/melodic/include/librealsense2/hpp/rs_context.hpp
- /opt/ros/melodic/include/librealsense2/hpp/rs_device.hpp
- /opt/ros/melodic/include/librealsense2/hpp/rs_frame.hpp
- /opt/ros/melodic/include/librealsense2/hpp/rs_options.hpp
- /opt/ros/melodic/include/librealsense2/hpp/rs_pipeline.hpp
- /opt/ros/melodic/include/librealsense2/hpp/rs_processing.hpp
- /opt/ros/melodic/include/librealsense2/hpp/rs_record_playback.hpp
- /opt/ros/melodic/include/librealsense2/hpp/rs_sensor.hpp
- /opt/ros/melodic/include/librealsense2/hpp/rs_serializable_device.hpp
- /opt/ros/melodic/include/librealsense2/hpp/rs_types.hpp
- /opt/ros/melodic/include/librealsense2/rs.h
- /opt/ros/melodic/include/librealsense2/rs.hpp
- /opt/ros/melodic/include/librealsense2/rs_advanced_mode.h
- /opt/ros/melodic/include/librealsense2/rs_advanced_mode.hpp
- /opt/ros/melodic/include/librealsense2/rsutil.h
  /opt/ros/melodic/include/nav_msgs/Odometry.h
  /opt/ros/melodic/include/nodelet/exception.h
  /opt/ros/melodic/include/nodelet/nodelet.h
@@ -444,32 +392,6 @@ realsense-ros/realsense2_camera/CMakeFiles/realsense2_camera.dir/src/t265_realse
  /opt/ros/melodic/include/image_transport/single_subscriber_publisher.h
  /opt/ros/melodic/include/image_transport/subscriber.h
  /opt/ros/melodic/include/image_transport/transport_hints.h
- /opt/ros/melodic/include/librealsense2/h/rs_advanced_mode_command.h
- /opt/ros/melodic/include/librealsense2/h/rs_config.h
- /opt/ros/melodic/include/librealsense2/h/rs_context.h
- /opt/ros/melodic/include/librealsense2/h/rs_device.h
- /opt/ros/melodic/include/librealsense2/h/rs_frame.h
- /opt/ros/melodic/include/librealsense2/h/rs_option.h
- /opt/ros/melodic/include/librealsense2/h/rs_pipeline.h
- /opt/ros/melodic/include/librealsense2/h/rs_processing.h
- /opt/ros/melodic/include/librealsense2/h/rs_record_playback.h
- /opt/ros/melodic/include/librealsense2/h/rs_sensor.h
- /opt/ros/melodic/include/librealsense2/h/rs_types.h
- /opt/ros/melodic/include/librealsense2/hpp/rs_context.hpp
- /opt/ros/melodic/include/librealsense2/hpp/rs_device.hpp
- /opt/ros/melodic/include/librealsense2/hpp/rs_frame.hpp
- /opt/ros/melodic/include/librealsense2/hpp/rs_options.hpp
- /opt/ros/melodic/include/librealsense2/hpp/rs_pipeline.hpp
- /opt/ros/melodic/include/librealsense2/hpp/rs_processing.hpp
- /opt/ros/melodic/include/librealsense2/hpp/rs_record_playback.hpp
- /opt/ros/melodic/include/librealsense2/hpp/rs_sensor.hpp
- /opt/ros/melodic/include/librealsense2/hpp/rs_serializable_device.hpp
- /opt/ros/melodic/include/librealsense2/hpp/rs_types.hpp
- /opt/ros/melodic/include/librealsense2/rs.h
- /opt/ros/melodic/include/librealsense2/rs.hpp
- /opt/ros/melodic/include/librealsense2/rs_advanced_mode.h
- /opt/ros/melodic/include/librealsense2/rs_advanced_mode.hpp
- /opt/ros/melodic/include/librealsense2/rsutil.h
  /opt/ros/melodic/include/nav_msgs/Odometry.h
  /opt/ros/melodic/include/nodelet/exception.h
  /opt/ros/melodic/include/nodelet/nodelet.h

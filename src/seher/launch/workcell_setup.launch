@@ -87,7 +87,7 @@
 
 <!-- launch rviz -->
 
-<node name="rviz" pkg="rviz" type="rviz" args="-d $(find realsense2_camera)/launch/rviz_config.rviz" />
+<node name="rviz" pkg="rviz" type="rviz" args="-d $(find seher)/launch/rviz_config_workcell.rviz" />
 
 <!-- launch the obstacle publisher -->
 
