@@ -38,11 +38,11 @@
 
 <!-- launch the tf publishers -->
 
-<node name="tf_base_link" pkg="tf" type="static_transform_publisher" output="screen" args="0 0 0 0 0 0 world base_link 50" />
+<node name="tf_base_link" pkg="tf" type="static_transform_publisher" output="screen" args="0 0 0 0 0 0 world base_link 50"/>
 
-<node name="tf_camL_link" pkg="tf" type="static_transform_publisher" output="screen" args="-0.8 -0.235 0.2 0 0 0 world camL_link 50" />
+<node name="tf_camL_link" pkg="tf" type="static_transform_publisher" output="screen" args="-0.8 -0.235 0.2 0 0 0 world camL_link 500" />
 
-<node name="tf_camR_link" pkg="tf" type="static_transform_publisher" output="screen" args="-0.8 0.185 0.15625 0 0 0 world camR_link 50" />
+<node name="tf_camR_link" pkg="tf" type="static_transform_publisher" output="screen" args="-0.8 0.185 0.15625 0 0 0 world camR_link 500" />
 
 <!-- launch the robot in gazebo -->
 
