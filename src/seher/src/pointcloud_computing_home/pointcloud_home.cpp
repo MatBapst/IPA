@@ -13,6 +13,7 @@
 #include <pcl/point_types.h>
 #include <pcl/filters/voxel_grid.h>
 #include <pcl_ros/transforms.h>
+#include <pcl/filters/statistical_outlier_removal.h>
 
 //ros::Publisher pub1;
 //ros::Publisher pub2;
@@ -46,68 +47,17 @@ void cloud_cb1 (const sensor_msgs::PointCloud2ConstPtr& input)
 {
   // Create a container for the data.
   //sensor_msgs::PointCloud2 output;
-  sensor_msgs::PointCloud2 inter;
+  
+ sensor_msgs::PointCloud2 inter4;
   
  pcl::PCLPointCloud2* cloud = new pcl::PCLPointCloud2;
  pcl::PCLPointCloud2ConstPtr cloudPtr(cloud);
  pcl::PCLPointCloud2::Ptr cloud_filtered (new pcl::PCLPointCloud2 ());
 
- pcl::PCLPointCloud2::Ptr voxel_cloud (new pcl::PCLPointCloud2 ());
-
- // Do data processing here...
+ 
+ // Pointcloud cropping 
  pcl_conversions::toPCL(*input, *cloud);
 
- 
- 
-   pcl::CropBox<pcl::PCLPointCloud2> cropFilter;
-  
-  //cropFilter.setTransform(trans2);
-  cropFilter.setMin(min_workcell);
-  cropFilter.setMax(max_workcell);
-  cropFilter.setTranslation(t2);
-  //cropFilter.setRotation(r2);
-  cropFilter.setInputCloud(cloudPtr);
-  cropFilter.filter(*cloud_filtered);
-  
-  
-  
-
-  pcl::VoxelGrid<pcl::PCLPointCloud2> sor;
-  sor.setInputCloud (cloud_filtered);
-  //sor.setDownsampleAllData(true);
-  sor.setLeafSize (0.01f, 0.01f, 0.01f);
-  sor.filter (*voxel_cloud);
-
-pcl_conversions::fromPCL(*voxel_cloud, inter);
-
-pcl_ros::transformPointCloud("world", inter, pcl_L, *listenerL);
-
-pcl::concatenatePointCloud(pcl_L,pcl_R,pcl_fusion);
-
-  // Publish the data.
-  //pub1.publish (pcl_L);
-  pub.publish (pcl_fusion);
-}
-
-
-void cloud_cb2 (const sensor_msgs::PointCloud2ConstPtr& input)
-{
-  // Create a container for the data.
-  sensor_msgs::PointCloud2 output;
-  sensor_msgs::PointCloud2 inter;
-
- pcl::PCLPointCloud2* cloud = new pcl::PCLPointCloud2;
- pcl::PCLPointCloud2ConstPtr cloudPtr(cloud);
- pcl::PCLPointCloud2::Ptr cloud_filtered (new pcl::PCLPointCloud2 ());
-
- pcl::PCLPointCloud2::Ptr voxel_cloud (new pcl::PCLPointCloud2 ());
-
- // Do data processing here...
- pcl_conversions::toPCL(*input, *cloud);
-
-  
-
-  
   pcl::CropBox<pcl::PCLPointCloud2> cropFilter;
   
   //cropFilter.setTransform(trans2);
@@ -118,8 +68,10 @@ void cloud_cb2 (const sensor_msgs::PointCloud2ConstPtr& input)
   cropFilter.setInputCloud(cloudPtr);
   cropFilter.filter(*cloud_filtered);
   
-
   
+  // down sampling with voxelization
+
+  pcl::PCLPointCloud2::Ptr voxel_cloud (new pcl::PCLPointCloud2 ());
 
   pcl::VoxelGrid<pcl::PCLPointCloud2> sor;
   sor.setInputCloud (cloud_filtered);
@@ -127,9 +79,93 @@ void cloud_cb2 (const sensor_msgs::PointCloud2ConstPtr& input)
   sor.setLeafSize (0.01f, 0.01f, 0.01f);
   sor.filter (*voxel_cloud);
 
-pcl_conversions::fromPCL(*voxel_cloud, inter);
+// Outlier Removal filter
+pcl::PointCloud<pcl::PointXYZ>::Ptr inter2 (new pcl::PointCloud<pcl::PointXYZ>);   //inter pointcloud used for conversions
 
-pcl_ros::transformPointCloud("world", inter, pcl_R, *listenerR);
+  pcl::PointCloud<pcl::PointXYZ>::Ptr inter(new pcl::PointCloud<pcl::PointXYZ>);
+  pcl::fromPCLPointCloud2(*voxel_cloud,*inter);
+//pcl_conversions::fromPCL(*voxel_cloud, inter);
+
+pcl::StatisticalOutlierRemoval<pcl::PointXYZ> filter;
+filter.setInputCloud(inter);
+filter.setMeanK(50);
+filter.setStddevMulThresh (1.0);
+filter.filter(*inter2);
+
+//conversions to sensor_msgs
+
+pcl::PCLPointCloud2::Ptr inter3 (new pcl::PCLPointCloud2 ());
+pcl::toPCLPointCloud2(*inter2, *inter3);
+pcl_conversions::fromPCL(*inter3, inter4);
+
+//transforming to world frame
+
+pcl_ros::transformPointCloud("world", inter4, pcl_L, *listenerL);
+
+//concatenate pointcloud
+pcl::concatenatePointCloud(pcl_L,pcl_R,pcl_fusion);
+
+  // Publish the data.
+  //pub1.publish (pcl_L);
+  pub.publish (pcl_fusion);
+}
+
+
+void cloud_cb2 (const sensor_msgs::PointCloud2ConstPtr& input)
+{
+  sensor_msgs::PointCloud2 inter4;
+  
+ pcl::PCLPointCloud2* cloud = new pcl::PCLPointCloud2;
+ pcl::PCLPointCloud2ConstPtr cloudPtr(cloud);
+ pcl::PCLPointCloud2::Ptr cloud_filtered (new pcl::PCLPointCloud2 ());
+
+ 
+ // Pointcloud cropping 
+ pcl_conversions::toPCL(*input, *cloud);
+
+  pcl::CropBox<pcl::PCLPointCloud2> cropFilter;
+  
+  //cropFilter.setTransform(trans2);
+  cropFilter.setMin(min_workcell);
+  cropFilter.setMax(max_workcell);
+  cropFilter.setTranslation(t2);
+  //cropFilter.setRotation(r2);
+  cropFilter.setInputCloud(cloudPtr);
+  cropFilter.filter(*cloud_filtered);
+  
+  
+  // down sampling with voxelization
+
+  pcl::PCLPointCloud2::Ptr voxel_cloud (new pcl::PCLPointCloud2 ());
+
+  pcl::VoxelGrid<pcl::PCLPointCloud2> sor;
+  sor.setInputCloud (cloud_filtered);
+  //sor.setDownsampleAllData(true);
+  sor.setLeafSize (0.01f, 0.01f, 0.01f);
+  sor.filter (*voxel_cloud);
+
+// Outlier Removal filter
+pcl::PointCloud<pcl::PointXYZ>::Ptr inter2 (new pcl::PointCloud<pcl::PointXYZ>);   //inter pointcloud used for conversions
+
+  pcl::PointCloud<pcl::PointXYZ>::Ptr inter(new pcl::PointCloud<pcl::PointXYZ>);
+  pcl::fromPCLPointCloud2(*voxel_cloud,*inter);
+//pcl_conversions::fromPCL(*voxel_cloud, inter);
+
+pcl::StatisticalOutlierRemoval<pcl::PointXYZ> filter;
+filter.setInputCloud(inter);
+filter.setMeanK(50);
+filter.setStddevMulThresh (1.0);
+filter.filter(*inter2);
+
+//conversions to sensor_msgs
+
+pcl::PCLPointCloud2::Ptr inter3 (new pcl::PCLPointCloud2 ());
+pcl::toPCLPointCloud2(*inter2, *inter3);
+pcl_conversions::fromPCL(*inter3, inter4);
+
+//transforming to world frame
+
+pcl_ros::transformPointCloud("world", inter4, pcl_R, *listenerR);
 
   // Publish the data.
   //pub2.publish (pcl_R);
