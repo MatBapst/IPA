@@ -15,6 +15,10 @@
 #include <pcl_ros/transforms.h>
 #include <pcl/filters/statistical_outlier_removal.h>
 
+#include <pcl/kdtree/kdtree.h>
+#include <pcl/segmentation/extract_clusters.h>
+
+
 //ros::Publisher pub1;
 //ros::Publisher pub2;
 ros::Publisher pub;
@@ -29,6 +33,8 @@ tf::TransformListener* listenerR;
 sensor_msgs::PointCloud2 pcl_fusion;
 sensor_msgs::PointCloud2 pcl_L;
 sensor_msgs::PointCloud2 pcl_R;
+
+
 
 //workcell 
 const Eigen::Vector4f min_workcell =Eigen::Vector4f(0,0,0,1);
@@ -46,9 +52,9 @@ const Eigen::Vector3f r2=Eigen::Vector3f(0.0f,0.0f,0.0f);
 void cloud_cb1 (const sensor_msgs::PointCloud2ConstPtr& input)
 {
   // Create a container for the data.
-  //sensor_msgs::PointCloud2 output;
+  sensor_msgs::PointCloud2 inter4;
   
- sensor_msgs::PointCloud2 inter4;
+ 
   
  pcl::PCLPointCloud2* cloud = new pcl::PCLPointCloud2;
  pcl::PCLPointCloud2ConstPtr cloudPtr(cloud);
@@ -102,11 +108,20 @@ pcl_conversions::fromPCL(*inter3, inter4);
 
 pcl_ros::transformPointCloud("world", inter4, pcl_L, *listenerL);
 
+//pcl::toPCLPointCloud2(*inter3, pcl_L);
+
 //concatenate pointcloud
 pcl::concatenatePointCloud(pcl_L,pcl_R,pcl_fusion);
 
+
+
+    
+  
+
   // Publish the data.
   //pub1.publish (pcl_L);
+  //ROS_INFO_STREAM( "number of points before voxelization" << cloud_filtered->width*(cloud_filtered)->height);
+  //ROS_INFO_STREAM( "number of points after voxelization" << pcl_L.width*pcl_L.height);
   pub.publish (pcl_fusion);
 }
 
@@ -166,6 +181,8 @@ pcl_conversions::fromPCL(*inter3, inter4);
 //transforming to world frame
 
 pcl_ros::transformPointCloud("world", inter4, pcl_R, *listenerR);
+
+//pcl::toPCLPointCloud2(*inter3, pcl_R);
 
   // Publish the data.
   //pub2.publish (pcl_R);

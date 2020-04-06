@@ -420,6 +420,8 @@ seher/CMakeFiles/pointcloud_computing_home.dir/src/pointcloud_computing_home/poi
  /usr/include/pcl-1.8/pcl/search/organized.h
  /usr/include/pcl-1.8/pcl/search/pcl_search.h
  /usr/include/pcl-1.8/pcl/search/search.h
+ /usr/include/pcl-1.8/pcl/segmentation/extract_clusters.h
+ /usr/include/pcl-1.8/pcl/segmentation/impl/extract_clusters.hpp
  /usr/include/x86_64-linux-gnu/bits/mman-linux.h
  /usr/include/x86_64-linux-gnu/bits/mman-shared.h
  /usr/include/x86_64-linux-gnu/bits/mman.h

@@ -3600,32 +3600,6 @@ topic_tools_generate_messages_nodejs/fast:
 .PHONY : topic_tools_generate_messages_nodejs/fast
 
 #=============================================================================
-# Target rules for targets named seher_genlisp
-
-# Build rule for target.
-seher_genlisp: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 seher_genlisp
-.PHONY : seher_genlisp
-
-# fast build rule for target.
-seher_genlisp/fast:
-	$(MAKE) -f seher/CMakeFiles/seher_genlisp.dir/build.make seher/CMakeFiles/seher_genlisp.dir/build
-.PHONY : seher_genlisp/fast
-
-#=============================================================================
-# Target rules for targets named topic_tools_generate_messages_py
-
-# Build rule for target.
-topic_tools_generate_messages_py: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 topic_tools_generate_messages_py
-.PHONY : topic_tools_generate_messages_py
-
-# fast build rule for target.
-topic_tools_generate_messages_py/fast:
-	$(MAKE) -f seher/CMakeFiles/topic_tools_generate_messages_py.dir/build.make seher/CMakeFiles/topic_tools_generate_messages_py.dir/build
-.PHONY : topic_tools_generate_messages_py/fast
-
-#=============================================================================
 # Target rules for targets named pcl_msgs_generate_messages_eus
 
 # Build rule for target.
@@ -3704,6 +3678,19 @@ seher_generate_messages_eus/fast:
 .PHONY : seher_generate_messages_eus/fast
 
 #=============================================================================
+# Target rules for targets named move_sim_robot
+
+# Build rule for target.
+move_sim_robot: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 move_sim_robot
+.PHONY : move_sim_robot
+
+# fast build rule for target.
+move_sim_robot/fast:
+	$(MAKE) -f seher/CMakeFiles/move_sim_robot.dir/build.make seher/CMakeFiles/move_sim_robot.dir/build
+.PHONY : move_sim_robot/fast
+
+#=============================================================================
 # Target rules for targets named seher_gencpp
 
 # Build rule for target.
@@ -3728,6 +3715,19 @@ seher_generate_messages_py: cmake_check_build_system
 seher_generate_messages_py/fast:
 	$(MAKE) -f seher/CMakeFiles/seher_generate_messages_py.dir/build.make seher/CMakeFiles/seher_generate_messages_py.dir/build
 .PHONY : seher_generate_messages_py/fast
+
+#=============================================================================
+# Target rules for targets named distance_calculation
+
+# Build rule for target.
+distance_calculation: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 distance_calculation
+.PHONY : distance_calculation
+
+# fast build rule for target.
+distance_calculation/fast:
+	$(MAKE) -f seher/CMakeFiles/distance_calculation.dir/build.make seher/CMakeFiles/distance_calculation.dir/build
+.PHONY : distance_calculation/fast
 
 #=============================================================================
 # Target rules for targets named seher_geneus
@@ -3819,6 +3819,58 @@ pointcloud_computing_workcell: cmake_check_build_system
 pointcloud_computing_workcell/fast:
 	$(MAKE) -f seher/CMakeFiles/pointcloud_computing_workcell.dir/build.make seher/CMakeFiles/pointcloud_computing_workcell.dir/build
 .PHONY : pointcloud_computing_workcell/fast
+
+#=============================================================================
+# Target rules for targets named seher_genlisp
+
+# Build rule for target.
+seher_genlisp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 seher_genlisp
+.PHONY : seher_genlisp
+
+# fast build rule for target.
+seher_genlisp/fast:
+	$(MAKE) -f seher/CMakeFiles/seher_genlisp.dir/build.make seher/CMakeFiles/seher_genlisp.dir/build
+.PHONY : seher_genlisp/fast
+
+#=============================================================================
+# Target rules for targets named topic_tools_generate_messages_py
+
+# Build rule for target.
+topic_tools_generate_messages_py: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 topic_tools_generate_messages_py
+.PHONY : topic_tools_generate_messages_py
+
+# fast build rule for target.
+topic_tools_generate_messages_py/fast:
+	$(MAKE) -f seher/CMakeFiles/topic_tools_generate_messages_py.dir/build.make seher/CMakeFiles/topic_tools_generate_messages_py.dir/build
+.PHONY : topic_tools_generate_messages_py/fast
+
+#=============================================================================
+# Target rules for targets named point_publisher
+
+# Build rule for target.
+point_publisher: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 point_publisher
+.PHONY : point_publisher
+
+# fast build rule for target.
+point_publisher/fast:
+	$(MAKE) -f seher/CMakeFiles/point_publisher.dir/build.make seher/CMakeFiles/point_publisher.dir/build
+.PHONY : point_publisher/fast
+
+#=============================================================================
+# Target rules for targets named clustering
+
+# Build rule for target.
+clustering: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 clustering
+.PHONY : clustering
+
+# fast build rule for target.
+clustering/fast:
+	$(MAKE) -f seher/CMakeFiles/clustering.dir/build.make seher/CMakeFiles/clustering.dir/build
+.PHONY : clustering/fast
 
 #=============================================================================
 # Target rules for targets named seher_support_generate_messages_eus
@@ -6983,16 +7035,16 @@ help:
 	@echo "... pcl_msgs_generate_messages_py"
 	@echo "... pcl_ros_gencfg"
 	@echo "... topic_tools_generate_messages_nodejs"
-	@echo "... seher_genlisp"
-	@echo "... topic_tools_generate_messages_py"
 	@echo "... pcl_msgs_generate_messages_eus"
 	@echo "... seher_generate_messages"
 	@echo "... graph_msgs_generate_messages_nodejs"
 	@echo "... seher_generate_messages_cpp"
 	@echo "... pcl_msgs_generate_messages_nodejs"
 	@echo "... seher_generate_messages_eus"
+	@echo "... move_sim_robot"
 	@echo "... seher_gencpp"
 	@echo "... seher_generate_messages_py"
+	@echo "... distance_calculation"
 	@echo "... seher_geneus"
 	@echo "... pcl_msgs_generate_messages_cpp"
 	@echo "... seher_generate_messages_lisp"
@@ -7000,6 +7052,10 @@ help:
 	@echo "... seher_genpy"
 	@echo "... collision_objects"
 	@echo "... pointcloud_computing_workcell"
+	@echo "... seher_genlisp"
+	@echo "... topic_tools_generate_messages_py"
+	@echo "... point_publisher"
+	@echo "... clustering"
 	@echo "... seher_support_generate_messages_eus"
 	@echo "... seher_support_gencpp"
 	@echo "... seher_support_generate_messages"

@@ -83,8 +83,17 @@ add_executable(pointcloud_computing_workcell src/pointcloud_computing_workcell/p
 target_link_libraries(pointcloud_computing_workcell ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
 
 
+add_executable(move_sim_robot src/move_sim_robot/move_sim_robot.cpp)
+target_link_libraries(move_sim_robot ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
 
+add_executable(point_publisher src/point_publisher/point_publisher.cpp)
+target_link_libraries(point_publisher ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
 
+add_executable(distance_calculation src/distance_calculation/distance_calculation.cpp)
+target_link_libraries(distance_calculation ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
+
+add_executable(clustering src/clustering/clustering.cpp)
+target_link_libraries(clustering ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)

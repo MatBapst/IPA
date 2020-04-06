@@ -67,7 +67,7 @@
 
 <!-- launch the pointcloud computing -->
 
-<node name="pointcloud_computing" pkg="seher" type="pointcloud_computing_home" />
+<node name="pointcloud_computing" pkg="seher" type="pointcloud_computing_home"/>
 
 
 </launch>

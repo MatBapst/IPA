@@ -80,6 +80,16 @@ install/local/fast: preinstall/fast
 	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
 .PHONY : install/local/fast
 
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+
+.PHONY : list_install_components/fast
+
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
@@ -90,29 +100,6 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 
 .PHONY : rebuild_cache/fast
-
-# Special rule for the target install
-install: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install
-
-# Special rule for the target install
-install/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install/fast
-
-# Special rule for the target test
-test:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
-	/usr/bin/ctest --force-new-ctest-process $(ARGS)
-.PHONY : test
-
-# Special rule for the target test
-test/fast: test
-
-.PHONY : test/fast
 
 # Special rule for the target edit_cache
 edit_cache:
@@ -125,15 +112,28 @@ edit_cache/fast: edit_cache
 
 .PHONY : edit_cache/fast
 
-# Special rule for the target list_install_components
-list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
-.PHONY : list_install_components
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
+	/usr/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
 
-# Special rule for the target list_install_components
-list_install_components/fast: list_install_components
+# Special rule for the target test
+test/fast: test
 
-.PHONY : list_install_components/fast
+.PHONY : test/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -393,36 +393,6 @@ topic_tools_generate_messages_nodejs/fast:
 .PHONY : topic_tools_generate_messages_nodejs/fast
 
 # Convenience name for target.
-seher/CMakeFiles/seher_genlisp.dir/rule:
-	cd /home/mathieu/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 seher/CMakeFiles/seher_genlisp.dir/rule
-.PHONY : seher/CMakeFiles/seher_genlisp.dir/rule
-
-# Convenience name for target.
-seher_genlisp: seher/CMakeFiles/seher_genlisp.dir/rule
-
-.PHONY : seher_genlisp
-
-# fast build rule for target.
-seher_genlisp/fast:
-	cd /home/mathieu/catkin_ws/build && $(MAKE) -f seher/CMakeFiles/seher_genlisp.dir/build.make seher/CMakeFiles/seher_genlisp.dir/build
-.PHONY : seher_genlisp/fast
-
-# Convenience name for target.
-seher/CMakeFiles/topic_tools_generate_messages_py.dir/rule:
-	cd /home/mathieu/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 seher/CMakeFiles/topic_tools_generate_messages_py.dir/rule
-.PHONY : seher/CMakeFiles/topic_tools_generate_messages_py.dir/rule
-
-# Convenience name for target.
-topic_tools_generate_messages_py: seher/CMakeFiles/topic_tools_generate_messages_py.dir/rule
-
-.PHONY : topic_tools_generate_messages_py
-
-# fast build rule for target.
-topic_tools_generate_messages_py/fast:
-	cd /home/mathieu/catkin_ws/build && $(MAKE) -f seher/CMakeFiles/topic_tools_generate_messages_py.dir/build.make seher/CMakeFiles/topic_tools_generate_messages_py.dir/build
-.PHONY : topic_tools_generate_messages_py/fast
-
-# Convenience name for target.
 seher/CMakeFiles/pcl_msgs_generate_messages_eus.dir/rule:
 	cd /home/mathieu/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 seher/CMakeFiles/pcl_msgs_generate_messages_eus.dir/rule
 .PHONY : seher/CMakeFiles/pcl_msgs_generate_messages_eus.dir/rule
@@ -513,6 +483,21 @@ seher_generate_messages_eus/fast:
 .PHONY : seher_generate_messages_eus/fast
 
 # Convenience name for target.
+seher/CMakeFiles/move_sim_robot.dir/rule:
+	cd /home/mathieu/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 seher/CMakeFiles/move_sim_robot.dir/rule
+.PHONY : seher/CMakeFiles/move_sim_robot.dir/rule
+
+# Convenience name for target.
+move_sim_robot: seher/CMakeFiles/move_sim_robot.dir/rule
+
+.PHONY : move_sim_robot
+
+# fast build rule for target.
+move_sim_robot/fast:
+	cd /home/mathieu/catkin_ws/build && $(MAKE) -f seher/CMakeFiles/move_sim_robot.dir/build.make seher/CMakeFiles/move_sim_robot.dir/build
+.PHONY : move_sim_robot/fast
+
+# Convenience name for target.
 seher/CMakeFiles/seher_gencpp.dir/rule:
 	cd /home/mathieu/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 seher/CMakeFiles/seher_gencpp.dir/rule
 .PHONY : seher/CMakeFiles/seher_gencpp.dir/rule
@@ -541,6 +526,21 @@ seher_generate_messages_py: seher/CMakeFiles/seher_generate_messages_py.dir/rule
 seher_generate_messages_py/fast:
 	cd /home/mathieu/catkin_ws/build && $(MAKE) -f seher/CMakeFiles/seher_generate_messages_py.dir/build.make seher/CMakeFiles/seher_generate_messages_py.dir/build
 .PHONY : seher_generate_messages_py/fast
+
+# Convenience name for target.
+seher/CMakeFiles/distance_calculation.dir/rule:
+	cd /home/mathieu/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 seher/CMakeFiles/distance_calculation.dir/rule
+.PHONY : seher/CMakeFiles/distance_calculation.dir/rule
+
+# Convenience name for target.
+distance_calculation: seher/CMakeFiles/distance_calculation.dir/rule
+
+.PHONY : distance_calculation
+
+# fast build rule for target.
+distance_calculation/fast:
+	cd /home/mathieu/catkin_ws/build && $(MAKE) -f seher/CMakeFiles/distance_calculation.dir/build.make seher/CMakeFiles/distance_calculation.dir/build
+.PHONY : distance_calculation/fast
 
 # Convenience name for target.
 seher/CMakeFiles/seher_geneus.dir/rule:
@@ -647,6 +647,93 @@ pointcloud_computing_workcell/fast:
 	cd /home/mathieu/catkin_ws/build && $(MAKE) -f seher/CMakeFiles/pointcloud_computing_workcell.dir/build.make seher/CMakeFiles/pointcloud_computing_workcell.dir/build
 .PHONY : pointcloud_computing_workcell/fast
 
+# Convenience name for target.
+seher/CMakeFiles/seher_genlisp.dir/rule:
+	cd /home/mathieu/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 seher/CMakeFiles/seher_genlisp.dir/rule
+.PHONY : seher/CMakeFiles/seher_genlisp.dir/rule
+
+# Convenience name for target.
+seher_genlisp: seher/CMakeFiles/seher_genlisp.dir/rule
+
+.PHONY : seher_genlisp
+
+# fast build rule for target.
+seher_genlisp/fast:
+	cd /home/mathieu/catkin_ws/build && $(MAKE) -f seher/CMakeFiles/seher_genlisp.dir/build.make seher/CMakeFiles/seher_genlisp.dir/build
+.PHONY : seher_genlisp/fast
+
+# Convenience name for target.
+seher/CMakeFiles/topic_tools_generate_messages_py.dir/rule:
+	cd /home/mathieu/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 seher/CMakeFiles/topic_tools_generate_messages_py.dir/rule
+.PHONY : seher/CMakeFiles/topic_tools_generate_messages_py.dir/rule
+
+# Convenience name for target.
+topic_tools_generate_messages_py: seher/CMakeFiles/topic_tools_generate_messages_py.dir/rule
+
+.PHONY : topic_tools_generate_messages_py
+
+# fast build rule for target.
+topic_tools_generate_messages_py/fast:
+	cd /home/mathieu/catkin_ws/build && $(MAKE) -f seher/CMakeFiles/topic_tools_generate_messages_py.dir/build.make seher/CMakeFiles/topic_tools_generate_messages_py.dir/build
+.PHONY : topic_tools_generate_messages_py/fast
+
+# Convenience name for target.
+seher/CMakeFiles/point_publisher.dir/rule:
+	cd /home/mathieu/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 seher/CMakeFiles/point_publisher.dir/rule
+.PHONY : seher/CMakeFiles/point_publisher.dir/rule
+
+# Convenience name for target.
+point_publisher: seher/CMakeFiles/point_publisher.dir/rule
+
+.PHONY : point_publisher
+
+# fast build rule for target.
+point_publisher/fast:
+	cd /home/mathieu/catkin_ws/build && $(MAKE) -f seher/CMakeFiles/point_publisher.dir/build.make seher/CMakeFiles/point_publisher.dir/build
+.PHONY : point_publisher/fast
+
+# Convenience name for target.
+seher/CMakeFiles/clustering.dir/rule:
+	cd /home/mathieu/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 seher/CMakeFiles/clustering.dir/rule
+.PHONY : seher/CMakeFiles/clustering.dir/rule
+
+# Convenience name for target.
+clustering: seher/CMakeFiles/clustering.dir/rule
+
+.PHONY : clustering
+
+# fast build rule for target.
+clustering/fast:
+	cd /home/mathieu/catkin_ws/build && $(MAKE) -f seher/CMakeFiles/clustering.dir/build.make seher/CMakeFiles/clustering.dir/build
+.PHONY : clustering/fast
+
+src/clustering/clustering.o: src/clustering/clustering.cpp.o
+
+.PHONY : src/clustering/clustering.o
+
+# target to build an object file
+src/clustering/clustering.cpp.o:
+	cd /home/mathieu/catkin_ws/build && $(MAKE) -f seher/CMakeFiles/clustering.dir/build.make seher/CMakeFiles/clustering.dir/src/clustering/clustering.cpp.o
+.PHONY : src/clustering/clustering.cpp.o
+
+src/clustering/clustering.i: src/clustering/clustering.cpp.i
+
+.PHONY : src/clustering/clustering.i
+
+# target to preprocess a source file
+src/clustering/clustering.cpp.i:
+	cd /home/mathieu/catkin_ws/build && $(MAKE) -f seher/CMakeFiles/clustering.dir/build.make seher/CMakeFiles/clustering.dir/src/clustering/clustering.cpp.i
+.PHONY : src/clustering/clustering.cpp.i
+
+src/clustering/clustering.s: src/clustering/clustering.cpp.s
+
+.PHONY : src/clustering/clustering.s
+
+# target to generate assembly for a file
+src/clustering/clustering.cpp.s:
+	cd /home/mathieu/catkin_ws/build && $(MAKE) -f seher/CMakeFiles/clustering.dir/build.make seher/CMakeFiles/clustering.dir/src/clustering/clustering.cpp.s
+.PHONY : src/clustering/clustering.cpp.s
+
 src/collision_objects/collision_objects.o: src/collision_objects/collision_objects.cpp.o
 
 .PHONY : src/collision_objects/collision_objects.o
@@ -673,6 +760,87 @@ src/collision_objects/collision_objects.s: src/collision_objects/collision_objec
 src/collision_objects/collision_objects.cpp.s:
 	cd /home/mathieu/catkin_ws/build && $(MAKE) -f seher/CMakeFiles/collision_objects.dir/build.make seher/CMakeFiles/collision_objects.dir/src/collision_objects/collision_objects.cpp.s
 .PHONY : src/collision_objects/collision_objects.cpp.s
+
+src/distance_calculation/distance_calculation.o: src/distance_calculation/distance_calculation.cpp.o
+
+.PHONY : src/distance_calculation/distance_calculation.o
+
+# target to build an object file
+src/distance_calculation/distance_calculation.cpp.o:
+	cd /home/mathieu/catkin_ws/build && $(MAKE) -f seher/CMakeFiles/distance_calculation.dir/build.make seher/CMakeFiles/distance_calculation.dir/src/distance_calculation/distance_calculation.cpp.o
+.PHONY : src/distance_calculation/distance_calculation.cpp.o
+
+src/distance_calculation/distance_calculation.i: src/distance_calculation/distance_calculation.cpp.i
+
+.PHONY : src/distance_calculation/distance_calculation.i
+
+# target to preprocess a source file
+src/distance_calculation/distance_calculation.cpp.i:
+	cd /home/mathieu/catkin_ws/build && $(MAKE) -f seher/CMakeFiles/distance_calculation.dir/build.make seher/CMakeFiles/distance_calculation.dir/src/distance_calculation/distance_calculation.cpp.i
+.PHONY : src/distance_calculation/distance_calculation.cpp.i
+
+src/distance_calculation/distance_calculation.s: src/distance_calculation/distance_calculation.cpp.s
+
+.PHONY : src/distance_calculation/distance_calculation.s
+
+# target to generate assembly for a file
+src/distance_calculation/distance_calculation.cpp.s:
+	cd /home/mathieu/catkin_ws/build && $(MAKE) -f seher/CMakeFiles/distance_calculation.dir/build.make seher/CMakeFiles/distance_calculation.dir/src/distance_calculation/distance_calculation.cpp.s
+.PHONY : src/distance_calculation/distance_calculation.cpp.s
+
+src/move_sim_robot/move_sim_robot.o: src/move_sim_robot/move_sim_robot.cpp.o
+
+.PHONY : src/move_sim_robot/move_sim_robot.o
+
+# target to build an object file
+src/move_sim_robot/move_sim_robot.cpp.o:
+	cd /home/mathieu/catkin_ws/build && $(MAKE) -f seher/CMakeFiles/move_sim_robot.dir/build.make seher/CMakeFiles/move_sim_robot.dir/src/move_sim_robot/move_sim_robot.cpp.o
+.PHONY : src/move_sim_robot/move_sim_robot.cpp.o
+
+src/move_sim_robot/move_sim_robot.i: src/move_sim_robot/move_sim_robot.cpp.i
+
+.PHONY : src/move_sim_robot/move_sim_robot.i
+
+# target to preprocess a source file
+src/move_sim_robot/move_sim_robot.cpp.i:
+	cd /home/mathieu/catkin_ws/build && $(MAKE) -f seher/CMakeFiles/move_sim_robot.dir/build.make seher/CMakeFiles/move_sim_robot.dir/src/move_sim_robot/move_sim_robot.cpp.i
+.PHONY : src/move_sim_robot/move_sim_robot.cpp.i
+
+src/move_sim_robot/move_sim_robot.s: src/move_sim_robot/move_sim_robot.cpp.s
+
+.PHONY : src/move_sim_robot/move_sim_robot.s
+
+# target to generate assembly for a file
+src/move_sim_robot/move_sim_robot.cpp.s:
+	cd /home/mathieu/catkin_ws/build && $(MAKE) -f seher/CMakeFiles/move_sim_robot.dir/build.make seher/CMakeFiles/move_sim_robot.dir/src/move_sim_robot/move_sim_robot.cpp.s
+.PHONY : src/move_sim_robot/move_sim_robot.cpp.s
+
+src/point_publisher/point_publisher.o: src/point_publisher/point_publisher.cpp.o
+
+.PHONY : src/point_publisher/point_publisher.o
+
+# target to build an object file
+src/point_publisher/point_publisher.cpp.o:
+	cd /home/mathieu/catkin_ws/build && $(MAKE) -f seher/CMakeFiles/point_publisher.dir/build.make seher/CMakeFiles/point_publisher.dir/src/point_publisher/point_publisher.cpp.o
+.PHONY : src/point_publisher/point_publisher.cpp.o
+
+src/point_publisher/point_publisher.i: src/point_publisher/point_publisher.cpp.i
+
+.PHONY : src/point_publisher/point_publisher.i
+
+# target to preprocess a source file
+src/point_publisher/point_publisher.cpp.i:
+	cd /home/mathieu/catkin_ws/build && $(MAKE) -f seher/CMakeFiles/point_publisher.dir/build.make seher/CMakeFiles/point_publisher.dir/src/point_publisher/point_publisher.cpp.i
+.PHONY : src/point_publisher/point_publisher.cpp.i
+
+src/point_publisher/point_publisher.s: src/point_publisher/point_publisher.cpp.s
+
+.PHONY : src/point_publisher/point_publisher.s
+
+# target to generate assembly for a file
+src/point_publisher/point_publisher.cpp.s:
+	cd /home/mathieu/catkin_ws/build && $(MAKE) -f seher/CMakeFiles/point_publisher.dir/build.make seher/CMakeFiles/point_publisher.dir/src/point_publisher/point_publisher.cpp.s
+.PHONY : src/point_publisher/point_publisher.cpp.s
 
 src/pointcloud_computing_home/pointcloud_home.o: src/pointcloud_computing_home/pointcloud_home.cpp.o
 
@@ -736,11 +904,14 @@ help:
 	@echo "... depend"
 	@echo "... install/strip"
 	@echo "... install/local"
+	@echo "... list_install_components"
+	@echo "... rebuild_cache"
+	@echo "... edit_cache"
+	@echo "... test"
 	@echo "... seher_gennodejs"
 	@echo "... topic_tools_generate_messages_eus"
 	@echo "... pcl_msgs_generate_messages_lisp"
 	@echo "... pointcloud_computing_home"
-	@echo "... rebuild_cache"
 	@echo "... topic_tools_generate_messages_cpp"
 	@echo "... graph_msgs_generate_messages_eus"
 	@echo "... graph_msgs_generate_messages_cpp"
@@ -751,20 +922,18 @@ help:
 	@echo "... nodelet_topic_tools_gencfg"
 	@echo "... topic_tools_generate_messages_lisp"
 	@echo "... pcl_msgs_generate_messages_py"
-	@echo "... test"
 	@echo "... pcl_ros_gencfg"
 	@echo "... topic_tools_generate_messages_nodejs"
-	@echo "... seher_genlisp"
-	@echo "... topic_tools_generate_messages_py"
 	@echo "... pcl_msgs_generate_messages_eus"
 	@echo "... seher_generate_messages"
 	@echo "... graph_msgs_generate_messages_nodejs"
 	@echo "... seher_generate_messages_cpp"
 	@echo "... pcl_msgs_generate_messages_nodejs"
 	@echo "... seher_generate_messages_eus"
+	@echo "... move_sim_robot"
 	@echo "... seher_gencpp"
 	@echo "... seher_generate_messages_py"
-	@echo "... edit_cache"
+	@echo "... distance_calculation"
 	@echo "... seher_geneus"
 	@echo "... pcl_msgs_generate_messages_cpp"
 	@echo "... seher_generate_messages_lisp"
@@ -772,10 +941,25 @@ help:
 	@echo "... seher_genpy"
 	@echo "... collision_objects"
 	@echo "... pointcloud_computing_workcell"
-	@echo "... list_install_components"
+	@echo "... seher_genlisp"
+	@echo "... topic_tools_generate_messages_py"
+	@echo "... point_publisher"
+	@echo "... clustering"
+	@echo "... src/clustering/clustering.o"
+	@echo "... src/clustering/clustering.i"
+	@echo "... src/clustering/clustering.s"
 	@echo "... src/collision_objects/collision_objects.o"
 	@echo "... src/collision_objects/collision_objects.i"
 	@echo "... src/collision_objects/collision_objects.s"
+	@echo "... src/distance_calculation/distance_calculation.o"
+	@echo "... src/distance_calculation/distance_calculation.i"
+	@echo "... src/distance_calculation/distance_calculation.s"
+	@echo "... src/move_sim_robot/move_sim_robot.o"
+	@echo "... src/move_sim_robot/move_sim_robot.i"
+	@echo "... src/move_sim_robot/move_sim_robot.s"
+	@echo "... src/point_publisher/point_publisher.o"
+	@echo "... src/point_publisher/point_publisher.i"
+	@echo "... src/point_publisher/point_publisher.s"
 	@echo "... src/pointcloud_computing_home/pointcloud_home.o"
 	@echo "... src/pointcloud_computing_home/pointcloud_home.i"
 	@echo "... src/pointcloud_computing_home/pointcloud_home.s"
