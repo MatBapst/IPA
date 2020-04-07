@@ -37,6 +37,7 @@ pcl_ros
     pcl_conversions
 pcl_msgs
 sensor_msgs
+ur_msgs
 )
 
 
