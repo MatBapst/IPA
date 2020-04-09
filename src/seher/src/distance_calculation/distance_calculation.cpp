@@ -8,16 +8,17 @@
 #include <sensor_msgs/point_cloud_conversion.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
+#include "std_msgs/Float32.h"
 
-double min_distance;
+float min_distance;
 
 tf::StampedTransform transform_TCP;
 
 
 
 
-double distanceComputing (geometry_msgs::Point32 point, tf::StampedTransform TCP){
-    double distance,x,y,z;
+float distanceComputing (geometry_msgs::Point32 point, tf::StampedTransform TCP){
+    float distance,x,y,z;
     x=TCP.getOrigin().x();
     y=TCP.getOrigin().y();
     z=TCP.getOrigin().z();
@@ -30,7 +31,7 @@ void distanceCallback (const sensor_msgs::PointCloud2ConstPtr& input){
     sensor_msgs::PointCloud pointcloud;
     sensor_msgs::convertPointCloud2ToPointCloud(*input, pointcloud);
     min_distance=100;
-    double distance;
+    float distance;
     for (int i =0; i<pointcloud.points.size();i++){
         distance=distanceComputing(pointcloud.points[i], transform_TCP);
         if (distance<min_distance){
@@ -55,7 +56,7 @@ int main(int argc, char** argv){
   tf::TransformListener robot_listener;
 
   ros::Subscriber robot_sub = node.subscribe("/cameras/depth_pointcloud_fusion",1, distanceCallback);
-
+  ros::Publisher distance_pub=node.advertise<std_msgs::Float32>("/distance_calculation/minimal_distance",1);
 
    
   ros::Rate rate(30.0);
@@ -73,7 +74,9 @@ int main(int argc, char** argv){
     ros::spinOnce();
 
     ROS_INFO_STREAM("minimal distance between TCP and pointcloud : " << min_distance);
-
+    std_msgs::Float32 msg;
+    msg.data=min_distance;
+    distance_pub.publish(msg);
     rate.sleep();
     
   }

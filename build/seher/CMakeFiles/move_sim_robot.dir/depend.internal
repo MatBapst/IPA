@@ -242,6 +242,7 @@ seher/CMakeFiles/move_sim_robot.dir/src/move_sim_robot/move_sim_robot.cpp.o
  /opt/ros/melodic/include/shape_msgs/SolidPrimitive.h
  /opt/ros/melodic/include/srdfdom/model.h
  /opt/ros/melodic/include/std_msgs/ColorRGBA.h
+ /opt/ros/melodic/include/std_msgs/Float32.h
  /opt/ros/melodic/include/std_msgs/Header.h
  /opt/ros/melodic/include/std_msgs/Int64.h
  /opt/ros/melodic/include/tf/LinearMath/Matrix3x3.h

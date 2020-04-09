@@ -3,12 +3,20 @@
 #include <angles/angles.h>
 #include <std_msgs/Header.h>
 #include <std_msgs/Int64.h>
+#include "std_msgs/Float32.h"
 
+
+//threshold distance between robot and obstacle to stop the robot
+float dist_threshold_low=0.2; //20 cm
+float dist_threshold_up=0.4; //40 cm
+bool near_obstacle=false;
 
 //constructor
 MoveRobot::MoveRobot()
 {
-
+onTarget=false;
+obstacle=false;
+status=false; // true if moving, false if stopped
 }
 
 //Destructor
@@ -78,19 +86,64 @@ void MoveRobot::executeCartesianTrajtoPose(geometry_msgs::Pose target, std::stri
   exit(-1);
 }
 
-
 bool MoveRobot::moveGroupExecutePlan(moveit::planning_interface::MoveGroupInterface::Plan my_plan)
 {
 
-  /*if(user_prompts)
-  {
-    std::string message = "Planning completed, press Next to execute";
-    visual_tools->prompt(message);
-  }
-  */
+  
   move_group->setStartStateToCurrentState();
   
   return move_group->execute(my_plan)==moveit::planning_interface::MoveItErrorCode::SUCCESS;;
+}
+
+bool MoveRobot::moveToTarget(geometry_msgs::Pose target)
+{
+
+  move_group->setStartStateToCurrentState();
+  move_group->setPoseTarget(target);
+  move_group->setMaxVelocityScalingFactor(1);
+  if ( move_group->asyncMove()==moveit::planning_interface::MoveItErrorCode::SUCCESS){
+      ROS_INFO_STREAM("MOVING");
+      status=true;
+      return true;
+  }
+  ROS_INFO_STREAM("NOT MOVING");
+  /*actionlib::SimpleActionClient<moveit_msgs::MoveGroupAction>& move_action_client = move_group->getMoveGroupClient();
+//ROS_INFO_STREAM(move_group->getMoveGroupClient().getState().toString());
+//ros::Rate rate(10);
+while (!move_action_client.getState().isDone() && ros::ok()) {
+  ROS_INFO_STREAM("STATE :   " << move_action_client.getState().toString().c_str());
+  ROS_INFO_STREAM("RESULT:   " << move_action_client.getResult()->error_code.val);
+  sleepSafeFor(1);
+  move_group->stop();
+  ROS_INFO_STREAM("STATE :   " << move_action_client.getState().toString().c_str());
+  ROS_INFO_STREAM("RESULT:   " << move_action_client.getResult()->error_code.val);
+  
+  sleepSafeFor(1);
+  move_group->setStartStateToCurrentState();
+  move_group->asyncMove();
+  sleepSafeFor(2);
+  
+  
+  //rate.sleep();
+  // to abort execution of the trajectory: `move_action_client->cancelGoal();` or `group.stop();`
+}
+
+ROS_DEBUG("move_action_client: %s %s",
+          move_action_client.getState().toString().c_str(),
+          move_action_client.getState().getText().c_str());
+
+auto error_code = move_action_client.getResult()->error_code.val;
+
+if (error_code == moveit::planning_interface::MoveItErrorCode::SUCCESS) {
+  ROS_INFO_STREAM("Moving SUCCESSFUL");
+  ROS_INFO_STREAM("Last STATE :   " << move_action_client.getState().toString().c_str());
+  return true;
+} else {
+  ROS_ERROR("Moving FAILED");
+  return false;
+    
+}*/
+
 }
 
 
@@ -182,6 +235,68 @@ void MoveRobot::adjustTrajectoryToFixTimeSequencing(moveit_msgs::RobotTrajectory
 }
 
 
+void MoveRobot::updateStatus(){
+    actionlib::SimpleActionClient<moveit_msgs::MoveGroupAction>& move_action_client = move_group->getMoveGroupClient();
+    auto error_code = move_action_client.getResult()->error_code.val;
+    //ROS_INFO_STREAM("UPDATING STATUS");
+    if (error_code == moveit::planning_interface::MoveItErrorCode::SUCCESS){
+        onTarget=true;
+        ROS_INFO_STREAM("MOVING SUCCESSFULL");
+    }
+    else {
+        onTarget=false;
+    }
+
+    if (near_obstacle){
+        obstacle=true;
+        //ROS_INFO_STREAM("OBSTACLE NEAR ROBOT");
+    } else {
+        obstacle=false;
+    }
+}
+
+
+void MoveRobot::stopRobot(){
+    ROS_INFO_STREAM("Robot Stopping");
+    move_group->stop();
+    status=false;
+}
+
+
+bool MoveRobot::getOnTarget(){
+    return onTarget;
+}
+
+bool MoveRobot::getObstacle(){
+    return obstacle;
+}
+
+void MoveRobot::setObstacle(bool is_obstacle){
+    if (is_obstacle){
+        obstacle=true;
+    }
+    else {
+        obstacle=false;
+    }
+}
+
+bool MoveRobot::getStatus(){
+    return status;
+}
+
+void distanceCallback (const std_msgs::Float32::ConstPtr& dst){
+    float distance=dst->data;
+
+    if (distance<=dist_threshold_low){
+        near_obstacle=true;
+    }
+    if (distance>=dist_threshold_up) {
+        near_obstacle=false;
+    }
+
+
+}
+
 
 int main(int argc, char **argv)
 {
@@ -208,10 +323,12 @@ int main(int argc, char **argv)
   ROS_INFO("---------------------------");
   */
 
+ ros::Subscriber distance_sub = nh.subscribe("/distance_calculation/minimal_distance",1, distanceCallback);
+
     geometry_msgs::Pose target_pose1;
   target_pose1.position.x = 0.3;
-  target_pose1.position.y = 0.4;
-  target_pose1.position.z = 0.4;
+  target_pose1.position.y = 0.6;
+  target_pose1.position.z = 0.5;
   geometry_msgs::Quaternion quat_msg;
   tf::quaternionTFToMsg(tf::createQuaternionFromRPY(angles::from_degrees(-90),angles::from_degrees(0),angles::from_degrees(0)),quat_msg);
   target_pose1.orientation = quat_msg;
@@ -219,16 +336,35 @@ int main(int argc, char **argv)
   geometry_msgs::Pose target_pose2 = target_pose1;
   target_pose1.position.x = 0.05;
   int seq = 0;
-  bool switcher=false;
+  bool switcher=true;
   
   while(ros::ok())
   {
-    ROS_INFO_STREAM("----------------------SEQ " << seq << "-------------------------------------");
-    robot_obj.executeCartesianTrajtoPose((switcher)?target_pose1:target_pose2, "To Point A");
-    robot_obj.sleepSafeFor(1);
-    robot_obj.executeCartesianTrajtoPose((switcher)?target_pose2:target_pose1, "To Point B");
-    robot_obj.sleepSafeFor(1);
-    switcher = !switcher;
+    //ROS_INFO_STREAM("----------------------SEQ " << seq++ << "-------------------------------------");
+
+    if (!robot_obj.getOnTarget()){
+        if (robot_obj.getObstacle()){
+            if (robot_obj.getStatus()){
+                robot_obj.stopRobot();
+            }
+            
+        }
+        else {
+            if (!robot_obj.getStatus()){
+                robot_obj.moveToTarget((switcher)?target_pose1:target_pose2);
+            }
+            else {
+                robot_obj.sleepSafeFor(0.01);
+            }
+        }
+
+    } else {
+        switcher = !switcher;
+        robot_obj.moveToTarget((switcher)?target_pose1:target_pose2);
+    }
+    robot_obj.updateStatus();
+    
+    ros::spinOnce();
     /*if (!switcher){
       ROS_INFO_STREAM("Slow down");
       seher_obj.move_group->setMaxVelocityScalingFactor(0.05);

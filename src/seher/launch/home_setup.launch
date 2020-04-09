@@ -69,5 +69,9 @@
 
 <node name="pointcloud_computing" pkg="seher" type="pointcloud_computing_home"/>
 
+<!-- launch the distance calculation -->
+
+<node name="distance_calculation" pkg="seher" type="distance_calculation"/>
+
 
 </launch>
