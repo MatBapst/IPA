@@ -88,6 +88,9 @@ target_link_libraries(pointcloud_computing_workcell ${catkin_LIBRARIES} ${Boost_
 add_executable(move_sim_robot src/move_sim_robot/move_sim_robot.cpp)
 target_link_libraries(move_sim_robot ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
 
+add_executable(move_sim_robot_skeleton src/move_sim_robot_skeleton/move_sim_robot_skeleton.cpp)
+target_link_libraries(move_sim_robot_skeleton ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
+
 add_executable(point_publisher src/point_publisher/point_publisher.cpp)
 target_link_libraries(point_publisher ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
 
