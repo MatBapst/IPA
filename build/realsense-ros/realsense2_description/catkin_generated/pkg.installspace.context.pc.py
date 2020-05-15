@@ -5,4 +5,4 @@ PROJECT_CATKIN_DEPENDS = "".replace(';', ' ')
 PKG_CONFIG_LIBRARIES_WITH_PREFIX = "".split(';') if "" != "" else []
 PROJECT_NAME = "realsense2_description"
 PROJECT_SPACE_DIR = "/home/mathieu/catkin_ws/install"
-PROJECT_VERSION = "2.2.12"
+PROJECT_VERSION = "2.2.13"

@@ -16,7 +16,7 @@
 
 
 <group ns="$(arg cameraL)">
- <include file="$(find realsense2_camera)/launch/includes/nodelet2.launch.xml">
+ <include file="$(find seher)/launch/includes/nodelet2.launch.xml">
       
       <arg name="serial_no"             value="$(arg serial_no_cameraL)"/>
       <arg name="tf_prefix"		value="$(arg tf_prefix_cameraL)"/>
@@ -26,7 +26,7 @@
   </group>
     
  <group ns="$(arg cameraR)"> 
-    <include file="$(find realsense2_camera)/launch/includes/nodelet2.launch.xml">
+    <include file="$(find seher)/launch/includes/nodelet2.launch.xml">
       
       <arg name="serial_no"             value="$(arg serial_no_cameraR)"/>
       <arg name="tf_prefix"         		value="$(arg tf_prefix_cameraR)"/>

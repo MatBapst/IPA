@@ -1,5 +1,5 @@
 set(_CATKIN_CURRENT_PACKAGE "ddynamic_reconfigure")
-set(ddynamic_reconfigure_VERSION "0.2.2")
+set(ddynamic_reconfigure_VERSION "0.2.3")
 set(ddynamic_reconfigure_MAINTAINER "Hilario Tome <hilario.tome@pal-robotics.com>, Luca Marchionni <luca.marchionni@pal-robotics.com>")
 set(ddynamic_reconfigure_PACKAGE_FORMAT "2")
 set(ddynamic_reconfigure_BUILD_DEPENDS "dynamic_reconfigure" "roscpp")

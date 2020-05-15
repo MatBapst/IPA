@@ -21,8 +21,8 @@ set(CMAKE_TARGET_DEFINITIONS_CXX
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "/home/mathieu/catkin_ws/devel/include"
   "/home/mathieu/catkin_ws/src/realsense-ros/realsense2_camera/include"
-  "/home/mathieu/catkin_ws/src/ddynamic_reconfigure/include"
   "/opt/ros/melodic/include"
+  "/home/mathieu/catkin_ws/src/ddynamic_reconfigure/include"
   "/opt/ros/melodic/share/xmlrpcpp/cmake/../../../include/xmlrpcpp"
   "/usr/include/opencv"
   )

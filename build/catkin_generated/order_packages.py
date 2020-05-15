@@ -2,4 +2,4 @@
 source_root_dir = '/home/mathieu/catkin_ws/src'
 whitelisted_packages = ''.split(';') if '' != '' else []
 blacklisted_packages = ''.split(';') if '' != '' else []
-underlay_workspaces = '/home/mathieu/catkin_ws/devel;/opt/ros/melodic'.split(';') if '/home/mathieu/catkin_ws/devel;/opt/ros/melodic' != '' else []
+underlay_workspaces = '/home/mathieu/test_ws/devel;/home/mathieu/catkin_ws/devel;/opt/ros/melodic'.split(';') if '/home/mathieu/test_ws/devel;/home/mathieu/catkin_ws/devel;/opt/ros/melodic' != '' else []
