@@ -424,7 +424,7 @@ int main(int argc, char** argv)
 
     // Create the app
     PeoplePCDApp app;
-    ros::Subscriber sub = nh.subscribe("/camera/depth_registered/points", 1, &PeoplePCDApp::source_cb1, &app);
+    ros::Subscriber sub = nh.subscribe("/camera/depth/color/points", 1, &PeoplePCDApp::source_cb1, &app);
     app.people_detector_.rdf_detector_ = rdf;
     
     // executing

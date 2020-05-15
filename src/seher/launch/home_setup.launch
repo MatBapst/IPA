@@ -10,28 +10,28 @@
   <arg name="tf_prefix_cameraR"         default="$(arg cameraR)"/>
   
   <arg name="initial_reset"             default="false"/>
-  <arg name="filters"			default="pointcloud"/>
+  
 
 <!-- launch the cameras -->
 
 
 <group ns="$(arg cameraL)">
- <include file="$(find realsense2_camera)/launch/includes/nodelet.launch.xml">
+ <include file="$(find realsense2_camera)/launch/includes/nodelet2.launch.xml">
       
       <arg name="serial_no"             value="$(arg serial_no_cameraL)"/>
       <arg name="tf_prefix"		value="$(arg tf_prefix_cameraL)"/>
       <arg name="initial_reset"         value="$(arg initial_reset)"/>
-      <arg name="filters"		value="$(arg filters)"/>
+      
     </include>
   </group>
     
  <group ns="$(arg cameraR)"> 
-    <include file="$(find realsense2_camera)/launch/includes/nodelet.launch.xml">
+    <include file="$(find realsense2_camera)/launch/includes/nodelet2.launch.xml">
       
       <arg name="serial_no"             value="$(arg serial_no_cameraR)"/>
       <arg name="tf_prefix"         		value="$(arg tf_prefix_cameraR)"/>
       <arg name="initial_reset"         value="$(arg initial_reset)"/>
-      <arg name="filters"		value="$(arg filters)"/>
+      
     </include>
  </group> 
 

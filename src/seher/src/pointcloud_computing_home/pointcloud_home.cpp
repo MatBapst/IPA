@@ -200,8 +200,8 @@ listenerL=&lstnrL;
 tf::TransformListener lstnrR(ros::Duration(5));
 listenerR=&lstnrR;
   // Create a ROS subscriber for the input point cloud
-  sub1 = nh.subscribe ("/camL/depth/color/points", 1, cloud_cb1);
-  sub2 = nh.subscribe ("/camR/depth/color/points", 1, cloud_cb2);
+  sub1 = nh.subscribe ("/camL/depth_registered/points", 1, cloud_cb1);
+  sub2 = nh.subscribe ("/camR/depth_registered/points", 1, cloud_cb2);
   // Create a ROS publisher for the output point cloud
   //pub1 = nh.advertise<sensor_msgs::PointCloud2> ("/camL/depth/color/points_computed", 1);
   //pub2 = nh.advertise<sensor_msgs::PointCloud2> ("/camR/depth/color/points_computed", 1);
