@@ -1,0 +1,8 @@
+prefix=/home/mathieu/catkin_ws/devel
+
+Name: cob_leg_detection
+Description: Description of cob_leg_detection
+Version: 1.0.5
+Cflags: -I/home/mathieu/catkin_ws/devel/include
+Libs: -L${prefix}/lib 
+Requires: 

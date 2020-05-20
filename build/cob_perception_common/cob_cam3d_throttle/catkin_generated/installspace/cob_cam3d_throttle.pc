@@ -1,0 +1,8 @@
+prefix=/home/mathieu/catkin_ws/install
+
+Name: cob_cam3d_throttle
+Description: Description of cob_cam3d_throttle
+Version: 0.6.15
+Cflags: 
+Libs: -L${prefix}/lib -lcam3d_throttle
+Requires: message_filters nodelet pluginlib roscpp sensor_msgs
