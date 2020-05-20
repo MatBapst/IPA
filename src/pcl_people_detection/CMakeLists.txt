@@ -54,8 +54,8 @@ add_definitions(${PCL_DEFINITIONS})
 
 include(FindCUDA)
 
-cuda_add_executable (pcl_people_detection src/pcl_people_detection.cpp)
-target_link_libraries (pcl_people_detection ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+#cuda_add_executable (pcl_people_detection src/pcl_people_detection.cpp)
+#target_link_libraries (pcl_people_detection ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}

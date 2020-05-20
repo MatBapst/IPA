@@ -5,4 +5,4 @@ PROJECT_CATKIN_DEPENDS = "roscpp;dynamic_reconfigure".replace(';', ' ')
 PKG_CONFIG_LIBRARIES_WITH_PREFIX = "-lddynamic_reconfigure".split(';') if "-lddynamic_reconfigure" != "" else []
 PROJECT_NAME = "ddynamic_reconfigure"
 PROJECT_SPACE_DIR = "/home/mathieu/catkin_ws/devel"
-PROJECT_VERSION = "0.2.2"
+PROJECT_VERSION = "0.2.3"

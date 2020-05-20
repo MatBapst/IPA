@@ -6,7 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /Axes1
+        - /PointCloud21
         - /TF1
         - /TF1/Frames1
       Splitter Ratio: 0.5
@@ -80,18 +80,11 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.009999999776482582
       Style: Flat Squares
-      Topic: /body_tracker/points_body_tracker
+      Topic: /body_tracker/points
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
-    - Class: rviz/Axes
-      Enabled: false
-      Length: 1
-      Name: Axes
-      Radius: 0.10000000149011612
-      Reference Frame: camera_link
-      Value: false
     - Class: rviz/TF
       Enabled: true
       Frame Timeout: 15
@@ -101,37 +94,7 @@ Visualization Manager:
           Value: false
         base_link:
           Value: false
-        camera_link:
-          Value: false
-        cob_body_tracker/head:
-          Value: true
-        cob_body_tracker/left_elbow:
-          Value: false
-        cob_body_tracker/left_foot:
-          Value: false
-        cob_body_tracker/left_hand:
-          Value: true
-        cob_body_tracker/left_hip:
-          Value: false
-        cob_body_tracker/left_knee:
-          Value: false
-        cob_body_tracker/left_shoulder:
-          Value: false
-        cob_body_tracker/neck:
-          Value: false
-        cob_body_tracker/right_elbow:
-          Value: false
-        cob_body_tracker/right_foot:
-          Value: false
-        cob_body_tracker/right_hand:
-          Value: true
-        cob_body_tracker/right_hip:
-          Value: false
-        cob_body_tracker/right_knee:
-          Value: false
-        cob_body_tracker/right_shoulder:
-          Value: false
-        cob_body_tracker/torso:
+        camL_link:
           Value: true
         ee_link:
           Value: false
@@ -183,37 +146,8 @@ Visualization Manager:
                                   {}
                         tool0:
                           {}
-          camera_link:
-            cob_body_tracker/head:
-              {}
-            cob_body_tracker/left_elbow:
-              {}
-            cob_body_tracker/left_foot:
-              {}
-            cob_body_tracker/left_hand:
-              {}
-            cob_body_tracker/left_hip:
-              {}
-            cob_body_tracker/left_knee:
-              {}
-            cob_body_tracker/left_shoulder:
-              {}
-            cob_body_tracker/neck:
-              {}
-            cob_body_tracker/right_elbow:
-              {}
-            cob_body_tracker/right_foot:
-              {}
-            cob_body_tracker/right_hand:
-              {}
-            cob_body_tracker/right_hip:
-              {}
-            cob_body_tracker/right_knee:
-              {}
-            cob_body_tracker/right_shoulder:
-              {}
-            cob_body_tracker/torso:
-              {}
+          camL_link:
+            {}
       Update Interval: 0
       Value: true
     - Acceleration_Scaling_Factor: 1
@@ -485,10 +419,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.5603981614112854
+      Pitch: 0.5553981065750122
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.28040575981140137
+      Yaw: 4.37359094619751
     Saved: ~
 Window Geometry:
   Displays:

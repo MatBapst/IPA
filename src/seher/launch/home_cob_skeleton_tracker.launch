@@ -1,11 +1,13 @@
 <launch>
   
-  
+<arg name="cameraL"              			default="camL"/>
     
 
 <include file="$(find cob_openni2_tracker)/launch/body_tracker_nodelet.launch">
       
       <arg name="standalone_without_camera_driver"   value="true"/>
+	<arg name="camera_name"   value="$(arg cameraL)"/>
+	
 </include>
 
 
@@ -13,7 +15,7 @@
 
 <!-- launch the tf publishers -->
 
-<node name="tf_base_link" pkg="tf" type="static_transform_publisher" output="screen" args="0 -0.4 0.4 0 0 -1.5708 world camera_link 50"/>
+<node name="tf_base_link" pkg="tf" type="static_transform_publisher" output="screen" args="0 -0.4 0.4 0 0 -1.5708 world camL_link 50"/>
 
 <!-- launch the robot in gazebo -->
 

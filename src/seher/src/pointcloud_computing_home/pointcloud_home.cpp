@@ -179,7 +179,7 @@ pcl::toPCLPointCloud2(*inter2, *inter3);
 pcl_conversions::fromPCL(*inter3, inter4);
 
 //transforming to world frame
-
+listenerR->waitForTransform("world", inter4.header.frame_id, ros::Time(0), ros::Duration(5.0));
 pcl_ros::transformPointCloud("world", inter4, pcl_R, *listenerR);
 
 //pcl::toPCLPointCloud2(*inter3, pcl_R);
@@ -200,7 +200,7 @@ listenerL=&lstnrL;
 tf::TransformListener lstnrR(ros::Duration(5));
 listenerR=&lstnrR;
   // Create a ROS subscriber for the input point cloud
-  sub1 = nh.subscribe ("/camL/depth/color/points", 1, cloud_cb1);
+  sub1 = nh.subscribe ("/camL/depth/color/points", 1, cloud_cb1); //from camL
   sub2 = nh.subscribe ("/camR/depth/color/points", 1, cloud_cb2);
   // Create a ROS publisher for the output point cloud
   //pub1 = nh.advertise<sensor_msgs::PointCloud2> ("/camL/depth/color/points_computed", 1);
