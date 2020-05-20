@@ -4,9 +4,6 @@
 realsense-ros/realsense2_camera/CMakeFiles/realsense2_camera.dir/src/base_realsense_node.cpp.o
  /home/mathieu/catkin_ws/devel/include/realsense2_camera/Extrinsics.h
  /home/mathieu/catkin_ws/devel/include/realsense2_camera/IMUInfo.h
- /home/mathieu/catkin_ws/src/ddynamic_reconfigure/include/ddynamic_reconfigure/ddynamic_reconfigure.h
- /home/mathieu/catkin_ws/src/ddynamic_reconfigure/include/ddynamic_reconfigure/ddynamic_reconfigure_utils.h
- /home/mathieu/catkin_ws/src/ddynamic_reconfigure/include/ddynamic_reconfigure/registered_param.h
  /home/mathieu/catkin_ws/src/realsense-ros/realsense2_camera/include/base_realsense_node.h
  /home/mathieu/catkin_ws/src/realsense-ros/realsense2_camera/include/constants.h
  /home/mathieu/catkin_ws/src/realsense-ros/realsense2_camera/include/realsense_node_factory.h
@@ -18,6 +15,9 @@ realsense-ros/realsense2_camera/CMakeFiles/realsense2_camera.dir/src/base_realse
  /opt/ros/melodic/include/class_loader/register_macro.hpp
  /opt/ros/melodic/include/class_loader/visibility_control.hpp
  /opt/ros/melodic/include/cv_bridge/cv_bridge.h
+ /opt/ros/melodic/include/ddynamic_reconfigure/ddynamic_reconfigure.h
+ /opt/ros/melodic/include/ddynamic_reconfigure/ddynamic_reconfigure_utils.h
+ /opt/ros/melodic/include/ddynamic_reconfigure/registered_param.h
  /opt/ros/melodic/include/diagnostic_msgs/DiagnosticArray.h
  /opt/ros/melodic/include/diagnostic_msgs/DiagnosticStatus.h
  /opt/ros/melodic/include/diagnostic_msgs/KeyValue.h
@@ -60,6 +60,32 @@ realsense-ros/realsense2_camera/CMakeFiles/realsense2_camera.dir/src/base_realse
  /opt/ros/melodic/include/image_transport/single_subscriber_publisher.h
  /opt/ros/melodic/include/image_transport/subscriber.h
  /opt/ros/melodic/include/image_transport/transport_hints.h
+ /opt/ros/melodic/include/librealsense2/h/rs_advanced_mode_command.h
+ /opt/ros/melodic/include/librealsense2/h/rs_config.h
+ /opt/ros/melodic/include/librealsense2/h/rs_context.h
+ /opt/ros/melodic/include/librealsense2/h/rs_device.h
+ /opt/ros/melodic/include/librealsense2/h/rs_frame.h
+ /opt/ros/melodic/include/librealsense2/h/rs_option.h
+ /opt/ros/melodic/include/librealsense2/h/rs_pipeline.h
+ /opt/ros/melodic/include/librealsense2/h/rs_processing.h
+ /opt/ros/melodic/include/librealsense2/h/rs_record_playback.h
+ /opt/ros/melodic/include/librealsense2/h/rs_sensor.h
+ /opt/ros/melodic/include/librealsense2/h/rs_types.h
+ /opt/ros/melodic/include/librealsense2/hpp/rs_context.hpp
+ /opt/ros/melodic/include/librealsense2/hpp/rs_device.hpp
+ /opt/ros/melodic/include/librealsense2/hpp/rs_frame.hpp
+ /opt/ros/melodic/include/librealsense2/hpp/rs_options.hpp
+ /opt/ros/melodic/include/librealsense2/hpp/rs_pipeline.hpp
+ /opt/ros/melodic/include/librealsense2/hpp/rs_processing.hpp
+ /opt/ros/melodic/include/librealsense2/hpp/rs_record_playback.hpp
+ /opt/ros/melodic/include/librealsense2/hpp/rs_sensor.hpp
+ /opt/ros/melodic/include/librealsense2/hpp/rs_serializable_device.hpp
+ /opt/ros/melodic/include/librealsense2/hpp/rs_types.hpp
+ /opt/ros/melodic/include/librealsense2/rs.h
+ /opt/ros/melodic/include/librealsense2/rs.hpp
+ /opt/ros/melodic/include/librealsense2/rs_advanced_mode.h
+ /opt/ros/melodic/include/librealsense2/rs_advanced_mode.hpp
+ /opt/ros/melodic/include/librealsense2/rsutil.h
  /opt/ros/melodic/include/nav_msgs/Odometry.h
  /opt/ros/melodic/include/nodelet/exception.h
  /opt/ros/melodic/include/nodelet/nodelet.h
@@ -169,9 +195,6 @@ realsense-ros/realsense2_camera/CMakeFiles/realsense2_camera.dir/src/base_realse
 realsense-ros/realsense2_camera/CMakeFiles/realsense2_camera.dir/src/realsense_node_factory.cpp.o
  /home/mathieu/catkin_ws/devel/include/realsense2_camera/Extrinsics.h
  /home/mathieu/catkin_ws/devel/include/realsense2_camera/IMUInfo.h
- /home/mathieu/catkin_ws/src/ddynamic_reconfigure/include/ddynamic_reconfigure/ddynamic_reconfigure.h
- /home/mathieu/catkin_ws/src/ddynamic_reconfigure/include/ddynamic_reconfigure/ddynamic_reconfigure_utils.h
- /home/mathieu/catkin_ws/src/ddynamic_reconfigure/include/ddynamic_reconfigure/registered_param.h
  /home/mathieu/catkin_ws/src/realsense-ros/realsense2_camera/include/base_realsense_node.h
  /home/mathieu/catkin_ws/src/realsense-ros/realsense2_camera/include/constants.h
  /home/mathieu/catkin_ws/src/realsense-ros/realsense2_camera/include/realsense_node_factory.h
@@ -184,6 +207,9 @@ realsense-ros/realsense2_camera/CMakeFiles/realsense2_camera.dir/src/realsense_n
  /opt/ros/melodic/include/class_loader/register_macro.hpp
  /opt/ros/melodic/include/class_loader/visibility_control.hpp
  /opt/ros/melodic/include/cv_bridge/cv_bridge.h
+ /opt/ros/melodic/include/ddynamic_reconfigure/ddynamic_reconfigure.h
+ /opt/ros/melodic/include/ddynamic_reconfigure/ddynamic_reconfigure_utils.h
+ /opt/ros/melodic/include/ddynamic_reconfigure/registered_param.h
  /opt/ros/melodic/include/diagnostic_msgs/DiagnosticArray.h
  /opt/ros/melodic/include/diagnostic_msgs/DiagnosticStatus.h
  /opt/ros/melodic/include/diagnostic_msgs/KeyValue.h
@@ -226,6 +252,32 @@ realsense-ros/realsense2_camera/CMakeFiles/realsense2_camera.dir/src/realsense_n
  /opt/ros/melodic/include/image_transport/single_subscriber_publisher.h
  /opt/ros/melodic/include/image_transport/subscriber.h
  /opt/ros/melodic/include/image_transport/transport_hints.h
+ /opt/ros/melodic/include/librealsense2/h/rs_advanced_mode_command.h
+ /opt/ros/melodic/include/librealsense2/h/rs_config.h
+ /opt/ros/melodic/include/librealsense2/h/rs_context.h
+ /opt/ros/melodic/include/librealsense2/h/rs_device.h
+ /opt/ros/melodic/include/librealsense2/h/rs_frame.h
+ /opt/ros/melodic/include/librealsense2/h/rs_option.h
+ /opt/ros/melodic/include/librealsense2/h/rs_pipeline.h
+ /opt/ros/melodic/include/librealsense2/h/rs_processing.h
+ /opt/ros/melodic/include/librealsense2/h/rs_record_playback.h
+ /opt/ros/melodic/include/librealsense2/h/rs_sensor.h
+ /opt/ros/melodic/include/librealsense2/h/rs_types.h
+ /opt/ros/melodic/include/librealsense2/hpp/rs_context.hpp
+ /opt/ros/melodic/include/librealsense2/hpp/rs_device.hpp
+ /opt/ros/melodic/include/librealsense2/hpp/rs_frame.hpp
+ /opt/ros/melodic/include/librealsense2/hpp/rs_options.hpp
+ /opt/ros/melodic/include/librealsense2/hpp/rs_pipeline.hpp
+ /opt/ros/melodic/include/librealsense2/hpp/rs_processing.hpp
+ /opt/ros/melodic/include/librealsense2/hpp/rs_record_playback.hpp
+ /opt/ros/melodic/include/librealsense2/hpp/rs_sensor.hpp
+ /opt/ros/melodic/include/librealsense2/hpp/rs_serializable_device.hpp
+ /opt/ros/melodic/include/librealsense2/hpp/rs_types.hpp
+ /opt/ros/melodic/include/librealsense2/rs.h
+ /opt/ros/melodic/include/librealsense2/rs.hpp
+ /opt/ros/melodic/include/librealsense2/rs_advanced_mode.h
+ /opt/ros/melodic/include/librealsense2/rs_advanced_mode.hpp
+ /opt/ros/melodic/include/librealsense2/rsutil.h
  /opt/ros/melodic/include/nav_msgs/Odometry.h
  /opt/ros/melodic/include/nodelet/exception.h
  /opt/ros/melodic/include/nodelet/nodelet.h
@@ -335,9 +387,6 @@ realsense-ros/realsense2_camera/CMakeFiles/realsense2_camera.dir/src/realsense_n
 realsense-ros/realsense2_camera/CMakeFiles/realsense2_camera.dir/src/t265_realsense_node.cpp.o
  /home/mathieu/catkin_ws/devel/include/realsense2_camera/Extrinsics.h
  /home/mathieu/catkin_ws/devel/include/realsense2_camera/IMUInfo.h
- /home/mathieu/catkin_ws/src/ddynamic_reconfigure/include/ddynamic_reconfigure/ddynamic_reconfigure.h
- /home/mathieu/catkin_ws/src/ddynamic_reconfigure/include/ddynamic_reconfigure/ddynamic_reconfigure_utils.h
- /home/mathieu/catkin_ws/src/ddynamic_reconfigure/include/ddynamic_reconfigure/registered_param.h
  /home/mathieu/catkin_ws/src/realsense-ros/realsense2_camera/include/base_realsense_node.h
  /home/mathieu/catkin_ws/src/realsense-ros/realsense2_camera/include/constants.h
  /home/mathieu/catkin_ws/src/realsense-ros/realsense2_camera/include/realsense_node_factory.h
@@ -350,6 +399,9 @@ realsense-ros/realsense2_camera/CMakeFiles/realsense2_camera.dir/src/t265_realse
  /opt/ros/melodic/include/class_loader/register_macro.hpp
  /opt/ros/melodic/include/class_loader/visibility_control.hpp
  /opt/ros/melodic/include/cv_bridge/cv_bridge.h
+ /opt/ros/melodic/include/ddynamic_reconfigure/ddynamic_reconfigure.h
+ /opt/ros/melodic/include/ddynamic_reconfigure/ddynamic_reconfigure_utils.h
+ /opt/ros/melodic/include/ddynamic_reconfigure/registered_param.h
  /opt/ros/melodic/include/diagnostic_msgs/DiagnosticArray.h
  /opt/ros/melodic/include/diagnostic_msgs/DiagnosticStatus.h
  /opt/ros/melodic/include/diagnostic_msgs/KeyValue.h
@@ -392,6 +444,32 @@ realsense-ros/realsense2_camera/CMakeFiles/realsense2_camera.dir/src/t265_realse
  /opt/ros/melodic/include/image_transport/single_subscriber_publisher.h
  /opt/ros/melodic/include/image_transport/subscriber.h
  /opt/ros/melodic/include/image_transport/transport_hints.h
+ /opt/ros/melodic/include/librealsense2/h/rs_advanced_mode_command.h
+ /opt/ros/melodic/include/librealsense2/h/rs_config.h
+ /opt/ros/melodic/include/librealsense2/h/rs_context.h
+ /opt/ros/melodic/include/librealsense2/h/rs_device.h
+ /opt/ros/melodic/include/librealsense2/h/rs_frame.h
+ /opt/ros/melodic/include/librealsense2/h/rs_option.h
+ /opt/ros/melodic/include/librealsense2/h/rs_pipeline.h
+ /opt/ros/melodic/include/librealsense2/h/rs_processing.h
+ /opt/ros/melodic/include/librealsense2/h/rs_record_playback.h
+ /opt/ros/melodic/include/librealsense2/h/rs_sensor.h
+ /opt/ros/melodic/include/librealsense2/h/rs_types.h
+ /opt/ros/melodic/include/librealsense2/hpp/rs_context.hpp
+ /opt/ros/melodic/include/librealsense2/hpp/rs_device.hpp
+ /opt/ros/melodic/include/librealsense2/hpp/rs_frame.hpp
+ /opt/ros/melodic/include/librealsense2/hpp/rs_options.hpp
+ /opt/ros/melodic/include/librealsense2/hpp/rs_pipeline.hpp
+ /opt/ros/melodic/include/librealsense2/hpp/rs_processing.hpp
+ /opt/ros/melodic/include/librealsense2/hpp/rs_record_playback.hpp
+ /opt/ros/melodic/include/librealsense2/hpp/rs_sensor.hpp
+ /opt/ros/melodic/include/librealsense2/hpp/rs_serializable_device.hpp
+ /opt/ros/melodic/include/librealsense2/hpp/rs_types.hpp
+ /opt/ros/melodic/include/librealsense2/rs.h
+ /opt/ros/melodic/include/librealsense2/rs.hpp
+ /opt/ros/melodic/include/librealsense2/rs_advanced_mode.h
+ /opt/ros/melodic/include/librealsense2/rs_advanced_mode.hpp
+ /opt/ros/melodic/include/librealsense2/rsutil.h
  /opt/ros/melodic/include/nav_msgs/Odometry.h
  /opt/ros/melodic/include/nodelet/exception.h
  /opt/ros/melodic/include/nodelet/nodelet.h

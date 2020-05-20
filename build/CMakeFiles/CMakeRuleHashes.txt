@@ -135,12 +135,16 @@ a9dcc1df5b0451e4dd5dc96e7e469a9e /home/mathieu/catkin_ws/devel/include/cob_perce
 db0b20627d4bd8a6dc9f1816dacec79d /home/mathieu/catkin_ws/devel/include/cob_perception_msgs/PositionMeasurementArray.h
 5166e7d608a1acb0d888edd9d2dea015 /home/mathieu/catkin_ws/devel/include/cob_perception_msgs/Rect.h
 44151284a25b483f3924126087b528ae /home/mathieu/catkin_ws/devel/include/cob_perception_msgs/Skeleton.h
+<<<<<<< HEAD
 b4869363ebd1ed6f7dd3a6a9126ba9d7 /home/mathieu/catkin_ws/devel/include/diff_drive_controller/DiffDriveControllerConfig.h
+=======
+>>>>>>> eb5a1d110fd40663992c4c4e4fd0a9ead47deabe
 c1ed026bb0c8ab0991764c2c993a6dc1 /home/mathieu/catkin_ws/devel/include/openni2_camera/GetSerial.h
 76f354fd0649d21c4e01307f43a9f514 /home/mathieu/catkin_ws/devel/include/openni2_camera/OpenNI2Config.h
 9bd13079748d25e6402030f7629589ba /home/mathieu/catkin_ws/devel/include/realsense2_camera/Extrinsics.h
 ef8f56cc90f8150f5f5d830093291d8f /home/mathieu/catkin_ws/devel/include/realsense2_camera/IMUInfo.h
 7561ad22d866664a382a5b4f0e93e894 /home/mathieu/catkin_ws/devel/include/seher_msgs/distances.h
+<<<<<<< HEAD
 eeeb5a298efcf6f84f31e9ff42e2d328 /home/mathieu/catkin_ws/devel/include/seher_support/PoseStampedArray.h
 70c42c75dc46a66ffbd7450350ed230c /home/mathieu/catkin_ws/devel/include/ur_dashboard_msgs/AddToLog.h
 268b2a88809bf5bb4245c97f8cc0f66d /home/mathieu/catkin_ws/devel/include/ur_dashboard_msgs/GetLoadedProgram.h
@@ -162,6 +166,8 @@ cb1d7b00707382931f0edd49eecc06cd /home/mathieu/catkin_ws/devel/include/ur_dashbo
 24a3c05fa4f800062ee208a2f8bb25b0 /home/mathieu/catkin_ws/devel/include/ur_dashboard_msgs/SetModeFeedback.h
 3d8b80c491cc4b97bed3327cff07efd5 /home/mathieu/catkin_ws/devel/include/ur_dashboard_msgs/SetModeGoal.h
 22394ae7c55d7c5e3581f088ab9d7eaa /home/mathieu/catkin_ws/devel/include/ur_dashboard_msgs/SetModeResult.h
+=======
+>>>>>>> eb5a1d110fd40663992c4c4e4fd0a9ead47deabe
 537ab425bdbb969ce5998f70e018c6e1 /home/mathieu/catkin_ws/devel/include/ur_driver/URDriverConfig.h
 5c9ee7279a7c84341508b3fb111dbed8 /home/mathieu/catkin_ws/devel/include/ur_msgs/Analog.h
 303ab6f93cd2c999fa19f6c90cf22aca /home/mathieu/catkin_ws/devel/include/ur_msgs/Digital.h
@@ -171,7 +177,6 @@ a187d1f9b3788aa4ab967cabe24c5f08 /home/mathieu/catkin_ws/devel/include/ur_msgs/R
 cc1b06207633797ca34e960e85eb8c73 /home/mathieu/catkin_ws/devel/include/ur_msgs/RobotStateRTMsg.h
 abba50d3f7e37f8094ef403e0dc8c4b0 /home/mathieu/catkin_ws/devel/include/ur_msgs/SetIO.h
 30dc10b640e9f6c47e95d7299531232a /home/mathieu/catkin_ws/devel/include/ur_msgs/SetPayload.h
-ef1a4dce7b1d52cf33584b474b14aabf /home/mathieu/catkin_ws/devel/include/ur_msgs/SetSpeedSliderFraction.h
 ce2aac6910be82ea81d0b5873c37e439 /home/mathieu/catkin_ws/devel/include/ur_msgs/ToolDataMsg.h
 ba88ad716d5237682830c70bb4312214 /home/mathieu/catkin_ws/devel/lib/python2.7/dist-packages/cob_3d_mapping_msgs/msg/_CurvedPolygon.py
 05f4471247bf6f19411817e4a114890f /home/mathieu/catkin_ws/devel/lib/python2.7/dist-packages/cob_3d_mapping_msgs/msg/_CurvedPolygonArray.py
@@ -321,6 +326,7 @@ cfe8e4798985448d5790e2bd366b7519 /home/mathieu/catkin_ws/devel/lib/python2.7/dis
 65d3ef0a8b1eb7f25aac5926e1e5e8ad /home/mathieu/catkin_ws/devel/lib/python2.7/dist-packages/realsense2_camera/msg/__init__.py
 adb4b2dbe80a5d11eefb3b1a13fa8b13 /home/mathieu/catkin_ws/devel/lib/python2.7/dist-packages/seher_msgs/msg/__init__.py
 f926f43e8aea406cb48ca56938f9b876 /home/mathieu/catkin_ws/devel/lib/python2.7/dist-packages/seher_msgs/msg/_distances.py
+<<<<<<< HEAD
 45a6e845256d1f865cd83786861becd4 /home/mathieu/catkin_ws/devel/lib/python2.7/dist-packages/seher_support/msg/_PoseStampedArray.py
 90ddbeaecc9c9392af93c532ec4e4994 /home/mathieu/catkin_ws/devel/lib/python2.7/dist-packages/seher_support/msg/__init__.py
 ee22d9403229d3aaf3b0d38dbe1dc07e /home/mathieu/catkin_ws/devel/lib/python2.7/dist-packages/ur_dashboard_msgs/msg/_ProgramState.py
@@ -345,6 +351,8 @@ bf3d887ad543a1f75871693e3e16dd96 /home/mathieu/catkin_ws/devel/lib/python2.7/dis
 f0b95c53cec66402835ac06892a8eb4b /home/mathieu/catkin_ws/devel/lib/python2.7/dist-packages/ur_dashboard_msgs/srv/_Popup.py
 adec5134b590ba1f146109a86539cff4 /home/mathieu/catkin_ws/devel/lib/python2.7/dist-packages/ur_dashboard_msgs/srv/_RawRequest.py
 f1b885439733e0289cf9b0810afa7ff5 /home/mathieu/catkin_ws/devel/lib/python2.7/dist-packages/ur_dashboard_msgs/srv/__init__.py
+=======
+>>>>>>> eb5a1d110fd40663992c4c4e4fd0a9ead47deabe
 3fa1181b8521953124c10b58f1dbc110 /home/mathieu/catkin_ws/devel/lib/python2.7/dist-packages/ur_msgs/msg/_Analog.py
 4885e6121917f7d8ed629877d8ef17fc /home/mathieu/catkin_ws/devel/lib/python2.7/dist-packages/ur_msgs/msg/_Digital.py
 dbdd098b8314c03026254c80352551cc /home/mathieu/catkin_ws/devel/lib/python2.7/dist-packages/ur_msgs/msg/_IOStates.py
@@ -355,7 +363,6 @@ cb3b4e7f53e60272f879bd4f92a15523 /home/mathieu/catkin_ws/devel/lib/python2.7/dis
 28a076129ed7b818179bff40a5df6d93 /home/mathieu/catkin_ws/devel/lib/python2.7/dist-packages/ur_msgs/msg/__init__.py
 38918f21355f442a0edf617984a5e8ad /home/mathieu/catkin_ws/devel/lib/python2.7/dist-packages/ur_msgs/srv/_SetIO.py
 cf980e11ea117ca04bb6429595e9fc1b /home/mathieu/catkin_ws/devel/lib/python2.7/dist-packages/ur_msgs/srv/_SetPayload.py
-4e856d70926816502c67676ad2af5be9 /home/mathieu/catkin_ws/devel/lib/python2.7/dist-packages/ur_msgs/srv/_SetSpeedSliderFraction.py
 884d1c2994386828adf16b5fccd606a2 /home/mathieu/catkin_ws/devel/lib/python2.7/dist-packages/ur_msgs/srv/__init__.py
 46c6f3ba67dceaff1e5d332c0dabb32a /home/mathieu/catkin_ws/devel/share/common-lisp/ros/cob_3d_mapping_msgs/msg/CurvedPolygon.lisp
 0c15dab4fb85d4353b73ebc05c45d712 /home/mathieu/catkin_ws/devel/share/common-lisp/ros/cob_3d_mapping_msgs/msg/CurvedPolygonArray.lisp
@@ -495,6 +502,7 @@ cb1f9a4175ac238b13d207cd4a579a51 /home/mathieu/catkin_ws/devel/share/common-lisp
 28de6aae402bac8f6bb855f9ec54e760 /home/mathieu/catkin_ws/devel/share/common-lisp/ros/realsense2_camera/msg/Extrinsics.lisp
 345aefe3eded0b7742944852c55d1aaa /home/mathieu/catkin_ws/devel/share/common-lisp/ros/realsense2_camera/msg/IMUInfo.lisp
 63be15ff2a2efa73b12d38ec8a8d5e95 /home/mathieu/catkin_ws/devel/share/common-lisp/ros/seher_msgs/msg/distances.lisp
+<<<<<<< HEAD
 c1c312c9d955aff4390eb931e1c5241e /home/mathieu/catkin_ws/devel/share/common-lisp/ros/seher_support/msg/PoseStampedArray.lisp
 a1cd760b134e0fd3ec10002ba72fbc39 /home/mathieu/catkin_ws/devel/share/common-lisp/ros/ur_dashboard_msgs/msg/ProgramState.lisp
 e4b83c0e6791881ae8b37985b8b48e71 /home/mathieu/catkin_ws/devel/share/common-lisp/ros/ur_dashboard_msgs/msg/RobotMode.lisp
@@ -516,6 +524,8 @@ d34640af0d011c6c3ff7e89b41a682cd /home/mathieu/catkin_ws/devel/share/common-lisp
 fe1253d37441b1d64967b258703aa12b /home/mathieu/catkin_ws/devel/share/common-lisp/ros/ur_dashboard_msgs/srv/Load.lisp
 f7625fd4cbbec2f97429e92198514aa0 /home/mathieu/catkin_ws/devel/share/common-lisp/ros/ur_dashboard_msgs/srv/Popup.lisp
 10f1ae01f38c22bcc2cc5af81d724bb0 /home/mathieu/catkin_ws/devel/share/common-lisp/ros/ur_dashboard_msgs/srv/RawRequest.lisp
+=======
+>>>>>>> eb5a1d110fd40663992c4c4e4fd0a9ead47deabe
 12432dfd73efce8be987ca9dfa7cf1b4 /home/mathieu/catkin_ws/devel/share/common-lisp/ros/ur_msgs/msg/Analog.lisp
 a1e161ad22dff24f47e44ea64e2ccbf4 /home/mathieu/catkin_ws/devel/share/common-lisp/ros/ur_msgs/msg/Digital.lisp
 77c1eb08e000dce2e9b54499f6521ae2 /home/mathieu/catkin_ws/devel/share/common-lisp/ros/ur_msgs/msg/IOStates.lisp
@@ -525,7 +535,10 @@ c4e4cc617e43c62de9378b0b345c4906 /home/mathieu/catkin_ws/devel/share/common-lisp
 a3885cb8b439ca08fd21e38c23d84b1d /home/mathieu/catkin_ws/devel/share/common-lisp/ros/ur_msgs/msg/ToolDataMsg.lisp
 753f49f4c6db804b87e5e2c9c2bb8946 /home/mathieu/catkin_ws/devel/share/common-lisp/ros/ur_msgs/srv/SetIO.lisp
 266fed6d4e870fa4661866bf6fc88dd2 /home/mathieu/catkin_ws/devel/share/common-lisp/ros/ur_msgs/srv/SetPayload.lisp
+<<<<<<< HEAD
 72bb498985fd2f14f50a89472a28c0c6 /home/mathieu/catkin_ws/devel/share/common-lisp/ros/ur_msgs/srv/SetSpeedSliderFraction.lisp
+=======
+>>>>>>> eb5a1d110fd40663992c4c4e4fd0a9ead47deabe
 4839bd33fd3508c6a1703dc2a809c418 /home/mathieu/catkin_ws/devel/share/gennodejs/ros/cob_3d_mapping_msgs/msg/CurvedPolygon.js
 c1df63b130ba95cd84895c8d0d546a54 /home/mathieu/catkin_ws/devel/share/gennodejs/ros/cob_3d_mapping_msgs/msg/CurvedPolygonArray.js
 c2779b3f3ee15700a4c76b83c34b4241 /home/mathieu/catkin_ws/devel/share/gennodejs/ros/cob_3d_mapping_msgs/msg/Feature.js
@@ -664,6 +677,7 @@ f48dcb6aa0f1f331fd77381d937152d8 /home/mathieu/catkin_ws/devel/share/gennodejs/r
 96c4a5f3fb2f7c3e6ba4b312426067cd /home/mathieu/catkin_ws/devel/share/gennodejs/ros/realsense2_camera/msg/Extrinsics.js
 f2798bbb9c9f3d8b1c6ca4f7e7a30a54 /home/mathieu/catkin_ws/devel/share/gennodejs/ros/realsense2_camera/msg/IMUInfo.js
 ab7a355279bf18288bd4d1611e7280fe /home/mathieu/catkin_ws/devel/share/gennodejs/ros/seher_msgs/msg/distances.js
+<<<<<<< HEAD
 3e41c09d2996cb31ca5e1c365351a4c7 /home/mathieu/catkin_ws/devel/share/gennodejs/ros/seher_support/msg/PoseStampedArray.js
 5ca6883ec39f9c93125065316356d196 /home/mathieu/catkin_ws/devel/share/gennodejs/ros/ur_dashboard_msgs/msg/ProgramState.js
 42835fd90f2f45d7bba9d485abfd275e /home/mathieu/catkin_ws/devel/share/gennodejs/ros/ur_dashboard_msgs/msg/RobotMode.js
@@ -685,6 +699,8 @@ eda57cea1fd5cf9e275b70d59f5073f7 /home/mathieu/catkin_ws/devel/share/gennodejs/r
 88f0e665d21f32048751c2aa3f123e49 /home/mathieu/catkin_ws/devel/share/gennodejs/ros/ur_dashboard_msgs/srv/Load.js
 82f2be3378a86278c35db3afbfa77e5e /home/mathieu/catkin_ws/devel/share/gennodejs/ros/ur_dashboard_msgs/srv/Popup.js
 987cc817623a35140b813cacf148ada1 /home/mathieu/catkin_ws/devel/share/gennodejs/ros/ur_dashboard_msgs/srv/RawRequest.js
+=======
+>>>>>>> eb5a1d110fd40663992c4c4e4fd0a9ead47deabe
 cb0c6f99f361b8621095cdf7277d47ee /home/mathieu/catkin_ws/devel/share/gennodejs/ros/ur_msgs/msg/Analog.js
 c5123b09209503a3bca6ba5a4519c214 /home/mathieu/catkin_ws/devel/share/gennodejs/ros/ur_msgs/msg/Digital.js
 058c1080f8ccfbab633cbd3b0d184ad6 /home/mathieu/catkin_ws/devel/share/gennodejs/ros/ur_msgs/msg/IOStates.js
@@ -694,7 +710,10 @@ a2e047c6434c85caa620d85555183ee7 /home/mathieu/catkin_ws/devel/share/gennodejs/r
 b4800dae64db8034ab8ee4c714e83323 /home/mathieu/catkin_ws/devel/share/gennodejs/ros/ur_msgs/msg/ToolDataMsg.js
 3447733e1c84212dfce614780e23d980 /home/mathieu/catkin_ws/devel/share/gennodejs/ros/ur_msgs/srv/SetIO.js
 7c5336f4dca6618a45b8b6b353e6d092 /home/mathieu/catkin_ws/devel/share/gennodejs/ros/ur_msgs/srv/SetPayload.js
+<<<<<<< HEAD
 6d357c742c6f9f3c3136a797f929bf32 /home/mathieu/catkin_ws/devel/share/gennodejs/ros/ur_msgs/srv/SetSpeedSliderFraction.js
+=======
+>>>>>>> eb5a1d110fd40663992c4c4e4fd0a9ead47deabe
 4bb6191045d80ce1a69d0d4e4c830135 /home/mathieu/catkin_ws/devel/share/roseus/ros/cob_3d_mapping_msgs/manifest.l
 145d9ae5a3ad25038861bcc8eef1bd97 /home/mathieu/catkin_ws/devel/share/roseus/ros/cob_3d_mapping_msgs/msg/CurvedPolygon.l
 934641bc90daf93c1c8bc1b00c713a77 /home/mathieu/catkin_ws/devel/share/roseus/ros/cob_3d_mapping_msgs/msg/CurvedPolygonArray.l
@@ -841,6 +860,7 @@ a1c45c27fd12b625fffca57e49e95cf2 /home/mathieu/catkin_ws/devel/share/roseus/ros/
 c2cafe7c77e728bd18e5a2e6b3c4c048 /home/mathieu/catkin_ws/devel/share/roseus/ros/seher/manifest.l
 553c927251b475a168ef640057682b79 /home/mathieu/catkin_ws/devel/share/roseus/ros/seher_msgs/manifest.l
 078d455679c82de85e8fcb58ef5d2be8 /home/mathieu/catkin_ws/devel/share/roseus/ros/seher_msgs/msg/distances.l
+<<<<<<< HEAD
 e838784f84d1a0835e1772b108fbd434 /home/mathieu/catkin_ws/devel/share/roseus/ros/seher_support/manifest.l
 fb659b01c4405db9e0dc919617b3d9c1 /home/mathieu/catkin_ws/devel/share/roseus/ros/seher_support/msg/PoseStampedArray.l
 c0b54b0c5ce3882a2532e33b286a4d5d /home/mathieu/catkin_ws/devel/share/roseus/ros/ur_dashboard_msgs/manifest.l
@@ -864,6 +884,8 @@ c9250b06f9703699e782c292d82699d7 /home/mathieu/catkin_ws/devel/share/roseus/ros/
 6207ca3fa38c007858614fa932e982af /home/mathieu/catkin_ws/devel/share/roseus/ros/ur_dashboard_msgs/srv/Load.l
 1ce75f70c12525a7b38f4702d0a7d03a /home/mathieu/catkin_ws/devel/share/roseus/ros/ur_dashboard_msgs/srv/Popup.l
 065dd79d5406c3750ce004c2f97b64b6 /home/mathieu/catkin_ws/devel/share/roseus/ros/ur_dashboard_msgs/srv/RawRequest.l
+=======
+>>>>>>> eb5a1d110fd40663992c4c4e4fd0a9ead47deabe
 e7ac8bf6f9b3f067f31534433f040e16 /home/mathieu/catkin_ws/devel/share/roseus/ros/ur_msgs/manifest.l
 2284b5c99a8d8941b05b6433ceb75a11 /home/mathieu/catkin_ws/devel/share/roseus/ros/ur_msgs/msg/Analog.l
 82bc4ffe835d0491796dde5c9e58f70d /home/mathieu/catkin_ws/devel/share/roseus/ros/ur_msgs/msg/Digital.l
@@ -874,7 +896,6 @@ e7a0ecef933e477fb8a26f1d5be2e0ce /home/mathieu/catkin_ws/devel/share/roseus/ros/
 ed578aff500fda391091db5f9fd7f9e3 /home/mathieu/catkin_ws/devel/share/roseus/ros/ur_msgs/msg/ToolDataMsg.l
 7c4d11c1bf176d43860462745961e7ad /home/mathieu/catkin_ws/devel/share/roseus/ros/ur_msgs/srv/SetIO.l
 bfc7cfb000873662cae8416deeb94b18 /home/mathieu/catkin_ws/devel/share/roseus/ros/ur_msgs/srv/SetPayload.l
-2d2b4ccf989aedf93f61a6ca49c92c5a /home/mathieu/catkin_ws/devel/share/roseus/ros/ur_msgs/srv/SetSpeedSliderFraction.l
 f2e8a122d2c02b19304a26e6406e1d31 CMakeFiles/clean_test_results
 cb438a859d121d25e680d9034fb0a4ce cob_people_perception/cob_leg_detection/CMakeFiles/cob_leg_detection_gencfg
 54f30e764b3c147ad2fda42fa28d232f cob_people_perception/cob_people_detection/CMakeFiles/_cob_people_detection_generate_messages_check_deps_addDataAction

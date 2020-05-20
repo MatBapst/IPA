@@ -178,6 +178,7 @@ class PeoplePCDApp
     visualizeAndWrite()
     {
       const PeopleDetector::Labels& labels = people_detector_.rdf_detector_->getLabels();
+      //std::cout << labels;
       pcl::gpu::people::colorizeLabels(color_map_, labels, cmap_device_);
       //people::colorizeMixedLabels(
             
@@ -424,7 +425,7 @@ int main(int argc, char** argv)
 
     // Create the app
     PeoplePCDApp app;
-    ros::Subscriber sub = nh.subscribe("/camera/depth_registered/points", 1, &PeoplePCDApp::source_cb1, &app);
+    ros::Subscriber sub = nh.subscribe("/camL/depth_registered/points", 1, &PeoplePCDApp::source_cb1, &app);
     app.people_detector_.rdf_detector_ = rdf;
     
     // executing

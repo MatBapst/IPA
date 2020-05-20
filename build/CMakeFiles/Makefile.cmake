@@ -241,6 +241,10 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/home/mathieu/catkin_ws/src/ur5e_egp50_moveit_config/package.xml"
   "/home/mathieu/catkin_ws/src/ur_manipulation/CMakeLists.txt"
   "/home/mathieu/catkin_ws/src/ur_manipulation/package.xml"
+  "/opt/ros/melodic/lib/cmake/realsense2/realsense2Config.cmake"
+  "/opt/ros/melodic/lib/cmake/realsense2/realsense2ConfigVersion.cmake"
+  "/opt/ros/melodic/lib/cmake/realsense2/realsense2Targets-none.cmake"
+  "/opt/ros/melodic/lib/cmake/realsense2/realsense2Targets.cmake"
   "/opt/ros/melodic/share/actionlib/cmake/actionlib-msg-extras.cmake"
   "/opt/ros/melodic/share/actionlib/cmake/actionlibConfig-version.cmake"
   "/opt/ros/melodic/share/actionlib/cmake/actionlibConfig.cmake"
@@ -626,10 +630,13 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/usr/lib/x86_64-linux-gnu/cmake/Qt5Widgets/Qt5WidgetsConfigExtras.cmake"
   "/usr/lib/x86_64-linux-gnu/cmake/Qt5Widgets/Qt5WidgetsConfigVersion.cmake"
   "/usr/lib/x86_64-linux-gnu/cmake/Qt5Widgets/Qt5WidgetsMacros.cmake"
+<<<<<<< HEAD
   "/usr/lib/x86_64-linux-gnu/cmake/realsense2/realsense2Config.cmake"
   "/usr/lib/x86_64-linux-gnu/cmake/realsense2/realsense2ConfigVersion.cmake"
   "/usr/lib/x86_64-linux-gnu/cmake/realsense2/realsense2Targets-release.cmake"
   "/usr/lib/x86_64-linux-gnu/cmake/realsense2/realsense2Targets.cmake"
+=======
+>>>>>>> eb5a1d110fd40663992c4c4e4fd0a9ead47deabe
   "/usr/local/share/pcl-1.10/Modules/FindEigen.cmake"
   "/usr/local/share/pcl-1.10/Modules/FindFLANN.cmake"
   "/usr/local/share/pcl-1.10/Modules/FindOpenNI.cmake"
@@ -1157,6 +1164,10 @@ set(CMAKE_DEPEND_INFO_FILES
   "cob_people_perception/cob_people_detection/CMakeFiles/_cob_people_detection_generate_messages_check_deps_finishRecording.dir/DependInfo.cmake"
   "cob_people_perception/cob_people_detection/CMakeFiles/_cob_people_detection_generate_messages_check_deps_updateDataResult.dir/DependInfo.cmake"
   "cob_people_perception/cob_people_detection/CMakeFiles/_cob_people_detection_generate_messages_check_deps_captureImage.dir/DependInfo.cmake"
+<<<<<<< HEAD
+=======
+  "pcl_people_detection/CMakeFiles/pcl_people_detection.dir/DependInfo.cmake"
+>>>>>>> eb5a1d110fd40663992c4c4e4fd0a9ead47deabe
   "realsense-ros/realsense2_camera/CMakeFiles/realsense2_camera.dir/DependInfo.cmake"
   "realsense-ros/realsense2_camera/CMakeFiles/realsense2_camera_genpy.dir/DependInfo.cmake"
   "realsense-ros/realsense2_camera/CMakeFiles/realsense2_camera_gennodejs.dir/DependInfo.cmake"

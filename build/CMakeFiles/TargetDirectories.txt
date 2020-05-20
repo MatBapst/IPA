@@ -588,10 +588,18 @@
 /home/mathieu/catkin_ws/build/cob_people_perception/cob_people_detection/CMakeFiles/_cob_people_detection_generate_messages_check_deps_updateDataResult.dir
 /home/mathieu/catkin_ws/build/cob_people_perception/cob_people_detection/CMakeFiles/_cob_people_detection_generate_messages_check_deps_captureImage.dir
 /home/mathieu/catkin_ws/build/pcl_people_detection/CMakeFiles/install/strip.dir
+<<<<<<< HEAD
 /home/mathieu/catkin_ws/build/pcl_people_detection/CMakeFiles/edit_cache.dir
 /home/mathieu/catkin_ws/build/pcl_people_detection/CMakeFiles/list_install_components.dir
 /home/mathieu/catkin_ws/build/pcl_people_detection/CMakeFiles/test.dir
 /home/mathieu/catkin_ws/build/pcl_people_detection/CMakeFiles/install/local.dir
+=======
+/home/mathieu/catkin_ws/build/pcl_people_detection/CMakeFiles/install/local.dir
+/home/mathieu/catkin_ws/build/pcl_people_detection/CMakeFiles/test.dir
+/home/mathieu/catkin_ws/build/pcl_people_detection/CMakeFiles/list_install_components.dir
+/home/mathieu/catkin_ws/build/pcl_people_detection/CMakeFiles/pcl_people_detection.dir
+/home/mathieu/catkin_ws/build/pcl_people_detection/CMakeFiles/edit_cache.dir
+>>>>>>> eb5a1d110fd40663992c4c4e4fd0a9ead47deabe
 /home/mathieu/catkin_ws/build/pcl_people_detection/CMakeFiles/rebuild_cache.dir
 /home/mathieu/catkin_ws/build/pcl_people_detection/CMakeFiles/install.dir
 /home/mathieu/catkin_ws/build/realsense-ros/realsense2_camera/CMakeFiles/install/strip.dir
