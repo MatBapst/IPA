@@ -76,8 +76,8 @@ void cloud_cb1 (const sensor_msgs::PointCloud2ConstPtr& input)
   
   
   // down sampling with voxelization
-
-  pcl::PCLPointCloud2::Ptr voxel_cloud (new pcl::PCLPointCloud2 ());
+  pcl::PCLPointCloud2* voxel_cloud = new pcl::PCLPointCloud2;
+  pcl::PCLPointCloud2ConstPtr voxel_cloudPtr (voxel_cloud);
 
   pcl::VoxelGrid<pcl::PCLPointCloud2> sor;
   sor.setInputCloud (cloud_filtered);
@@ -86,22 +86,22 @@ void cloud_cb1 (const sensor_msgs::PointCloud2ConstPtr& input)
   sor.filter (*voxel_cloud);
 
 // Outlier Removal filter
-pcl::PointCloud<pcl::PointXYZ>::Ptr inter2 (new pcl::PointCloud<pcl::PointXYZ>);   //inter pointcloud used for conversions
+//pcl::PointCloud<pcl::PointXYZ>::Ptr inter2 (new pcl::PointCloud<pcl::PointXYZ>);   //inter pointcloud used for conversions
 
-  pcl::PointCloud<pcl::PointXYZ>::Ptr inter(new pcl::PointCloud<pcl::PointXYZ>);
-  pcl::fromPCLPointCloud2(*voxel_cloud,*inter);
+  //pcl::PointCloud<pcl::PointXYZ>::Ptr inter(new pcl::PointCloud<pcl::PointXYZ>);
+  //pcl::fromPCLPointCloud2(*voxel_cloud,*inter);
 //pcl_conversions::fromPCL(*voxel_cloud, inter);
-
-pcl::StatisticalOutlierRemoval<pcl::PointXYZ> filter;
-filter.setInputCloud(inter);
+pcl::PCLPointCloud2::Ptr inter3 (new pcl::PCLPointCloud2 ());
+pcl::StatisticalOutlierRemoval<pcl::PCLPointCloud2> filter;
+filter.setInputCloud(voxel_cloudPtr);
 filter.setMeanK(50);
 filter.setStddevMulThresh (1.0);
-filter.filter(*inter2);
+filter.filter(*inter3);
 
 //conversions to sensor_msgs
 
-pcl::PCLPointCloud2::Ptr inter3 (new pcl::PCLPointCloud2 ());
-pcl::toPCLPointCloud2(*inter2, *inter3);
+
+//pcl::toPCLPointCloud2(*inter2, *inter3);
 pcl_conversions::fromPCL(*inter3, inter4);
 
 //transforming to world frame
@@ -151,8 +151,8 @@ void cloud_cb2 (const sensor_msgs::PointCloud2ConstPtr& input)
   
   // down sampling with voxelization
 
-  pcl::PCLPointCloud2::Ptr voxel_cloud (new pcl::PCLPointCloud2 ());
-
+  pcl::PCLPointCloud2* voxel_cloud = new pcl::PCLPointCloud2;
+  pcl::PCLPointCloud2ConstPtr voxel_cloudPtr(voxel_cloud);
   pcl::VoxelGrid<pcl::PCLPointCloud2> sor;
   sor.setInputCloud (cloud_filtered);
   //sor.setDownsampleAllData(true);
@@ -160,22 +160,22 @@ void cloud_cb2 (const sensor_msgs::PointCloud2ConstPtr& input)
   sor.filter (*voxel_cloud);
 
 // Outlier Removal filter
-pcl::PointCloud<pcl::PointXYZ>::Ptr inter2 (new pcl::PointCloud<pcl::PointXYZ>);   //inter pointcloud used for conversions
+//pcl::PointCloud<pcl::PointXYZ>::Ptr inter2 (new pcl::PointCloud<pcl::PointXYZ>);   //inter pointcloud used for conversions
 
-  pcl::PointCloud<pcl::PointXYZ>::Ptr inter(new pcl::PointCloud<pcl::PointXYZ>);
-  pcl::fromPCLPointCloud2(*voxel_cloud,*inter);
+  //pcl::PointCloud<pcl::PointXYZ>::Ptr inter(new pcl::PointCloud<pcl::PointXYZ>);
+  //pcl::fromPCLPointCloud2(*voxel_cloud,*inter);
 //pcl_conversions::fromPCL(*voxel_cloud, inter);
-
-pcl::StatisticalOutlierRemoval<pcl::PointXYZ> filter;
-filter.setInputCloud(inter);
+pcl::PCLPointCloud2::Ptr inter3 (new pcl::PCLPointCloud2 ());
+pcl::StatisticalOutlierRemoval<pcl::PCLPointCloud2> filter;
+filter.setInputCloud(voxel_cloudPtr);
 filter.setMeanK(50);
 filter.setStddevMulThresh (1.0);
-filter.filter(*inter2);
+filter.filter(*inter3);
 
 //conversions to sensor_msgs
 
-pcl::PCLPointCloud2::Ptr inter3 (new pcl::PCLPointCloud2 ());
-pcl::toPCLPointCloud2(*inter2, *inter3);
+
+//pcl::toPCLPointCloud2(*inter2, *inter3);
 pcl_conversions::fromPCL(*inter3, inter4);
 
 //transforming to world frame

@@ -6,6 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /TF1
         - /TF1/Frames1
       Splitter Ratio: 0.5
     Tree Height: 267
@@ -62,6 +63,8 @@ Visualization Manager:
           Value: false
         base_link:
           Value: true
+        camL_aligned_depth_to_color_frame:
+          Value: false
         camL_color_frame:
           Value: false
         camL_color_optical_frame:
@@ -70,16 +73,10 @@ Visualization Manager:
           Value: false
         camL_depth_optical_frame:
           Value: false
-        camL_infra1_frame:
-          Value: false
-        camL_infra1_optical_frame:
-          Value: false
-        camL_infra2_frame:
-          Value: false
-        camL_infra2_optical_frame:
-          Value: false
         camL_link:
           Value: true
+        camR_aligned_depth_to_color_frame:
+          Value: false
         camR_color_frame:
           Value: false
         camR_color_optical_frame:
@@ -87,14 +84,6 @@ Visualization Manager:
         camR_depth_frame:
           Value: false
         camR_depth_optical_frame:
-          Value: false
-        camR_infra1_frame:
-          Value: false
-        camR_infra1_optical_frame:
-          Value: false
-        camR_infra2_frame:
-          Value: false
-        camR_infra2_optical_frame:
           Value: false
         camR_link:
           Value: true
@@ -149,30 +138,22 @@ Visualization Manager:
                         tool0:
                           {}
           camL_link:
-            camL_color_frame:
+            camL_aligned_depth_to_color_frame:
               camL_color_optical_frame:
                 {}
+            camL_color_frame:
+              {}
             camL_depth_frame:
               camL_depth_optical_frame:
                 {}
-            camL_infra1_frame:
-              camL_infra1_optical_frame:
-                {}
-            camL_infra2_frame:
-              camL_infra2_optical_frame:
-                {}
           camR_link:
-            camR_color_frame:
+            camR_aligned_depth_to_color_frame:
               camR_color_optical_frame:
                 {}
+            camR_color_frame:
+              {}
             camR_depth_frame:
               camR_depth_optical_frame:
-                {}
-            camR_infra1_frame:
-              camR_infra1_optical_frame:
-                {}
-            camR_infra2_frame:
-              camR_infra2_optical_frame:
                 {}
       Update Interval: 0
       Value: true
