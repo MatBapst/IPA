@@ -1,8 +1,0 @@
-prefix=/home/mathieu/catkin_ws/install
-
-Name: ipa_3d_fov_visualization
-Description: Description of ipa_3d_fov_visualization
-Version: 0.6.15
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: sensor_msgs visualization_msgs

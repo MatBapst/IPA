@@ -1,8 +1,0 @@
-prefix=/home/mathieu/catkin_ws/devel
-
-Name: libnite2
-Description: Description of libnite2
-Version: 1.0.5
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 
