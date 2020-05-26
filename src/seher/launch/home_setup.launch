@@ -10,6 +10,7 @@
   <arg name="tf_prefix_cameraR"         default="$(arg cameraR)"/>
   
   <arg name="initial_reset"             default="false"/>
+  <arg name="filters"             default="pointcloud"/>
   
 
 <!-- launch the cameras -->
@@ -22,7 +23,7 @@
       <arg name="serial_no"             value="$(arg serial_no_cameraR)"/>
       <arg name="tf_prefix"         		value="$(arg tf_prefix_cameraR)"/>
       <arg name="initial_reset"         value="$(arg initial_reset)"/>
-      
+      <arg name="filters"		value="$(arg filters)"/>
     </include>
  </group> 
 
