@@ -1,107 +1,16 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(seher)
+project(seher_msgs)
 
-
-add_compile_options(-std=c++11)
+## Compile as C++11, supported in ROS Kinetic and newer
+# add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  rospy
-  std_msgs
-)
-
-
-find_package(Eigen3 REQUIRED)
-find_package(PCL 1.8.1 REQUIRED)
-
-
-if(NOT EIGEN3_INCLUDE_DIRS)
-  set(EIGEN3_INCLUDE_DIRS ${EIGEN3_INCLUDE_DIR})
-endif()
-
-
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  rospy
-  tf
-  geometry_msgs
-  message_generation
-  tf2_eigen
-moveit_core
-moveit_visual_tools
-moveit_ros_planning_interface
-pcl_ros
-    pcl_conversions
-pcl_msgs
-sensor_msgs
-ur_msgs
-seher_msgs
-)
-
-
-generate_messages(
-  DEPENDENCIES
-  geometry_msgs
-)
-
-catkin_package(
-  INCLUDE_DIRS
-    include
-  CATKIN_DEPENDS
-    roscpp
-    message_runtime
-moveit_core
-moveit_visual_tools
-moveit_ros_planning_interface
-sensor_msgs
-    pcl_ros
-    pcl_conversions
-pcl_msgs
-  DEPENDS
-    EIGEN3
-    PCL
-)
-
-
-include_directories(
-  include
-  ${catkin_INCLUDE_DIRS}
-)
-include_directories(SYSTEM ${THIS_PACKAGE_INCLUDE_DIRS} ${Boost_INCLUDE_DIR} ${EIGEN3_INCLUDE_DIRS})
-
-
-
-
-add_executable(collision_objects src/collision_objects/collision_objects.cpp)
-target_link_libraries(collision_objects ${catkin_LIBRARIES} ${Boost_LIBRARIES})
-
-add_executable(pointcloud_computing_home src/pointcloud_computing_home/pointcloud_home.cpp)
-target_link_libraries(pointcloud_computing_home ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
-
-add_executable(pointcloud_computing_workcell src/pointcloud_computing_workcell/pointcloud_workcell.cpp)
-target_link_libraries(pointcloud_computing_workcell ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
-
-
-add_executable(move_sim_robot src/move_sim_robot/move_sim_robot.cpp)
-target_link_libraries(move_sim_robot ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
-
-add_executable(move_sim_robot_skeleton src/move_sim_robot_skeleton/move_sim_robot_skeleton.cpp)
-target_link_libraries(move_sim_robot_skeleton ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
-
-add_executable(point_publisher src/point_publisher/point_publisher.cpp)
-target_link_libraries(point_publisher ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
-
-add_executable(distance_calculation src/distance_calculation/distance_calculation.cpp)
-target_link_libraries(distance_calculation ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
-
-add_executable(distance_calculation_skeleton src/distance_calculation_skeleton/distance_calculation_skeleton.cpp)
-target_link_libraries(distance_calculation_skeleton ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
-
-add_executable(clustering src/clustering/clustering.cpp)
-target_link_libraries(clustering ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
+   roscpp
+   std_msgs
+   message_generation)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -137,11 +46,13 @@ target_link_libraries(clustering ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
+add_message_files(
+DIRECTORY
+msgs  
+FILES
+  distances.msg
 #   Message2.msg
-# )
+ )
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -158,10 +69,10 @@ target_link_libraries(clustering ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs
-# )
+generate_messages(
+ DEPENDENCIES
+ std_msgs  # Or other packages containing msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -192,12 +103,15 @@ target_link_libraries(clustering ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
-#catkin_package(
+catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES seher
-#  CATKIN_DEPENDS roscpp rospy std_msgs
+#  LIBRARIES seher_msgs
+#  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
-#)
+CATKIN_DEPENDS 
+message_runtime
+std_msgs
+)
 
 ###########
 ## Build ##
@@ -205,14 +119,14 @@ target_link_libraries(clustering ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-#include_directories(
+include_directories(
 # include
-#  ${catkin_INCLUDE_DIRS}
-#)
+${catkin_INCLUDE_DIRS}
+)
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/seher.cpp
+#   src/${PROJECT_NAME}/seher_msgs.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -223,7 +137,7 @@ target_link_libraries(clustering ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/seher_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/seher_msgs_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -249,7 +163,7 @@ target_link_libraries(clustering ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
-# install(PROGRAMS
+# catkin_install_python(PROGRAMS
 #   scripts/my_python_script
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
@@ -287,7 +201,7 @@ target_link_libraries(clustering ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_seher.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_seher_msgs.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
