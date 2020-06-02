@@ -78,18 +78,13 @@ include_directories(SYSTEM ${THIS_PACKAGE_INCLUDE_DIRS} ${Boost_INCLUDE_DIR} ${E
 add_executable(collision_objects src/collision_objects/collision_objects.cpp)
 target_link_libraries(collision_objects ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
-add_executable(pointcloud_computing_home src/pointcloud_computing_home/pointcloud_home.cpp)
-target_link_libraries(pointcloud_computing_home ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
-
-add_executable(pointcloud_computing_workcell src/pointcloud_computing_workcell/pointcloud_workcell.cpp)
-target_link_libraries(pointcloud_computing_workcell ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
+add_executable(pointcloud_computing src/pointcloud_computing/pointcloud_computing.cpp)
+target_link_libraries(pointcloud_computing ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
 
 
-add_executable(move_sim_robot src/move_sim_robot/move_sim_robot.cpp)
-target_link_libraries(move_sim_robot ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
+add_executable(move_robot src/move_robot/move_robot.cpp)
+target_link_libraries(move_robot ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
 
-add_executable(move_sim_robot_skeleton src/move_sim_robot_skeleton/move_sim_robot_skeleton.cpp)
-target_link_libraries(move_sim_robot_skeleton ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
 
 add_executable(point_publisher src/point_publisher/point_publisher.cpp)
 target_link_libraries(point_publisher ${catkin_LIBRARIES} ${Boost_LIBRARIES})  

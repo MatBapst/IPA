@@ -1,4 +1,4 @@
-#include "seher/move_sim_robot/move_sim_robot.h"
+#include "seher/move_robot/move_robot.h"
 #include "tf/transform_datatypes.h"
 #include <angles/angles.h>
 #include <std_msgs/Header.h>
@@ -327,10 +327,10 @@ int main(int argc, char **argv)
 
     geometry_msgs::Pose target_pose1;
   target_pose1.position.x = 0.3;
-  target_pose1.position.y = 0.6;
-  target_pose1.position.z = 0.5;
+  target_pose1.position.y = 0.4;
+  target_pose1.position.z = 0.05;
   geometry_msgs::Quaternion quat_msg;
-  tf::quaternionTFToMsg(tf::createQuaternionFromRPY(angles::from_degrees(-90),angles::from_degrees(0),angles::from_degrees(0)),quat_msg);
+  tf::quaternionTFToMsg(tf::createQuaternionFromRPY(angles::from_degrees(180),angles::from_degrees(0),angles::from_degrees(0)),quat_msg);
   target_pose1.orientation = quat_msg;
 
   geometry_msgs::Pose target_pose2 = target_pose1;
