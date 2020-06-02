@@ -38,7 +38,7 @@ sensor_msgs::PointCloud2 pcl_R;
 
 //workcell 
 const Eigen::Vector4f min_workcell =Eigen::Vector4f(0,0,0,1);
-const Eigen::Vector4f max_workcell =Eigen::Vector4f(1.0,1.0,1.50,1);
+const Eigen::Vector4f max_workcell =Eigen::Vector4f(1.0,1.0,2.0,1);
 
 //const Eigen::Vector4f min_workcell =Eigen::Vector4f(0.076f,0.793f,1.625f,1); // ok ?
 //const Eigen::Vector4f max_workcell =Eigen::Vector4f(0.294f--0.77f,0.29f,1);

@@ -39,7 +39,7 @@ seher_msgs::distances distanceComputing (){
     y=transform_TCP.getOrigin().y();
     z=transform_TCP.getOrigin().z();
     try{
-      listener->lookupTransform("/world", "/cob_body_tracker/head",  
+      listener->lookupTransform("/world", "/camL_link/head",  
                                ros::Time(0), transform_head);
       result.head=sqrt(pow(transform_head.getOrigin().x()-x,2)+pow(transform_head.getOrigin().y()-y,2)+pow(transform_head.getOrigin().z()-z,2));
       if (result.head<min_distance) {
@@ -52,7 +52,7 @@ seher_msgs::distances distanceComputing (){
     }
 
     try{
-      listener->lookupTransform("/world", "/cob_body_tracker/left_shoulder",  
+      listener->lookupTransform("/world", "/camL_link/left_shoulder",  
                                ros::Time(0), transform_left_shoulder);
       result.left_shoulder=sqrt(pow(transform_left_shoulder.getOrigin().x()-x,2)+pow(transform_left_shoulder.getOrigin().y()-y,2)+pow(transform_left_shoulder.getOrigin().z()-z,2));
       if (result.left_shoulder<min_distance) {
@@ -65,7 +65,7 @@ seher_msgs::distances distanceComputing (){
     }
 
     try{
-      listener->lookupTransform("/world", "/cob_body_tracker/right_shoulder",  
+      listener->lookupTransform("/world", "/camL_link/right_shoulder",  
                                ros::Time(0), transform_right_shoulder);
       result.right_shoulder=sqrt(pow(transform_right_shoulder.getOrigin().x()-x,2)+pow(transform_right_shoulder.getOrigin().y()-y,2)+pow(transform_right_shoulder.getOrigin().z()-z,2));
       if (result.right_shoulder<min_distance) {
@@ -78,7 +78,7 @@ seher_msgs::distances distanceComputing (){
     }
 
     try{
-      listener->lookupTransform("/world", "/cob_body_tracker/left_elbow",  
+      listener->lookupTransform("/world", "/camL_link/left_elbow",  
                                ros::Time(0), transform_left_elbow);
       result.left_elbow=sqrt(pow(transform_left_elbow.getOrigin().x()-x,2)+pow(transform_left_elbow.getOrigin().y()-y,2)+pow(transform_left_elbow.getOrigin().z()-z,2));
       if (result.left_elbow<min_distance) {
@@ -91,7 +91,7 @@ seher_msgs::distances distanceComputing (){
     }
 
     try{
-      listener->lookupTransform("/world", "/cob_body_tracker/right_elbow",  
+      listener->lookupTransform("/world", "/camL_link/right_elbow",  
                                ros::Time(0), transform_right_elbow);
       result.right_elbow=sqrt(pow(transform_right_elbow.getOrigin().x()-x,2)+pow(transform_right_elbow.getOrigin().y()-y,2)+pow(transform_right_elbow.getOrigin().z()-z,2));
       if (result.right_elbow<min_distance) {
@@ -104,7 +104,7 @@ seher_msgs::distances distanceComputing (){
     }
 
     try{
-      listener->lookupTransform("/world", "/cob_body_tracker/left_hand",  
+      listener->lookupTransform("/world", "/camL_link/left_hand",  
                                ros::Time(0), transform_left_hand);
       result.left_hand=sqrt(pow(transform_left_hand.getOrigin().x()-x,2)+pow(transform_left_hand.getOrigin().y()-y,2)+pow(transform_left_hand.getOrigin().z()-z,2));
       if (result.left_hand<min_distance) {
@@ -117,7 +117,7 @@ seher_msgs::distances distanceComputing (){
     }
     
     try{
-      listener->lookupTransform("/world", "/cob_body_tracker/right_hand",  
+      listener->lookupTransform("/world", "/camL_link/right_hand",  
                                ros::Time(0), transform_right_hand);
       result.right_hand=sqrt(pow(transform_right_hand.getOrigin().x()-x,2)+pow(transform_right_hand.getOrigin().y()-y,2)+pow(transform_right_hand.getOrigin().z()-z,2));
       if (result.right_hand<min_distance) {
@@ -130,7 +130,7 @@ seher_msgs::distances distanceComputing (){
     }
 
     try{
-      listener->lookupTransform("/world", "/cob_body_tracker/torso",  
+      listener->lookupTransform("/world", "/camL_link/torso",  
                                ros::Time(0), transform_torso);
       result.torso=sqrt(pow(transform_torso.getOrigin().x()-x,2)+pow(transform_torso.getOrigin().y()-y,2)+pow(transform_torso.getOrigin().z()-z,2));
       if (result.torso<min_distance) {
