@@ -95,5 +95,8 @@
 
 <node name="obstacle_publisher" pkg="seher" type="collision_objects" />
 
+<!-- launch the pointcloud computing node -->
+
+<node name="pointcloud_computing" pkg="seher" type="pointcloud_computing" />
 
 </launch>

@@ -4,6 +4,7 @@
 #include <std_msgs/Header.h>
 #include <std_msgs/Int64.h>
 #include "std_msgs/Float32.h"
+#include "std_msgs/Float64.h"
 
 
 //threshold distance between robot and obstacle to stop the robot
@@ -324,6 +325,7 @@ int main(int argc, char **argv)
   */
 
  ros::Subscriber distance_sub = nh.subscribe("/distance_calculation/minimal_distance",1, distanceCallback);
+ //ros::Publisher speed_pub=nh.advertise<std_msgs::Float64>("/speed_scaling_factor",1);
 
     geometry_msgs::Pose target_pose1;
   target_pose1.position.x = 0.3;
@@ -337,6 +339,10 @@ int main(int argc, char **argv)
   target_pose1.position.x = 0.05;
   int seq = 0;
   bool switcher=true;
+  /*std_msgs::Float64 low;
+  std_msgs::Float64 fast;
+  low.data=0.06;
+  fast.data=0.25;*/
   
   while(ros::ok())
   {
@@ -351,6 +357,7 @@ int main(int argc, char **argv)
         }
         else {
             if (!robot_obj.getStatus()){
+                //speed_pub.publish((switcher)?low:fast);
                 robot_obj.moveToTarget((switcher)?target_pose1:target_pose2);
             }
             else {

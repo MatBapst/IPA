@@ -5,13 +5,27 @@ Seher Project
 
 Robot Human Collaboration
 
-The new codes and launch files are in the package "seher"
+The developed codes and launch files are in the package "seher" and "seher_msgs". "cob_people_perception" has been modified too.
 
-SIM BRANCH : working with a gazebo simulated ur5e robot.
+Necessary packages which have to be cloned in your repository :
+- cob_perception_common from https://github.com/ipa320/cob_perception_common.git
+- fmauch_universal_robot , Universal_Robots_ROS_Driver ur5e_egp50_moveit_config (for ur5e robot) as described on https://github.com/ipa-kut/ur_manipulation. Follow the steps given on the page.
+- openni2_camera from https://github.com/ros-drivers/openni2_camera.git
+- realsense_ros from https://github.com/IntelRealSense/realsense-ros
+- rgbd_launch from https://github.com/ros-drivers/rgbd_launch
+- seher_support from https://github.com/ipa-kut/seher_support
+
+Install OpenNI2 wrapper for realsense as described in https://github.com/IntelRealSense/librealsense/tree/master/wrappers/openni2 (for human body tracking)
+
+
+
 
 To launch the workcell setup :
 - build and source the repository
+- clone the above given repos.
 - roslaunch seher workcell_setup.launch
+
+SIM BRANCH : working with a gazebo simulated ur5e robot for home setup.
 
 For the home setup :
 

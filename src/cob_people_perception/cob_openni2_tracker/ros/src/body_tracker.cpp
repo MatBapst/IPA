@@ -99,7 +99,7 @@ int colorCount = 3;
 nite::SkeletonState skeletonStates[MAX_USERS] = {nite::SKELETON_NONE};
 char userStatusLabels[MAX_USERS][100] = {{0}};
 char generalMessage[100] = {0};
-static std::string detector_ = "camL";
+static std::string detector_ = "cam3";
 
 using namespace std;
 using namespace message_filters;
@@ -188,7 +188,7 @@ BodyTracker::BodyTracker(ros::NodeHandle nh_priv)
 
 	vis_pub_ = nh_.advertise<visualization_msgs::Marker>( "visualization_marker", 10);
 	if (drawDepth_==true)
-		pcl_pub_ = nh_.advertise<pcl::PointCloud<pcl::PointXYZRGB> >("/camL/depth/color/points", 1);	// original point cloud with all points that belong to one tracked person colored in a individual color
+		pcl_pub_ = nh_.advertise<pcl::PointCloud<pcl::PointXYZRGB> >("/cam3/depth/color/points", 1);	// original point cloud with all points that belong to one tracked person colored in a individual color
 	people_pub_ = nh_.advertise<cob_perception_msgs::People>("people", 1);		// detections
 
 	ROS_INFO("Create BodyTracker.\n");
@@ -900,7 +900,7 @@ void BodyTracker::calculateHistogram(float* pHistogram, int histogramSize, const
 
 int main(int argc, char** argv)
 {
-	ros::init(argc, argv, "camL_body_tracker");
+	ros::init(argc, argv, "cam3_body_tracker");
 	ros::NodeHandle nh_priv("~");
 	BodyTracker BodyTracker(nh_priv);
 
