@@ -29,7 +29,7 @@ find_package(catkin REQUIRED COMPONENTS
 find_package(OpenCV REQUIRED)
 find_package(orocos_kdl REQUIRED)
 find_package(PkgConfig)
-find_package(Qt5 COMPONENTS Core Gui Widgets Test Concurrent OpenGL)
+find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Test Concurrent OpenGL)
 pkg_check_modules(BFL REQUIRED orocos-bfl)
 
 ## dynamic reconfigure config

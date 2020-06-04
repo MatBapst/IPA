@@ -19,8 +19,11 @@
 #include <pcl/segmentation/extract_clusters.h>
 
 
-//ros::Publisher pub1;
-//ros::Publisher pub2;
+ros::Publisher pub1;
+ros::Publisher pub2;
+ros::Publisher pub4;
+
+
 ros::Publisher pub;
 
 ros::Subscriber sub1;
@@ -35,6 +38,7 @@ tf::TransformListener* listener3;
 tf::TransformListener* listener4;
 
 sensor_msgs::PointCloud2 pcl_fusion;
+sensor_msgs::PointCloud2 pcl_fusion_final;
 sensor_msgs::PointCloud2 pcl_pre_fusion;
 sensor_msgs::PointCloud2 pcl_pre_fusion2;
 sensor_msgs::PointCloud2 pcl_1;
@@ -49,28 +53,34 @@ sensor_msgs::PointCloud2 pcl_4;
 const Eigen::Vector4f min_workcell =Eigen::Vector4f(0,0,0,1);
 const Eigen::Vector4f max_workcell =Eigen::Vector4f(0.96,1.0,1.47,1);
 
+const Eigen::Vector4f max_workcell_final =Eigen::Vector4f(0.86,1.47,1.0,1);
+
 //const Eigen::Vector4f min_workcell =Eigen::Vector4f(0.076f,0.793f,1.625f,1); // ok ?
 //const Eigen::Vector4f max_workcell =Eigen::Vector4f(0.294f--0.77f,0.29f,1);
 
 
-const Eigen::Vector3f t2=Eigen::Vector3f(0.35f,-0.8f,0.29f);
-const Eigen::Vector3f r2=Eigen::Vector3f(0.2315f,1.0f,1.647f);
+const Eigen::Vector3f t2=Eigen::Vector3f(-0.475f,-0.85f,1.0f);  //OK
+const Eigen::Vector3f r2=Eigen::Vector3f(-0.496f,0.767f,0.2055f);
 
-const Eigen::Vector3f t1=Eigen::Vector3f(0.35f,-0.8f,0.29f); //TODO
-const Eigen::Vector3f r1=Eigen::Vector3f(0.2315f,1.0f,1.647f);
+const Eigen::Vector3f t1=Eigen::Vector3f(-0.687f,0.0f,0.625f); //OK
+const Eigen::Vector3f r1=Eigen::Vector3f(0.49f,0.767f,-0.2f);
 
 const Eigen::Vector3f t3=Eigen::Vector3f(-0.025f,-0.05f,0.025f); 
 const Eigen::Vector3f r3=Eigen::Vector3f(0.95f,0.2f,1.249f);
 
-const Eigen::Vector3f t4=Eigen::Vector3f(0.3f,-0.76f,0.2f);  
-const Eigen::Vector3f r4=Eigen::Vector3f(0.2315f,1.0f,1.647f);
+const Eigen::Vector3f t4=Eigen::Vector3f(-0.462f,-0.75f,1.05f);  //OK
+const Eigen::Vector3f r4=Eigen::Vector3f(-0.496f,0.767f,0.2055f);
 
+
+const Eigen::Vector3f t_final=Eigen::Vector3f(-0.4f,-0.28f,0.05f);
 
 
 void cloud_cb2 (const sensor_msgs::PointCloud2ConstPtr& input)
 {
   // Create a container for the data.
   sensor_msgs::PointCloud2 inter4;
+
+  
   
  
   
@@ -92,7 +102,9 @@ void cloud_cb2 (const sensor_msgs::PointCloud2ConstPtr& input)
   cropFilter.setInputCloud(cloudPtr);
   cropFilter.filter(*cloud_filtered);
   
-  
+  sensor_msgs::PointCloud2 test2;
+  pcl_conversions::fromPCL(*cloud_filtered, test2);
+
   // down sampling with voxelization
   pcl::PCLPointCloud2::Ptr voxel_cloud (new pcl::PCLPointCloud2 ());
 
@@ -127,18 +139,39 @@ pcl_conversions::fromPCL(*inter3, inter4);
 
 pcl_ros::transformPointCloud("world", inter4, pcl_2, *listener2);
 
+
+
 //pcl::toPCLPointCloud2(*inter3, pcl_L);
 
 //concatenate pointcloud
-pcl::concatenatePointCloud(pcl_2,pcl_3,pcl_pre_fusion);
-pcl::concatenatePointCloud(pcl_pre_fusion,pcl_4,pcl_pre_fusion2);
+//pcl::concatenatePointCloud(pcl_2,pcl_3,pcl_pre_fusion);
+//pcl::concatenatePointCloud(pcl_pre_fusion,pcl_4,pcl_pre_fusion2);
+pcl::concatenatePointCloud(pcl_2,pcl_4,pcl_pre_fusion2);
 pcl::concatenatePointCloud(pcl_pre_fusion2,pcl_1,pcl_fusion);
 
+pcl::PCLPointCloud2* cloud_final = new pcl::PCLPointCloud2;
+ pcl::PCLPointCloud2ConstPtr cloud_finalPtr(cloud_final);
+ pcl::PCLPointCloud2::Ptr cloud_final_filtered (new pcl::PCLPointCloud2 ());
+
+ 
+ // Pointcloud cropping 
+ pcl_conversions::toPCL(pcl_fusion, *cloud_final);
+
+  pcl::CropBox<pcl::PCLPointCloud2> cropFilter_world;
+  
+  //cropFilter.setTransform(trans2);
+  cropFilter_world.setMin(min_workcell);
+  cropFilter_world.setMax(max_workcell_final);
+  cropFilter_world.setTranslation(t_final);
+  cropFilter_world.setInputCloud(cloud_finalPtr);
+  cropFilter_world.filter(*cloud_final_filtered);
+
+  pcl_conversions::fromPCL(*cloud_final_filtered, pcl_fusion_final);
   // Publish the data.
-  //pub1.publish (pcl_L);
+  pub2.publish (test2);
   //ROS_INFO_STREAM( "number of points before voxelization" << cloud_filtered->width*(cloud_filtered)->height);
   //ROS_INFO_STREAM( "number of points after voxelization" << pcl_L.width*pcl_L.height);
-  pub.publish (pcl_fusion);
+  pub.publish (pcl_fusion_final);
 }
 
 
@@ -164,6 +197,8 @@ void cloud_cb3 (const sensor_msgs::PointCloud2ConstPtr& input)
   cropFilter.setInputCloud(cloudPtr);
   cropFilter.filter(*cloud_filtered);
   
+  
+
   
   // down sampling with voxelization
 
@@ -227,6 +262,8 @@ void cloud_cb4 (const sensor_msgs::PointCloud2ConstPtr& input)
   cropFilter.setInputCloud(cloudPtr);
   cropFilter.filter(*cloud_filtered);
   
+  sensor_msgs::PointCloud2 test4;
+  pcl_conversions::fromPCL(*cloud_filtered, test4);
   
   // down sampling with voxelization
 
@@ -264,7 +301,7 @@ pcl_ros::transformPointCloud("world", inter4, pcl_4, *listener4);
 //pcl::toPCLPointCloud2(*inter3, pcl_R);
 
   // Publish the data.
-  //pub2.publish (pcl_R);
+  pub4.publish (test4);
 }
 
 void cloud_cb1 (const sensor_msgs::PointCloud2ConstPtr& input)
@@ -289,6 +326,10 @@ void cloud_cb1 (const sensor_msgs::PointCloud2ConstPtr& input)
   cropFilter.setInputCloud(cloudPtr);
   cropFilter.filter(*cloud_filtered);
   
+
+  sensor_msgs::PointCloud2 test1;
+  pcl_conversions::fromPCL(*cloud_filtered, test1);
+
   
   // down sampling with voxelization
 
@@ -326,7 +367,7 @@ pcl_ros::transformPointCloud("world", inter4, pcl_1, *listener1);
 //pcl::toPCLPointCloud2(*inter3, pcl_R);
 
   // Publish the data.
-  //pub2.publish (pcl_R);
+  pub1.publish (test1);
 }
 
 int main (int argc, char** argv)
@@ -352,8 +393,10 @@ listener4=&lstnr4;
   sub4=nh.subscribe ("/cam4/depth/color/points", 1, cloud_cb4);
 
   // Create a ROS publisher for the output point cloud
-  //pub1 = nh.advertise<sensor_msgs::PointCloud2> ("/camL/depth/color/points_computed", 1);
-  //pub2 = nh.advertise<sensor_msgs::PointCloud2> ("/camR/depth/color/points_computed", 1);
+  pub1 = nh.advertise<sensor_msgs::PointCloud2> ("/cam1/depth/color/points_computed", 1);
+  pub2 = nh.advertise<sensor_msgs::PointCloud2> ("/cam2/depth/color/points_computed", 1);
+  pub4 = nh.advertise<sensor_msgs::PointCloud2> ("/cam4/depth/color/points_computed", 1);
+
   pub = nh.advertise<sensor_msgs::PointCloud2> ("/cameras/depth_pointcloud_fusion", 1);
   //listener.lookupTransform("/world", "/camL_link", ros::Time(0), transform);
   // Spin

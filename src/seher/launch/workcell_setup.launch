@@ -30,11 +30,11 @@
     </include>
   </group>
     
- <group ns="$(arg camera3)"> 
+ <group ns="$(arg camera1)"> 
     <include file="$(find realsense2_camera)/launch/includes/nodelet.launch.xml">
       
-      <arg name="serial_no"             value="$(arg serial_no_camera3)"/>
-      <arg name="tf_prefix"         		value="$(arg tf_prefix_camera3)"/>
+      <arg name="serial_no"             value="$(arg serial_no_camera1)"/>
+      <arg name="tf_prefix"         		value="$(arg tf_prefix_camera1)"/>
       <arg name="initial_reset"         value="$(arg initial_reset)"/>
       <arg name="filters"		value="$(arg filters)"/>
     </include>
@@ -52,7 +52,7 @@
   
   
 
-<group ns="$(arg camera1)" if="$(eval cam1_present != '')">
+<group ns="$(arg camera3)" if="$(eval cam1_present != '')">
     <include file="$(find realsense2_camera)/launch/rs_camera.launch">
       <arg name="camera"		value="$(arg camera1)"/>
       <arg name="serial_no"             value="$(arg serial_no_camera1)"/>
@@ -66,11 +66,13 @@
 
 <node name="tf_base_link" pkg="tf" type="static_transform_publisher" output="screen" args="0 0 0 0 0 0 world base_link 50" />
 
-<node name="tf_cam2_link" pkg="tf" type="static_transform_publisher" output="screen" args="-0.418 1.16 1.097 -1.0472 0.7854 -1.5708 base_link cam2_link 50" />
+<node name="tf_cam1_link" pkg="tf" type="static_transform_publisher" output="screen" args="0.458 1.1475 1.072 -2.0944 0.7854 -1.5708 base_link cam1_link 50" />
 
-<node name="tf_cam3_link" pkg="tf" type="static_transform_publisher" output="screen" args="-0.368 -0.21 1.097 1.0472 0.7854 -1.5708 base_link cam3_link 50" />
+<node name="tf_cam2_link" pkg="tf" type="static_transform_publisher" output="screen" args="-0.418 1.11 1.072 -1.0472 0.7854 -1.5708 base_link cam2_link 50" />
 
-<node name="tf_cam4_link" pkg="tf" type="static_transform_publisher" output="screen" args="0.383 -0.21 1.097 2.0944 0.7854 -1.5708 base_link cam4_link 50" />
+<!-- node name="tf_cam3_link" pkg="tf" type="static_transform_publisher" output="screen" args="-0.368 -0.21 1.097 1.0472 0.7854 -1.5708 base_link cam3_link 50" / -->
+
+<node name="tf_cam4_link" pkg="tf" type="static_transform_publisher" output="screen" args="0.408 -0.235 1.097 2.0944 0.7854 -1.5708 base_link cam4_link 50" />
 
 <!-- launch the robot -->
 
