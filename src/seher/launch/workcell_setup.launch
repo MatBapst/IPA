@@ -99,4 +99,13 @@
 
 <node name="pointcloud_computing" pkg="seher" type="pointcloud_computing" />
 
+<!-- launch the robot self filter -->
+
+<include file="$(find seher)/launch/robot_self_filter.launch" />
+
+<!-- launch the statistical outlier removal filter -->
+
+<node name="pointcloud_statistical_removal_filter" pkg="seher" type="pointcloud_statistical_outlier_removal_filter" />
+
+
 </launch>

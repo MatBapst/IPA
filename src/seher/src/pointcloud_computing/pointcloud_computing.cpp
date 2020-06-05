@@ -19,9 +19,9 @@
 #include <pcl/segmentation/extract_clusters.h>
 
 
-ros::Publisher pub1;
-ros::Publisher pub2;
-ros::Publisher pub4;
+//ros::Publisher pub1;
+//ros::Publisher pub2;
+//ros::Publisher pub4;
 
 
 ros::Publisher pub;
@@ -102,8 +102,8 @@ void cloud_cb2 (const sensor_msgs::PointCloud2ConstPtr& input)
   cropFilter.setInputCloud(cloudPtr);
   cropFilter.filter(*cloud_filtered);
   
-  sensor_msgs::PointCloud2 test2;
-  pcl_conversions::fromPCL(*cloud_filtered, test2);
+  //sensor_msgs::PointCloud2 test2;
+  //pcl_conversions::fromPCL(*cloud_filtered, test2);
 
   // down sampling with voxelization
   pcl::PCLPointCloud2::Ptr voxel_cloud (new pcl::PCLPointCloud2 ());
@@ -121,18 +121,18 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr inter2 (new pcl::PointCloud<pcl::PointXYZ>);
   pcl::fromPCLPointCloud2(*voxel_cloud,*inter);
 //pcl_conversions::fromPCL(*voxel_cloud, inter);
 
-pcl::StatisticalOutlierRemoval<pcl::PointXYZ> filter;
+/*pcl::StatisticalOutlierRemoval<pcl::PointXYZ> filter;
 filter.setInputCloud(inter);
 filter.setMeanK(50);
 filter.setStddevMulThresh (1.0);
-filter.filter(*inter2);
+filter.filter(*inter2);*/
 
 
 //conversions to sensor_msgs
 
 
 pcl::PCLPointCloud2::Ptr inter3 (new pcl::PCLPointCloud2 ());
-pcl::toPCLPointCloud2(*inter2, *inter3);
+pcl::toPCLPointCloud2(*inter, *inter3);
 pcl_conversions::fromPCL(*inter3, inter4);
 
 //transforming to world frame
@@ -168,7 +168,7 @@ pcl::PCLPointCloud2* cloud_final = new pcl::PCLPointCloud2;
 
   pcl_conversions::fromPCL(*cloud_final_filtered, pcl_fusion_final);
   // Publish the data.
-  pub2.publish (test2);
+  //pub2.publish (test2);
   //ROS_INFO_STREAM( "number of points before voxelization" << cloud_filtered->width*(cloud_filtered)->height);
   //ROS_INFO_STREAM( "number of points after voxelization" << pcl_L.width*pcl_L.height);
   pub.publish (pcl_fusion_final);
@@ -218,16 +218,16 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr inter2 (new pcl::PointCloud<pcl::PointXYZ>);
   pcl::fromPCLPointCloud2(*voxel_cloud,*inter);
 //pcl_conversions::fromPCL(*voxel_cloud, inter);
 
-pcl::StatisticalOutlierRemoval<pcl::PointXYZ> filter;
+/*pcl::StatisticalOutlierRemoval<pcl::PointXYZ> filter;
 filter.setInputCloud(inter);
 filter.setMeanK(50);
 filter.setStddevMulThresh (1.0);
-filter.filter(*inter2);
+filter.filter(*inter2);*/
 
 //conversions to sensor_msgs
 
 pcl::PCLPointCloud2::Ptr inter3 (new pcl::PCLPointCloud2 ());
-pcl::toPCLPointCloud2(*inter2, *inter3);
+pcl::toPCLPointCloud2(*inter, *inter3);
 pcl_conversions::fromPCL(*inter3, inter4);
 //transforming to world frame
 listener3->waitForTransform("world", inter4.header.frame_id, ros::Time(0), ros::Duration(5.0));
@@ -262,8 +262,8 @@ void cloud_cb4 (const sensor_msgs::PointCloud2ConstPtr& input)
   cropFilter.setInputCloud(cloudPtr);
   cropFilter.filter(*cloud_filtered);
   
-  sensor_msgs::PointCloud2 test4;
-  pcl_conversions::fromPCL(*cloud_filtered, test4);
+  //sensor_msgs::PointCloud2 test4;
+  //pcl_conversions::fromPCL(*cloud_filtered, test4);
   
   // down sampling with voxelization
 
@@ -283,16 +283,16 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr inter2 (new pcl::PointCloud<pcl::PointXYZ>);
   pcl::fromPCLPointCloud2(*voxel_cloud,*inter);
 //pcl_conversions::fromPCL(*voxel_cloud, inter);
 
-pcl::StatisticalOutlierRemoval<pcl::PointXYZ> filter;
+/*pcl::StatisticalOutlierRemoval<pcl::PointXYZ> filter;
 filter.setInputCloud(inter);
 filter.setMeanK(50);
 filter.setStddevMulThresh (1.0);
-filter.filter(*inter2);
+filter.filter(*inter2);*/
 
 //conversions to sensor_msgs
 
 pcl::PCLPointCloud2::Ptr inter3 (new pcl::PCLPointCloud2 ());
-pcl::toPCLPointCloud2(*inter2, *inter3);
+pcl::toPCLPointCloud2(*inter, *inter3);
 pcl_conversions::fromPCL(*inter3, inter4);
 //transforming to world frame
 listener4->waitForTransform("world", inter4.header.frame_id, ros::Time(0), ros::Duration(5.0));
@@ -301,7 +301,7 @@ pcl_ros::transformPointCloud("world", inter4, pcl_4, *listener4);
 //pcl::toPCLPointCloud2(*inter3, pcl_R);
 
   // Publish the data.
-  pub4.publish (test4);
+  //pub4.publish (test4);
 }
 
 void cloud_cb1 (const sensor_msgs::PointCloud2ConstPtr& input)
@@ -327,8 +327,8 @@ void cloud_cb1 (const sensor_msgs::PointCloud2ConstPtr& input)
   cropFilter.filter(*cloud_filtered);
   
 
-  sensor_msgs::PointCloud2 test1;
-  pcl_conversions::fromPCL(*cloud_filtered, test1);
+  //sensor_msgs::PointCloud2 test1;
+  //pcl_conversions::fromPCL(*cloud_filtered, test1);
 
   
   // down sampling with voxelization
@@ -349,16 +349,16 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr inter2 (new pcl::PointCloud<pcl::PointXYZ>);
   pcl::fromPCLPointCloud2(*voxel_cloud,*inter);
 //pcl_conversions::fromPCL(*voxel_cloud, inter);
 
-pcl::StatisticalOutlierRemoval<pcl::PointXYZ> filter;
+/*pcl::StatisticalOutlierRemoval<pcl::PointXYZ> filter;
 filter.setInputCloud(inter);
 filter.setMeanK(50);
 filter.setStddevMulThresh (1.0);
-filter.filter(*inter2);
+filter.filter(*inter2);*/
 
 //conversions to sensor_msgs
 
 pcl::PCLPointCloud2::Ptr inter3 (new pcl::PCLPointCloud2 ());
-pcl::toPCLPointCloud2(*inter2, *inter3);
+pcl::toPCLPointCloud2(*inter, *inter3);
 pcl_conversions::fromPCL(*inter3, inter4);
 //transforming to world frame
 listener1->waitForTransform("world", inter4.header.frame_id, ros::Time(0), ros::Duration(5.0));
@@ -367,7 +367,7 @@ pcl_ros::transformPointCloud("world", inter4, pcl_1, *listener1);
 //pcl::toPCLPointCloud2(*inter3, pcl_R);
 
   // Publish the data.
-  pub1.publish (test1);
+  //pub1.publish (test1);
 }
 
 int main (int argc, char** argv)
@@ -387,15 +387,15 @@ tf::TransformListener lstnr4(ros::Duration(5));
 listener4=&lstnr4;
   // Create a ROS subscriber for the input point cloud
 
-  sub1 = nh.subscribe ("/cam1/depth/color/points", 1, cloud_cb1); //from camL
+  sub1 = nh.subscribe ("/cam1/depth/color/points", 1, cloud_cb1); 
   sub2 = nh.subscribe ("/cam2/depth/color/points", 1, cloud_cb2);
   sub3= nh.subscribe ("/cam3/depth/color/points", 1, cloud_cb3);
   sub4=nh.subscribe ("/cam4/depth/color/points", 1, cloud_cb4);
 
   // Create a ROS publisher for the output point cloud
-  pub1 = nh.advertise<sensor_msgs::PointCloud2> ("/cam1/depth/color/points_computed", 1);
+  /*pub1 = nh.advertise<sensor_msgs::PointCloud2> ("/cam1/depth/color/points_computed", 1);
   pub2 = nh.advertise<sensor_msgs::PointCloud2> ("/cam2/depth/color/points_computed", 1);
-  pub4 = nh.advertise<sensor_msgs::PointCloud2> ("/cam4/depth/color/points_computed", 1);
+  pub4 = nh.advertise<sensor_msgs::PointCloud2> ("/cam4/depth/color/points_computed", 1);*/
 
   pub = nh.advertise<sensor_msgs::PointCloud2> ("/cameras/depth_pointcloud_fusion", 1);
   //listener.lookupTransform("/world", "/camL_link", ros::Time(0), transform);

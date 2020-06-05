@@ -98,6 +98,9 @@ target_link_libraries(distance_calculation_skeleton ${catkin_LIBRARIES} ${Boost_
 add_executable(clustering src/clustering/clustering.cpp)
 target_link_libraries(clustering ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
 
+add_executable(pointcloud_statistical_outlier_removal_filter src/pointcloud_statistical_outlier_removal_filter/pointcloud_statistical_outlier_removal_filter.cpp)
+target_link_libraries(pointcloud_statistical_outlier_removal_filter ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 

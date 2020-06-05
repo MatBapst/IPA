@@ -55,7 +55,7 @@ int main(int argc, char** argv){
   
   tf::TransformListener robot_listener;
 
-  ros::Subscriber robot_sub = node.subscribe("/cameras/depth_pointcloud_fusion",1, distanceCallback);
+  ros::Subscriber robot_sub = node.subscribe("/cameras/depth_pointcloud_fusion_final",1, distanceCallback);
   ros::Publisher distance_pub=node.advertise<std_msgs::Float32>("/distance_calculation/minimal_distance",1);
 
    
@@ -63,7 +63,7 @@ int main(int argc, char** argv){
   while (node.ok()){
     
     try{
-      robot_listener.lookupTransform("/world", "/tool0",  
+      robot_listener.lookupTransform("/world", "/egp50_body_link",  
                                ros::Time(0), transform_TCP);
     }
     catch (tf::TransformException ex){
