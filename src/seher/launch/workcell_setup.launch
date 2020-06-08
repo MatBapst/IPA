@@ -105,7 +105,11 @@
 
 <!-- launch the statistical outlier removal filter -->
 
+
 <node name="pointcloud_statistical_removal_filter" pkg="seher" type="pointcloud_statistical_outlier_removal_filter" />
 
+<!-- launch the distance computing node -->
+
+<node name="distance_computing_node" pkg="seher" type="distance_calculation" />
 
 </launch>

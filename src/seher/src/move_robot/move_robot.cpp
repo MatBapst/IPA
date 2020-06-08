@@ -4,13 +4,18 @@
 #include <std_msgs/Header.h>
 #include <std_msgs/Int64.h>
 #include "std_msgs/Float32.h"
+#include "actionlib_msgs/GoalID.h"
 #include "std_msgs/Float64.h"
+#include <ros/ros.h>
+#include <std_srvs/Trigger.h>
 
 
 //threshold distance between robot and obstacle to stop the robot
 float dist_threshold_low=0.2; //20 cm
 float dist_threshold_up=0.4; //40 cm
 bool near_obstacle=false;
+
+ros::Publisher cancel_pub;
 
 //constructor
 MoveRobot::MoveRobot()
@@ -103,6 +108,8 @@ bool MoveRobot::moveToTarget(geometry_msgs::Pose target)
   move_group->setPoseTarget(target);
   move_group->setMaxVelocityScalingFactor(1);
   if ( move_group->asyncMove()==moveit::planning_interface::MoveItErrorCode::SUCCESS){
+      std_srvs::Trigger trig;
+      ros::service::call("/ur_hardware_interface/dashboard/play", trig);
       ROS_INFO_STREAM("MOVING");
       status=true;
       return true;
@@ -259,7 +266,12 @@ void MoveRobot::updateStatus(){
 
 void MoveRobot::stopRobot(){
     ROS_INFO_STREAM("Robot Stopping");
-    move_group->stop();
+    //move_group->stop();
+    //actionlib_msgs::GoalID stop;
+    //cancel_pub.publish(stop);
+    //sleepSafeFor(5);
+    std_srvs::Trigger trig;
+    ros::service::call("/ur_hardware_interface/dashboard/pause",trig); //to stop the robot
     status=false;
 }
 
@@ -327,6 +339,8 @@ int main(int argc, char **argv)
  ros::Subscriber distance_sub = nh.subscribe("/distance_calculation/minimal_distance",1, distanceCallback);
  //ros::Publisher speed_pub=nh.advertise<std_msgs::Float64>("/speed_scaling_factor",1);
 
+ cancel_pub=nh.advertise<actionlib_msgs::GoalID>("/move_group/cancel",1);
+
     geometry_msgs::Pose target_pose1;
   target_pose1.position.x = 0.3;
   target_pose1.position.y = 0.4;
@@ -358,6 +372,7 @@ int main(int argc, char **argv)
         else {
             if (!robot_obj.getStatus()){
                 //speed_pub.publish((switcher)?low:fast);
+
                 robot_obj.moveToTarget((switcher)?target_pose1:target_pose2);
             }
             else {
