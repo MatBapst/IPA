@@ -42,6 +42,7 @@ moveit::planning_interface::MoveGroupInterface::Plan getCartesianPathPlanToPose(
 bool moveGroupExecutePlan(moveit::planning_interface::MoveGroupInterface::Plan my_plan);
 void adjustTrajectoryToFixTimeSequencing(moveit_msgs::RobotTrajectory &trajectory);
 void stopRobot();
+void startRobot();
 bool getOnTarget();
 bool getObstacle();
 void updateStatus();

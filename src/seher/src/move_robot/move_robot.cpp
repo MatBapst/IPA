@@ -8,12 +8,15 @@
 #include "std_msgs/Float64.h"
 #include <ros/ros.h>
 #include <std_srvs/Trigger.h>
+#include <ur_msgs/SetSpeedSliderFraction.h>
 
 
 //threshold distance between robot and obstacle to stop the robot
 float dist_threshold_low=0.2; //20 cm
 float dist_threshold_up=0.4; //40 cm
 bool near_obstacle=false;
+float max_robot_speed = 0.5; //corresponds to % of max robot speed like on the Teach Pendant
+float distance; //minimal distance between TCP and obstacle
 
 ros::Publisher cancel_pub;
 
@@ -108,8 +111,7 @@ bool MoveRobot::moveToTarget(geometry_msgs::Pose target)
   move_group->setPoseTarget(target);
   move_group->setMaxVelocityScalingFactor(1);
   if ( move_group->asyncMove()==moveit::planning_interface::MoveItErrorCode::SUCCESS){
-      std_srvs::Trigger trig;
-      ros::service::call("/ur_hardware_interface/dashboard/play", trig);
+      
       ROS_INFO_STREAM("MOVING");
       status=true;
       return true;
@@ -261,6 +263,11 @@ void MoveRobot::updateStatus(){
     } else {
         obstacle=false;
     }
+    ur_msgs::SetSpeedSliderFraction speed;
+    float adjusted_speed=1.33*distance-0.165;
+    speed.request.speed_slider_fraction = std::min(max_robot_speed, adjusted_speed);
+    ros::service::call("/ur_hardware_interface/set_speed_slider",speed);
+
 }
 
 
@@ -275,6 +282,13 @@ void MoveRobot::stopRobot(){
     status=false;
 }
 
+
+void MoveRobot::startRobot(){
+  ROS_INFO_STREAM("Robot Starting");
+  std_srvs::Trigger trig;
+  ros::service::call("/ur_hardware_interface/dashboard/play",trig); //to start the robot
+  status=true;
+}
 
 bool MoveRobot::getOnTarget(){
     return onTarget;
@@ -298,7 +312,7 @@ bool MoveRobot::getStatus(){
 }
 
 void distanceCallback (const std_msgs::Float32::ConstPtr& dst){
-    float distance=dst->data;
+    distance=dst->data;
 
     if (distance<=dist_threshold_low){
         near_obstacle=true;
@@ -357,7 +371,8 @@ int main(int argc, char **argv)
   std_msgs::Float64 fast;
   low.data=0.06;
   fast.data=0.25;*/
-  
+  robot_obj.startRobot();
+  robot_obj.moveToTarget((switcher)?target_pose1:target_pose2);
   while(ros::ok())
   {
     //ROS_INFO_STREAM("----------------------SEQ " << seq++ << "-------------------------------------");
@@ -372,8 +387,8 @@ int main(int argc, char **argv)
         else {
             if (!robot_obj.getStatus()){
                 //speed_pub.publish((switcher)?low:fast);
-
-                robot_obj.moveToTarget((switcher)?target_pose1:target_pose2);
+                robot_obj.startRobot();
+                //robot_obj.moveToTarget((switcher)?target_pose1:target_pose2);
             }
             else {
                 robot_obj.sleepSafeFor(0.01);
