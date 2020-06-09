@@ -17,6 +17,10 @@ float dist_threshold_up=0.4; //40 cm
 bool near_obstacle=false;
 float max_robot_speed = 0.5; //corresponds to % of max robot speed like on the Teach Pendant
 float distance; //minimal distance between TCP and obstacle
+float speed_distance=0.5; // max distance for adjusting the robot speed
+
+float distance_a = (max_robot_speed-0.1)/(speed_distance-dist_threshold_low);
+float distance_b = max_robot_speed-distance_a*speed_distance;
 
 ros::Publisher cancel_pub;
 
@@ -264,7 +268,7 @@ void MoveRobot::updateStatus(){
         obstacle=false;
     }
     ur_msgs::SetSpeedSliderFraction speed;
-    float adjusted_speed=1.33*distance-0.165;
+    float adjusted_speed=distance_a*distance+distance_b;
     speed.request.speed_slider_fraction = std::min(max_robot_speed, adjusted_speed);
     ros::service::call("/ur_hardware_interface/set_speed_slider",speed);
 
@@ -402,13 +406,7 @@ int main(int argc, char **argv)
     robot_obj.updateStatus();
     
     ros::spinOnce();
-    /*if (!switcher){
-      ROS_INFO_STREAM("Slow down");
-      seher_obj.move_group->setMaxVelocityScalingFactor(0.05);
-    } else{
-      ROS_INFO_STREAM("nominal speed");
-      seher_obj.move_group->setMaxVelocityScalingFactor(1);
-    }*/
+    
     
   }
 return 0;
