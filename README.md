@@ -14,6 +14,7 @@ Necessary packages which have to be cloned in your repository :
 - realsense_ros from https://github.com/IntelRealSense/realsense-ros
 - rgbd_launch from https://github.com/ros-drivers/rgbd_launch
 - seher_support from https://github.com/ipa-kut/seher_support
+- robot_self_filter from https://github.com/PR2/robot_self_filter.git
 
 Install OpenNI2 wrapper for realsense as described in https://github.com/IntelRealSense/librealsense/tree/master/wrappers/openni2 (for human body tracking)
 
@@ -21,9 +22,14 @@ Install OpenNI2 wrapper for realsense as described in https://github.com/IntelRe
 
 
 To launch the workcell setup :
-- build and source the repository
+- build (catkin_make_isolated necessary) and source the repository
 - clone the above given repos.
 - roslaunch seher workcell_setup.launch
+
+To run the robot moving demonstration with speed reduction and stopping when approaching :
+- rosrun seher move_robot
+
+Hint!! robot has to be in Remote Control mode. This must be activated from Teach Pendant.
 
 SIM BRANCH : working with a gazebo simulated ur5e robot for home setup.
 
