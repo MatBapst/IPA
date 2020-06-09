@@ -113,7 +113,7 @@ bool MoveRobot::moveToTarget(geometry_msgs::Pose target)
 
   move_group->setStartStateToCurrentState();
   move_group->setPoseTarget(target);
-  move_group->setMaxVelocityScalingFactor(1);
+  
   if ( move_group->asyncMove()==moveit::planning_interface::MoveItErrorCode::SUCCESS){
       
       ROS_INFO_STREAM("MOVING");
