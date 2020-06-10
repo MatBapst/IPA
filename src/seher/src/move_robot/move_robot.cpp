@@ -22,7 +22,6 @@ float speed_distance=0.5; // max distance for adjusting the robot speed
 float distance_a = (max_robot_speed-0.1)/(speed_distance-dist_threshold_low);
 float distance_b = max_robot_speed-distance_a*speed_distance;
 
-ros::Publisher cancel_pub;
 
 //constructor
 MoveRobot::MoveRobot()
@@ -357,7 +356,7 @@ int main(int argc, char **argv)
  ros::Subscriber distance_sub = nh.subscribe("/distance_calculation/minimal_distance",1, distanceCallback);
  //ros::Publisher speed_pub=nh.advertise<std_msgs::Float64>("/speed_scaling_factor",1);
 
- cancel_pub=nh.advertise<actionlib_msgs::GoalID>("/move_group/cancel",1);
+ 
 
     geometry_msgs::Pose target_pose1;
   target_pose1.position.x = 0.3;

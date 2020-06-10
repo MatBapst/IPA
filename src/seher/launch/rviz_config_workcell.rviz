@@ -152,7 +152,7 @@ Visualization Manager:
       Frames:
         All Enabled: false
         base:
-          Value: true
+          Value: false
         base_link:
           Value: true
         cam1_color_frame:
@@ -193,36 +193,6 @@ Visualization Manager:
           Value: true
         cam3_link:
           Value: true
-        cam3_link/head:
-          Value: true
-        cam3_link/left_elbow:
-          Value: false
-        cam3_link/left_foot:
-          Value: false
-        cam3_link/left_hand:
-          Value: true
-        cam3_link/left_hip:
-          Value: false
-        cam3_link/left_knee:
-          Value: false
-        cam3_link/left_shoulder:
-          Value: true
-        cam3_link/neck:
-          Value: false
-        cam3_link/right_elbow:
-          Value: false
-        cam3_link/right_foot:
-          Value: false
-        cam3_link/right_hand:
-          Value: true
-        cam3_link/right_hip:
-          Value: false
-        cam3_link/right_knee:
-          Value: false
-        cam3_link/right_shoulder:
-          Value: true
-        cam3_link/torso:
-          Value: true
         cam4_color_frame:
           Value: false
         cam4_color_optical_frame:
@@ -250,7 +220,7 @@ Visualization Manager:
         egp50_pincer_link:
           Value: false
         egp_50_tip:
-          Value: false
+          Value: true
         forearm_link:
           Value: false
         shoulder_link:
@@ -307,36 +277,7 @@ Visualization Manager:
                 cam2_infra2_optical_frame:
                   {}
             cam3_link:
-              cam3_link/head:
-                {}
-              cam3_link/left_elbow:
-                {}
-              cam3_link/left_foot:
-                {}
-              cam3_link/left_hand:
-                {}
-              cam3_link/left_hip:
-                {}
-              cam3_link/left_knee:
-                {}
-              cam3_link/left_shoulder:
-                {}
-              cam3_link/neck:
-                {}
-              cam3_link/right_elbow:
-                {}
-              cam3_link/right_foot:
-                {}
-              cam3_link/right_hand:
-                {}
-              cam3_link/right_hip:
-                {}
-              cam3_link/right_knee:
-                {}
-              cam3_link/right_shoulder:
-                {}
-              cam3_link/torso:
-                {}
+              {}
             cam4_link:
               cam4_color_frame:
                 cam4_color_optical_frame:
