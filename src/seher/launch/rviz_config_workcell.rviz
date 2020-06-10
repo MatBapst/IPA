@@ -6,10 +6,11 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /TF1
         - /TF1/Frames1
         - /PlanningScene1
         - /PointCloud24
-      Splitter Ratio: 0.5
+      Splitter Ratio: 0.770588219165802
     Tree Height: 875
   - Class: rviz/Selection
     Name: Selection
@@ -190,6 +191,38 @@ Visualization Manager:
           Value: false
         cam2_link:
           Value: true
+        cam3_link:
+          Value: true
+        cam3_link/head:
+          Value: true
+        cam3_link/left_elbow:
+          Value: false
+        cam3_link/left_foot:
+          Value: false
+        cam3_link/left_hand:
+          Value: true
+        cam3_link/left_hip:
+          Value: false
+        cam3_link/left_knee:
+          Value: false
+        cam3_link/left_shoulder:
+          Value: true
+        cam3_link/neck:
+          Value: false
+        cam3_link/right_elbow:
+          Value: false
+        cam3_link/right_foot:
+          Value: false
+        cam3_link/right_hand:
+          Value: true
+        cam3_link/right_hip:
+          Value: false
+        cam3_link/right_knee:
+          Value: false
+        cam3_link/right_shoulder:
+          Value: true
+        cam3_link/torso:
+          Value: true
         cam4_color_frame:
           Value: false
         cam4_color_optical_frame:
@@ -273,6 +306,37 @@ Visualization Manager:
               cam2_infra2_frame:
                 cam2_infra2_optical_frame:
                   {}
+            cam3_link:
+              cam3_link/head:
+                {}
+              cam3_link/left_elbow:
+                {}
+              cam3_link/left_foot:
+                {}
+              cam3_link/left_hand:
+                {}
+              cam3_link/left_hip:
+                {}
+              cam3_link/left_knee:
+                {}
+              cam3_link/left_shoulder:
+                {}
+              cam3_link/neck:
+                {}
+              cam3_link/right_elbow:
+                {}
+              cam3_link/right_foot:
+                {}
+              cam3_link/right_hand:
+                {}
+              cam3_link/right_hip:
+                {}
+              cam3_link/right_knee:
+                {}
+              cam3_link/right_shoulder:
+                {}
+              cam3_link/torso:
+                {}
             cam4_link:
               cam4_color_frame:
                 cam4_color_optical_frame:
@@ -410,77 +474,6 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
-          base:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          base_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          ee_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          egp50_base_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          egp50_body_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          egp50_pincer_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          egp_50_tip:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          forearm_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          shoulder_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          tool0:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          upper_arm_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          world:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          wrist_1_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          wrist_2_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          wrist_3_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
         Robot Alpha: 1
         Show Robot Collision: false
         Show Robot Visual: true
@@ -543,7 +536,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.5951616764068604
+      Distance: 3.8533568382263184
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -558,10 +551,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.3597972095012665
+      Pitch: 0.43479716777801514
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.21040397882461548
+      Yaw: 0.16040369868278503
     Saved: ~
 Window Geometry:
   Displays:

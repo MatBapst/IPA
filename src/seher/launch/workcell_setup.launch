@@ -1,5 +1,5 @@
 <launch>
-  <arg name="cam1_present"		default=""/>
+  <arg name="cam3_present"		default="true"/>
 
   <arg name="serial_no_camera1"    			default="937622073146"/> 			<!-- Note: Replace with actual serial number -->
   <arg name="serial_no_camera2"    			default="838212073567"/> 			<!-- Note: Replace with actual serial number -->
@@ -51,16 +51,14 @@
  </group> 
   
   
+<!-- launch camera 3 with OpenNI body tracker -->
 
-<group ns="$(arg camera3)" if="$(eval cam1_present != '')">
-    <include file="$(find realsense2_camera)/launch/rs_camera.launch">
-      <arg name="camera"		value="$(arg camera1)"/>
-      <arg name="serial_no"             value="$(arg serial_no_camera1)"/>
-      <arg name="tf_prefix"		          value="$(arg tf_prefix_camera1)"/>
-      <arg name="initial_reset"         value="$(arg initial_reset)"/>
-      <arg name="filters"		value="$(arg filters)"/>
-    </include>
-  </group>
+<include file="$(find cob_openni2_tracker)/launch/body_tracker_nodelet.launch" if="$(eval cam3_present != '')">
+      
+      <arg name="standalone_without_camera_driver"   value="true"/>
+	<arg name="camera_name"   value="$(arg camera3)"/>
+	
+</include>
 
 <!-- launch the tf publishers -->
 
@@ -70,7 +68,7 @@
 
 <node name="tf_cam2_link" pkg="tf" type="static_transform_publisher" output="screen" args="-0.418 1.11 1.072 -1.0472 0.7854 -1.5708 base_link cam2_link 50" />
 
-<!-- node name="tf_cam3_link" pkg="tf" type="static_transform_publisher" output="screen" args="-0.368 -0.21 1.097 1.0472 0.7854 -1.5708 base_link cam3_link 50" / -->
+<node name="tf_cam3_link" pkg="tf" type="static_transform_publisher" output="screen" args="-0.45 0.65 0.18 -1.5708 0 -1.5708 base_link cam3_link 50"  if="$(eval cam3_present != '')"/>
 
 <node name="tf_cam4_link" pkg="tf" type="static_transform_publisher" output="screen" args="0.408 -0.235 1.097 2.0944 0.7854 -1.5708 base_link cam4_link 50" />
 
