@@ -389,7 +389,7 @@ listener4=&lstnr4;
 
   sub1 = nh.subscribe ("/cam1/depth/color/points", 1, cloud_cb1); 
   sub2 = nh.subscribe ("/cam2/depth/color/points", 1, cloud_cb2);
-  sub3= nh.subscribe ("/cam3/depth/color/points", 1, cloud_cb3);
+  //sub3= nh.subscribe ("/cam3/depth/color/points", 1, cloud_cb3);
   sub4=nh.subscribe ("/cam4/depth/color/points", 1, cloud_cb4);
 
   // Create a ROS publisher for the output point cloud
