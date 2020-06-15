@@ -19,6 +19,8 @@
 #include <geometry_msgs/PoseStamped.h>
 
 #include "ur_msgs/SetIO.h"
+#include <tf/transform_listener.h>
+#include "std_msgs/Float32.h"
 
 
 class MoveRobot {
@@ -48,6 +50,11 @@ bool getObstacle();
 void updateStatus();
 void setObstacle(bool is_obstacle);
 bool getStatus();
+float distanceComputing (geometry_msgs::Point point1, geometry_msgs::Point point2);
+void update_hand_position(tf::StampedTransform transform);
+bool is_in_the_cell(tf::StampedTransform transform);
+void update_handover_status(tf::StampedTransform hand_tf);
+
 
 private:
 
@@ -59,6 +66,21 @@ const int IO_SERVICE_FUN_LEVEL_ = 1;   // Not exactly sure what this is, but 1 s
 bool onTarget; //true if move to target has succeeded
 bool obstacle; //true if obstacle close to TCP
 bool status; //true if robot moving, false if robot stopped
+ros::Time hand_timer; //timer to know if the hand is static in the workcell, to trigger the handover
+ros::Duration hand_timer_threshold; //time after whose tool handover phase is triggered
+geometry_msgs::Point hand_position_current; //current hand position 
+geometry_msgs::Point hand_position_old; //hand position at time t-1. to compare if the hand is static or not
+float hand_tolerance;   //tolerance between 2 hand positions to know if it is static or not
+bool handover_flag; //to trigger the handover when hand is static for 2 sec
+
+//workcell limits
+const float WORKCELL_XMAX=0.46;
+const float WORKCELL_XMIN=-0.5;
+const float WORKCELL_YMIN=-0.28;
+const float WORKCELL_YMAX=1.19;
+const float WORKCELL_ZMIN=0.0;
+const float WORKCELL_ZMAX=1.0;
+
 
 
 
