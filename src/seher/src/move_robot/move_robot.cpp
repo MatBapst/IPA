@@ -11,6 +11,7 @@
 #include <ur_msgs/SetSpeedSliderFraction.h>
 
 
+
 //threshold distance between robot and obstacle to stop the robot
 float dist_threshold_low=0.2; //20 cm
 float dist_threshold_up=0.4; //40 cm
@@ -29,6 +30,12 @@ MoveRobot::MoveRobot()
 onTarget=false;
 obstacle=false;
 status=false; // true if moving, false if stopped
+handover_flag=false;
+hand_position_current.z=-1.0;
+hand_position_old.z=-1.0;
+hand_timer=ros::Time::now();
+hand_timer_threshold=ros::Duration(3.0);
+hand_tolerance=0.05; //5 cm
 }
 
 //Destructor
@@ -120,42 +127,7 @@ bool MoveRobot::moveToTarget(geometry_msgs::Pose target)
       return true;
   }
   ROS_INFO_STREAM("NOT MOVING");
-  /*actionlib::SimpleActionClient<moveit_msgs::MoveGroupAction>& move_action_client = move_group->getMoveGroupClient();
-//ROS_INFO_STREAM(move_group->getMoveGroupClient().getState().toString());
-//ros::Rate rate(10);
-while (!move_action_client.getState().isDone() && ros::ok()) {
-  ROS_INFO_STREAM("STATE :   " << move_action_client.getState().toString().c_str());
-  ROS_INFO_STREAM("RESULT:   " << move_action_client.getResult()->error_code.val);
-  sleepSafeFor(1);
-  move_group->stop();
-  ROS_INFO_STREAM("STATE :   " << move_action_client.getState().toString().c_str());
-  ROS_INFO_STREAM("RESULT:   " << move_action_client.getResult()->error_code.val);
-  
-  sleepSafeFor(1);
-  move_group->setStartStateToCurrentState();
-  move_group->asyncMove();
-  sleepSafeFor(2);
-  
-  
-  //rate.sleep();
-  // to abort execution of the trajectory: `move_action_client->cancelGoal();` or `group.stop();`
-}
-
-ROS_DEBUG("move_action_client: %s %s",
-          move_action_client.getState().toString().c_str(),
-          move_action_client.getState().getText().c_str());
-
-auto error_code = move_action_client.getResult()->error_code.val;
-
-if (error_code == moveit::planning_interface::MoveItErrorCode::SUCCESS) {
-  ROS_INFO_STREAM("Moving SUCCESSFUL");
-  ROS_INFO_STREAM("Last STATE :   " << move_action_client.getState().toString().c_str());
-  return true;
-} else {
-  ROS_ERROR("Moving FAILED");
-  return false;
-    
-}*/
+ 
 
 }
 
@@ -327,11 +299,53 @@ void distanceCallback (const std_msgs::Float32::ConstPtr& dst){
 
 }
 
+float MoveRobot::distanceComputing (geometry_msgs::Point point1, geometry_msgs::Point point2){
+    float distance;
+    
+    distance= sqrt(pow(point1.x-point2.x,2)+pow(point1.y-point2.y,2)+pow(point1.z-point2.z,2));
+    return distance;
+}
+
+void MoveRobot::update_hand_position(tf::StampedTransform transform){
+  hand_position_old=hand_position_current;
+  geometry_msgs::Point point;
+  point.x=transform.getOrigin().x();
+  point.y=transform.getOrigin().y();
+  point.z=transform.getOrigin().z();
+  hand_position_current=point;
+}
+
+bool MoveRobot::is_in_the_cell(tf::StampedTransform transform){
+  if (transform.getOrigin().x()<WORKCELL_XMAX && transform.getOrigin().x()>WORKCELL_XMIN && transform.getOrigin().y()<WORKCELL_YMAX &&
+          transform.getOrigin().y()>WORKCELL_YMIN && transform.getOrigin().z()<WORKCELL_ZMAX && transform.getOrigin().z()>WORKCELL_ZMIN) {
+            return true;
+          }
+  return false;
+}
+
+void MoveRobot::update_handover_status(tf::StampedTransform hand_tf){
+  if (is_in_the_cell(hand_tf)){
+    update_hand_position(hand_tf);
+    if (distanceComputing (hand_position_current,hand_position_old)>hand_tolerance) {
+      hand_timer=ros::Time::now();
+    }
+    if (ros::Time::now()-hand_timer>hand_timer_threshold) {
+        if(!handover_flag) {
+        ROS_INFO_STREAM("handover triggered");
+        }
+        handover_flag=true;
+        
+    }
+  }
+}
+
 
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "move_robot");
   ros::NodeHandle nh;
+  tf::StampedTransform transform_hand;
+  tf::TransformListener hand_listener;
   ros::AsyncSpinner spinner(1);
   spinner.start();
 
@@ -379,7 +393,7 @@ int main(int argc, char **argv)
   while(ros::ok())
   {
     //ROS_INFO_STREAM("----------------------SEQ " << seq++ << "-------------------------------------");
-
+    
     if (!robot_obj.getOnTarget()){
         if (robot_obj.getObstacle()){
             if (robot_obj.getStatus()){
@@ -402,7 +416,19 @@ int main(int argc, char **argv)
         switcher = !switcher;
         robot_obj.moveToTarget((switcher)?target_pose1:target_pose2);
     }
+    try{
+      hand_listener.lookupTransform("/world", "/cam3_link/left_hand",  
+                               ros::Time(0), transform_hand);
+      robot_obj.update_handover_status(transform_hand);
+    }
+    catch (tf::TransformException ex){
+      //ROS_ERROR("%s",ex.what());
+      //ROS_INFO_STREAM("no human skeleton detected");
+      //ros::Duration(1.0).sleep();
+    }
     robot_obj.updateStatus();
+    
+
     
     ros::spinOnce();
     
