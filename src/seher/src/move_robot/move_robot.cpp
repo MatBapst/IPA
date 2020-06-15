@@ -35,7 +35,8 @@ hand_position_current.z=-1.0;
 hand_position_old.z=-1.0;
 hand_timer=ros::Time::now();
 hand_timer_threshold=ros::Duration(3.0);
-hand_tolerance=0.05; //5 cm
+hand_tolerance=0.03; //5 cm
+adjusted_speed=max_robot_speed;
 }
 
 //Destructor
@@ -239,7 +240,7 @@ void MoveRobot::updateStatus(){
         obstacle=false;
     }
     ur_msgs::SetSpeedSliderFraction speed;
-    float adjusted_speed=distance_a*distance+distance_b;
+    adjusted_speed=(adjusted_speed+distance_a*distance+distance_b)/2.0;
     speed.request.speed_slider_fraction = std::min(max_robot_speed, adjusted_speed);
     ros::service::call("/ur_hardware_interface/set_speed_slider",speed);
 
@@ -255,6 +256,7 @@ void MoveRobot::stopRobot(){
     std_srvs::Trigger trig;
     ros::service::call("/ur_hardware_interface/dashboard/pause",trig); //to stop the robot
     status=false;
+    sleepSafeFor(1.0);
 }
 
 
@@ -374,7 +376,7 @@ int main(int argc, char **argv)
 
     geometry_msgs::Pose target_pose1;
   target_pose1.position.x = 0.3;
-  target_pose1.position.y = 0.4;
+  target_pose1.position.y = 0.4; //0.4
   target_pose1.position.z = 0.05;
   geometry_msgs::Quaternion quat_msg;
   tf::quaternionTFToMsg(tf::createQuaternionFromRPY(angles::from_degrees(180),angles::from_degrees(0),angles::from_degrees(0)),quat_msg);

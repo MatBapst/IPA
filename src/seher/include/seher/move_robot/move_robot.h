@@ -66,6 +66,7 @@ const int IO_SERVICE_FUN_LEVEL_ = 1;   // Not exactly sure what this is, but 1 s
 bool onTarget; //true if move to target has succeeded
 bool obstacle; //true if obstacle close to TCP
 bool status; //true if robot moving, false if robot stopped
+float adjusted_speed;
 ros::Time hand_timer; //timer to know if the hand is static in the workcell, to trigger the handover
 ros::Duration hand_timer_threshold; //time after whose tool handover phase is triggered
 geometry_msgs::Point hand_position_current; //current hand position 

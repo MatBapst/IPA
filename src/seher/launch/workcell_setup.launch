@@ -1,5 +1,5 @@
 <launch>
-  <arg name="cam3_present"		default=""/>
+  <arg name="cam3_present"		default="true"/>
 
   <arg name="serial_no_camera1"    			default="937622073146"/> 			<!-- Note: Replace with actual serial number -->
   <arg name="serial_no_camera2"    			default="838212073567"/> 			<!-- Note: Replace with actual serial number -->
