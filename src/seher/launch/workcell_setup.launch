@@ -64,7 +64,7 @@
 
 <node name="tf_base_link" pkg="tf" type="static_transform_publisher" output="screen" args="0 0 0 0 0 0 world base_link 50" />
 
-<node name="tf_cam1_link" pkg="tf" type="static_transform_publisher" output="screen" args="0.458 1.1475 1.072 -2.0944 0.7854 -1.5708 base_link cam1_link 50" />
+<node name="tf_cam1_link" pkg="tf" type="static_transform_publisher" output="screen" args="0.458 1.1475 1.092 -2.0944 0.7854 -1.5708 base_link cam1_link 50" />
 
 <node name="tf_cam2_link" pkg="tf" type="static_transform_publisher" output="screen" args="-0.418 1.11 1.072 -1.0472 0.7854 -1.5708 base_link cam2_link 50" />
 

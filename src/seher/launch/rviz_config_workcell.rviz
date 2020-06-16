@@ -206,7 +206,7 @@ Visualization Manager:
         cam3_link/left_knee:
           Value: false
         cam3_link/left_shoulder:
-          Value: true
+          Value: false
         cam3_link/neck:
           Value: false
         cam3_link/right_elbow:
@@ -220,9 +220,9 @@ Visualization Manager:
         cam3_link/right_knee:
           Value: false
         cam3_link/right_shoulder:
-          Value: true
+          Value: false
         cam3_link/torso:
-          Value: true
+          Value: false
         cam4_color_frame:
           Value: false
         cam4_color_optical_frame:
@@ -501,7 +501,7 @@ Visualization Manager:
       Queue Size: 10
       Selectable: true
       Size (Pixels): 3
-      Size (m): 0.009999999776482582
+      Size (m): 0.019999999552965164
       Style: Flat Squares
       Topic: /cameras/depth_pointcloud_fusion_final
       Unreliable: false
@@ -551,10 +551,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.43479716777801514
+      Pitch: 0.3547976315021515
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.16040369868278503
+      Yaw: 0.3204079866409302
     Saved: ~
 Window Geometry:
   Displays:

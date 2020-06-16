@@ -74,6 +74,8 @@ const Eigen::Vector3f r4=Eigen::Vector3f(-0.496f,0.767f,0.2055f);
 
 const Eigen::Vector3f t_final=Eigen::Vector3f(-0.4f,-0.28f,0.05f);
 
+const float leaf_size=0.02;
+
 
 void cloud_cb2 (const sensor_msgs::PointCloud2ConstPtr& input)
 {
@@ -111,7 +113,7 @@ void cloud_cb2 (const sensor_msgs::PointCloud2ConstPtr& input)
   pcl::VoxelGrid<pcl::PCLPointCloud2> sor;
   sor.setInputCloud (cloud_filtered);
   //sor.setDownsampleAllData(true);
-  sor.setLeafSize (0.01f, 0.01f, 0.01f);
+  sor.setLeafSize (leaf_size, leaf_size, leaf_size);
   sor.filter (*voxel_cloud);
 
 // Outlier Removal filter
@@ -207,7 +209,7 @@ void cloud_cb3 (const sensor_msgs::PointCloud2ConstPtr& input)
   pcl::VoxelGrid<pcl::PCLPointCloud2> sor;
   sor.setInputCloud (cloud_filtered);
   //sor.setDownsampleAllData(true);
-  sor.setLeafSize (0.01f, 0.01f, 0.01f);
+  sor.setLeafSize (leaf_size, leaf_size, leaf_size);
   sor.filter (*voxel_cloud);
 
 
@@ -272,7 +274,7 @@ void cloud_cb4 (const sensor_msgs::PointCloud2ConstPtr& input)
   pcl::VoxelGrid<pcl::PCLPointCloud2> sor;
   sor.setInputCloud (cloud_filtered);
   //sor.setDownsampleAllData(true);
-  sor.setLeafSize (0.01f, 0.01f, 0.01f);
+  sor.setLeafSize (leaf_size, leaf_size, leaf_size);
   sor.filter (*voxel_cloud);
 
 
@@ -338,7 +340,7 @@ void cloud_cb1 (const sensor_msgs::PointCloud2ConstPtr& input)
   pcl::VoxelGrid<pcl::PCLPointCloud2> sor;
   sor.setInputCloud (cloud_filtered);
   //sor.setDownsampleAllData(true);
-  sor.setLeafSize (0.01f, 0.01f, 0.01f);
+  sor.setLeafSize (leaf_size, leaf_size, leaf_size);
   sor.filter (*voxel_cloud);
 
 

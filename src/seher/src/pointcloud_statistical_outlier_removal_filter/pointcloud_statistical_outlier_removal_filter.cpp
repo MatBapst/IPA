@@ -21,7 +21,7 @@ void filter_cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
     pcl::StatisticalOutlierRemoval<pcl::PointXYZ> filter;
     filter.setInputCloud(input_xyz);
     filter.setMeanK(300);
-    filter.setStddevMulThresh (0.01); //0.05
+    filter.setStddevMulThresh (0.02); //0.05
     filter.filter(*output_xyz);
     pcl::PCLPointCloud2::Ptr output_pcl2 (new pcl::PCLPointCloud2 ());
     pcl::toPCLPointCloud2(*output_xyz, *output_pcl2);
