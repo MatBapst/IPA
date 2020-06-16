@@ -22,8 +22,8 @@ void filter_cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
     pcl::fromPCLPointCloud2(*input_pcl2,*input_xyz);
     pcl::RadiusOutlierRemoval<pcl::PointXYZ> ror_filter;
     ror_filter.setInputCloud(input_xyz);
-    ror_filter.setRadiusSearch(0.1);
-    ror_filter.setMinNeighborsInRadius(30);
+    ror_filter.setRadiusSearch(0.15);
+    ror_filter.setMinNeighborsInRadius(120);
     ror_filter.filter(*output1);
     pcl::StatisticalOutlierRemoval<pcl::PointXYZ> filter;
     filter.setInputCloud(output1);

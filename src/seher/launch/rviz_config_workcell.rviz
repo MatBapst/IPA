@@ -193,36 +193,6 @@ Visualization Manager:
           Value: true
         cam3_link:
           Value: true
-        cam3_link/head:
-          Value: true
-        cam3_link/left_elbow:
-          Value: false
-        cam3_link/left_foot:
-          Value: false
-        cam3_link/left_hand:
-          Value: true
-        cam3_link/left_hip:
-          Value: false
-        cam3_link/left_knee:
-          Value: false
-        cam3_link/left_shoulder:
-          Value: false
-        cam3_link/neck:
-          Value: false
-        cam3_link/right_elbow:
-          Value: false
-        cam3_link/right_foot:
-          Value: false
-        cam3_link/right_hand:
-          Value: true
-        cam3_link/right_hip:
-          Value: false
-        cam3_link/right_knee:
-          Value: false
-        cam3_link/right_shoulder:
-          Value: false
-        cam3_link/torso:
-          Value: false
         cam4_color_frame:
           Value: false
         cam4_color_optical_frame:
@@ -307,36 +277,7 @@ Visualization Manager:
                 cam2_infra2_optical_frame:
                   {}
             cam3_link:
-              cam3_link/head:
-                {}
-              cam3_link/left_elbow:
-                {}
-              cam3_link/left_foot:
-                {}
-              cam3_link/left_hand:
-                {}
-              cam3_link/left_hip:
-                {}
-              cam3_link/left_knee:
-                {}
-              cam3_link/left_shoulder:
-                {}
-              cam3_link/neck:
-                {}
-              cam3_link/right_elbow:
-                {}
-              cam3_link/right_foot:
-                {}
-              cam3_link/right_hand:
-                {}
-              cam3_link/right_hip:
-                {}
-              cam3_link/right_knee:
-                {}
-              cam3_link/right_shoulder:
-                {}
-              cam3_link/torso:
-                {}
+              {}
             cam4_link:
               cam4_color_frame:
                 cam4_color_optical_frame:
@@ -536,7 +477,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 3.8533568382263184
+      Distance: 2.310840368270874
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -551,10 +492,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.3547976315021515
+      Pitch: 0.5697973966598511
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.3204079866409302
+      Yaw: 0.2254195660352707
     Saved: ~
 Window Geometry:
   Displays:

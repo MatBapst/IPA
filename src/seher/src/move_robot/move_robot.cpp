@@ -13,10 +13,10 @@
 
 
 //threshold distance between robot and obstacle to stop the robot
-float dist_threshold_low=0.2; //20 cm
-float dist_threshold_up=0.4; //40 cm
+float dist_threshold_low=0.15; //20 cm
+float dist_threshold_up=0.3; //40 cm
 bool near_obstacle=false;
-float max_robot_speed = 0.5; //corresponds to % of max robot speed like on the Teach Pendant
+float max_robot_speed = 0.3; //corresponds to % of max robot speed like on the Teach Pendant
 float distance; //minimal distance between TCP and obstacle
 float speed_distance=0.5; // max distance for adjusting the robot speed
 
@@ -128,7 +128,7 @@ bool MoveRobot::moveToTarget(geometry_msgs::Pose target)
       return true;
   }
   ROS_INFO_STREAM("NOT MOVING");
- 
+  return false;
 
 }
 
@@ -227,7 +227,16 @@ void MoveRobot::updateStatus(){
     //ROS_INFO_STREAM("UPDATING STATUS");
     if (error_code == moveit::planning_interface::MoveItErrorCode::SUCCESS){
         onTarget=true;
+        status=false;
         ROS_INFO_STREAM("MOVING SUCCESSFULL");
+        if (handover_flag) {
+          geometry_msgs::Pose current_pose = move_group->getCurrentPose().pose;
+          if( comparePoses(current_pose, hand_target)) {
+            handover_flag=false;
+            ROS_INFO_STREAM("On hand position");
+            sleepSafeFor(5.0);
+        }
+        }
     }
     else {
         onTarget=false;
@@ -239,6 +248,7 @@ void MoveRobot::updateStatus(){
     } else {
         obstacle=false;
     }
+
     ur_msgs::SetSpeedSliderFraction speed;
     adjusted_speed=(adjusted_speed+distance_a*distance+distance_b)/2.0;
     speed.request.speed_slider_fraction = std::min(max_robot_speed, adjusted_speed);
@@ -341,6 +351,24 @@ void MoveRobot::update_handover_status(tf::StampedTransform hand_tf){
   }
 }
 
+bool MoveRobot::getHandoverFlag(){
+  return handover_flag;
+}
+
+void MoveRobot::computePoseToHand(){
+  geometry_msgs::Pose pose;
+  pose.position=hand_position_current;
+  pose.position.y=pose.position.y-0.15;
+  geometry_msgs::Quaternion quat_msg;
+  tf::quaternionTFToMsg(tf::createQuaternionFromRPY(angles::from_degrees(-90),angles::from_degrees(-90),angles::from_degrees(0)),quat_msg);
+  pose.orientation=quat_msg;
+  hand_target=pose;
+}
+
+geometry_msgs::Pose MoveRobot::getHandTarget(){
+  return hand_target;
+}
+
 
 int main(int argc, char **argv)
 {
@@ -396,27 +424,37 @@ int main(int argc, char **argv)
   {
     //ROS_INFO_STREAM("----------------------SEQ " << seq++ << "-------------------------------------");
     
-    if (!robot_obj.getOnTarget()){
-        if (robot_obj.getObstacle()){
-            if (robot_obj.getStatus()){
-                robot_obj.stopRobot();
-            }
-            
-        }
-        else {
-            if (!robot_obj.getStatus()){
-                //speed_pub.publish((switcher)?low:fast);
-                robot_obj.startRobot();
-                //robot_obj.moveToTarget((switcher)?target_pose1:target_pose2);
-            }
-            else {
-                robot_obj.sleepSafeFor(0.01);
-            }
-        }
+  
+      if (!robot_obj.getOnTarget()){
+          if (robot_obj.getObstacle()){
+              if (robot_obj.getStatus()){
+                  robot_obj.stopRobot();
+              }
+              
+          }
+          else {
+              if (!robot_obj.getStatus()){
+                  //speed_pub.publish((switcher)?low:fast);
+                  robot_obj.startRobot();
+                  //robot_obj.moveToTarget((switcher)?target_pose1:target_pose2);
+              }
+              else {
+                  robot_obj.sleepSafeFor(0.01);
+              }
+          }
 
-    } else {
-        switcher = !switcher;
-        robot_obj.moveToTarget((switcher)?target_pose1:target_pose2);
+      } else {
+        if (!robot_obj.getHandoverFlag()){
+          switcher = !switcher;
+          robot_obj.moveToTarget((switcher)?target_pose1:target_pose2);
+      } else {
+        if (!robot_obj.getStatus()){
+          robot_obj.computePoseToHand();
+          robot_obj.moveToTarget(robot_obj.getHandTarget());
+          ROS_INFO_STREAM("Go To Hand");
+        }
+          
+      }
     }
     try{
       hand_listener.lookupTransform("/world", "/cam3_link/left_hand",  

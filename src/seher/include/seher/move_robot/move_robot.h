@@ -54,7 +54,9 @@ float distanceComputing (geometry_msgs::Point point1, geometry_msgs::Point point
 void update_hand_position(tf::StampedTransform transform);
 bool is_in_the_cell(tf::StampedTransform transform);
 void update_handover_status(tf::StampedTransform hand_tf);
-
+bool getHandoverFlag();
+void computePoseToHand();
+geometry_msgs::Pose getHandTarget();
 
 private:
 
@@ -71,6 +73,7 @@ ros::Time hand_timer; //timer to know if the hand is static in the workcell, to 
 ros::Duration hand_timer_threshold; //time after whose tool handover phase is triggered
 geometry_msgs::Point hand_position_current; //current hand position 
 geometry_msgs::Point hand_position_old; //hand position at time t-1. to compare if the hand is static or not
+geometry_msgs::Pose hand_target;
 float hand_tolerance;   //tolerance between 2 hand positions to know if it is static or not
 bool handover_flag; //to trigger the handover when hand is static for 2 sec
 
