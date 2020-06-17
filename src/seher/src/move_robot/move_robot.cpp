@@ -230,11 +230,14 @@ void MoveRobot::updateStatus(){
     
         if (handover_flag) {
           geometry_msgs::Pose current_pose = move_group->getCurrentPose().pose;
-          if( comparePoses(current_pose, hand_target)) {
-            handover_flag=false;
-            ROS_INFO_STREAM("On hand position");
-            sleepSafeFor(5.0);
-        }
+          
+          
+          if( comparePoses(current_pose, hand_target, 0.08)) {
+                handover_flag=false;
+                ROS_INFO_STREAM("On hand position");
+                sleepSafeFor(5.0);
+              } 
+        
         }
    
 }
@@ -269,13 +272,14 @@ bool MoveRobot::is_in_the_cell(tf::StampedTransform transform){
 void MoveRobot::update_handover_status(tf::StampedTransform hand_tf){
   if (is_in_the_cell(hand_tf)){
     update_hand_position(hand_tf);
+    computePoseToHand();
     if (distanceComputing (hand_position_current,hand_position_old)>hand_tolerance) {
       hand_timer=ros::Time::now();
     }
     if (ros::Time::now()-hand_timer>hand_timer_threshold) {
         if(!handover_flag) {
         ROS_INFO_STREAM("handover triggered");
-        computePoseToHand();
+        //computePoseToHand();
         }
         handover_flag=true;
         
@@ -330,7 +334,7 @@ int main(int argc, char **argv)
   int seq = 0;
   bool switcher=true;
  
-  robot_obj.moveToTarget((switcher)?target_pose1:target_pose2);
+  robot_obj.executeCartesianTrajtoPose((switcher)?target_pose1:target_pose2);
   while(ros::ok())
   {
     
@@ -340,9 +344,9 @@ int main(int argc, char **argv)
     switcher = !switcher;
     robot_obj.executeCartesianTrajtoPose((switcher)?target_pose1:target_pose2);
   } else {
-          
-      robot_obj.moveToTarget(robot_obj.getHandTarget());
-      ROS_INFO_STREAM("Go To Hand");
+      ROS_INFO_STREAM("Go To Hand");    
+      robot_obj.executeCartesianTrajtoPose(robot_obj.getHandTarget());
+      robot_obj.sleepSafeFor(1.0);
     }
           
   

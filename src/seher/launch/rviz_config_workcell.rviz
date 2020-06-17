@@ -8,6 +8,7 @@ Panels:
         - /Status1
         - /TF1
         - /TF1/Frames1
+        - /PointCloud24
         - /MotionPlanning1/Scene Geometry1
       Splitter Ratio: 0.770588219165802
     Tree Height: 875
@@ -500,7 +501,7 @@ Visualization Manager:
       Queue Size: 10
       Selectable: true
       Size (Pixels): 3
-      Size (m): 0.019999999552965164
+      Size (m): 0.009999999776482582
       Style: Flat Squares
       Topic: /cameras/depth_pointcloud_fusion_final
       Unreliable: false
@@ -776,10 +777,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.4997974932193756
+      Pitch: 0.3397979140281677
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 1.4704188108444214
+      Yaw: 1.5004196166992188
     Saved: ~
 Window Geometry:
   Displays:
