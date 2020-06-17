@@ -79,17 +79,18 @@ void MoveRobot::sleepSafeFor(double duration)
 }
 
 
-void MoveRobot::executeCartesianTrajtoPose(geometry_msgs::Pose target, std::string label)
+void MoveRobot::executeCartesianTrajtoPose(geometry_msgs::Pose target)
 {
   int trial=0;
-  while(trial<5)
+  while(trial<10)
   {
-    if(moveGroupExecutePlan(getCartesianPathPlanToPose(target, label)))
+    if(moveGroupExecutePlan(getCartesianPathPlanToPose(target)))
     {
       return;
     }
-    ROS_ERROR_STREAM("Execution to " << label << " trial " << trial++ << " failed. Reattempting");
+    //ROS_ERROR_STREAM("Execution to " << label << " trial " << trial++ << " failed. Reattempting");
     //failure_counter_++;
+    trial++;
   }
   ROS_ERROR_STREAM("Maxx execution attempts reached, aborting program");
   ros::shutdown();
@@ -137,7 +138,7 @@ bool MoveRobot::moveToTarget(geometry_msgs::Pose target)
 }
 
 
-moveit::planning_interface::MoveGroupInterface::Plan MoveRobot::getCartesianPathPlanToPose(geometry_msgs::Pose target_pose, std::string display_label, double eef_step, double jump_threshold)
+moveit::planning_interface::MoveGroupInterface::Plan MoveRobot::getCartesianPathPlanToPose(geometry_msgs::Pose target_pose, double eef_step, double jump_threshold)
 {
   namespace rvt = rviz_visual_tools;
   move_group->setStartStateToCurrentState();
@@ -160,7 +161,7 @@ moveit::planning_interface::MoveGroupInterface::Plan MoveRobot::getCartesianPath
     exit(-1);
   }
 
-  ROS_INFO_STREAM("Visualizing Cartesian Path plan to "  <<  display_label <<" (" << fraction*100  << "% acheived)");
+  //ROS_INFO_STREAM("Visualizing Cartesian Path plan to "  <<  display_label <<" (" << fraction*100  << "% acheived)");
 
   adjustTrajectoryToFixTimeSequencing(trajectory);
 
@@ -337,7 +338,7 @@ int main(int argc, char **argv)
       
   if (!robot_obj.getHandoverFlag()){
     switcher = !switcher;
-    robot_obj.moveToTarget((switcher)?target_pose1:target_pose2);
+    robot_obj.executeCartesianTrajtoPose((switcher)?target_pose1:target_pose2);
   } else {
           
       robot_obj.moveToTarget(robot_obj.getHandTarget());
