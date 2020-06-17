@@ -12,31 +12,20 @@
 
 
 
-//threshold distance between robot and obstacle to stop the robot
-float dist_threshold_low=0.15; //20 cm
-float dist_threshold_up=0.3; //40 cm
-bool near_obstacle=false;
-float max_robot_speed = 0.3; //corresponds to % of max robot speed like on the Teach Pendant
-float distance; //minimal distance between TCP and obstacle
-float speed_distance=0.5; // max distance for adjusting the robot speed
 
-float distance_a = (max_robot_speed-0.1)/(speed_distance-dist_threshold_low);
-float distance_b = max_robot_speed-distance_a*speed_distance;
 
 
 //constructor
 MoveRobot::MoveRobot()
 {
-onTarget=false;
-obstacle=false;
-status=false; // true if moving, false if stopped
+
 handover_flag=false;
 hand_position_current.z=-1.0;
 hand_position_old.z=-1.0;
 hand_timer=ros::Time::now();
 hand_timer_threshold=ros::Duration(3.0);
 hand_tolerance=0.03; //5 cm
-adjusted_speed=max_robot_speed;
+
 }
 
 //Destructor
@@ -47,7 +36,8 @@ void MoveRobot::initialiseMoveit(ros::NodeHandle nh)
   namespace rvt = rviz_visual_tools;
   move_group = new moveit::planning_interface::MoveGroupInterface(GROUP_MANIP);
   joint_model_group = move_group->getCurrentState()->getJointModelGroup(GROUP_MANIP);
-  
+  move_group->setPlannerId("RRTConnectkConfigDefault");
+
   visual_tools = new moveit_visual_tools::MoveItVisualTools("base_link");
   visual_tools->deleteAllMarkers();
   visual_tools->loadRemoteControl();
@@ -117,19 +107,33 @@ bool MoveRobot::moveGroupExecutePlan(moveit::planning_interface::MoveGroupInterf
 
 bool MoveRobot::moveToTarget(geometry_msgs::Pose target)
 {
+  namespace rvt = rviz_visual_tools;
+  bool plan_success = false;
+  moveit::planning_interface::MoveGroupInterface::Plan my_plan;
+  
 
   move_group->setStartStateToCurrentState();
   move_group->setPoseTarget(target);
-  
-  if ( move_group->asyncMove()==moveit::planning_interface::MoveItErrorCode::SUCCESS){
-      
-      ROS_INFO_STREAM("MOVING");
-      status=true;
-      return true;
-  }
-  ROS_INFO_STREAM("NOT MOVING");
-  return false;
 
+  plan_success = (move_group->plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+  
+  visual_tools->publishText(text_pose, "Pose Goal", rvt::WHITE, rvt::XLARGE);
+  visual_tools->publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
+  visual_tools->trigger();
+  
+  if (plan_success){
+    if ( move_group->move()==moveit::planning_interface::MoveItErrorCode::SUCCESS){
+        
+        ROS_INFO_STREAM("MOVING");
+        
+        return true;
+    }
+    ROS_INFO_STREAM("NOT MOVING");
+    
+  } else {
+    ROS_WARN_STREAM("Failed planning");
+  }
+  return false;
 }
 
 
@@ -222,13 +226,7 @@ void MoveRobot::adjustTrajectoryToFixTimeSequencing(moveit_msgs::RobotTrajectory
 
 
 void MoveRobot::updateStatus(){
-    actionlib::SimpleActionClient<moveit_msgs::MoveGroupAction>& move_action_client = move_group->getMoveGroupClient();
-    auto error_code = move_action_client.getResult()->error_code.val;
-    //ROS_INFO_STREAM("UPDATING STATUS");
-    if (error_code == moveit::planning_interface::MoveItErrorCode::SUCCESS){
-        onTarget=true;
-        status=false;
-        ROS_INFO_STREAM("MOVING SUCCESSFULL");
+    
         if (handover_flag) {
           geometry_msgs::Pose current_pose = move_group->getCurrentPose().pose;
           if( comparePoses(current_pose, hand_target)) {
@@ -237,79 +235,11 @@ void MoveRobot::updateStatus(){
             sleepSafeFor(5.0);
         }
         }
-    }
-    else {
-        onTarget=false;
-    }
-
-    if (near_obstacle){
-        obstacle=true;
-        //ROS_INFO_STREAM("OBSTACLE NEAR ROBOT");
-    } else {
-        obstacle=false;
-    }
-
-    ur_msgs::SetSpeedSliderFraction speed;
-    adjusted_speed=(adjusted_speed+distance_a*distance+distance_b)/2.0;
-    speed.request.speed_slider_fraction = std::min(max_robot_speed, adjusted_speed);
-    ros::service::call("/ur_hardware_interface/set_speed_slider",speed);
-
+   
 }
 
 
-void MoveRobot::stopRobot(){
-    ROS_INFO_STREAM("Robot Stopping");
-    //move_group->stop();
-    //actionlib_msgs::GoalID stop;
-    //cancel_pub.publish(stop);
-    //sleepSafeFor(5);
-    std_srvs::Trigger trig;
-    ros::service::call("/ur_hardware_interface/dashboard/pause",trig); //to stop the robot
-    status=false;
-    sleepSafeFor(1.0);
-}
 
-
-void MoveRobot::startRobot(){
-  ROS_INFO_STREAM("Robot Starting");
-  std_srvs::Trigger trig;
-  ros::service::call("/ur_hardware_interface/dashboard/play",trig); //to start the robot
-  status=true;
-}
-
-bool MoveRobot::getOnTarget(){
-    return onTarget;
-}
-
-bool MoveRobot::getObstacle(){
-    return obstacle;
-}
-
-void MoveRobot::setObstacle(bool is_obstacle){
-    if (is_obstacle){
-        obstacle=true;
-    }
-    else {
-        obstacle=false;
-    }
-}
-
-bool MoveRobot::getStatus(){
-    return status;
-}
-
-void distanceCallback (const std_msgs::Float32::ConstPtr& dst){
-    distance=dst->data;
-
-    if (distance<=dist_threshold_low){
-        near_obstacle=true;
-    }
-    if (distance>=dist_threshold_up) {
-        near_obstacle=false;
-    }
-
-
-}
 
 float MoveRobot::distanceComputing (geometry_msgs::Point point1, geometry_msgs::Point point2){
     float distance;
@@ -344,6 +274,7 @@ void MoveRobot::update_handover_status(tf::StampedTransform hand_tf){
     if (ros::Time::now()-hand_timer>hand_timer_threshold) {
         if(!handover_flag) {
         ROS_INFO_STREAM("handover triggered");
+        computePoseToHand();
         }
         handover_flag=true;
         
@@ -360,7 +291,7 @@ void MoveRobot::computePoseToHand(){
   pose.position=hand_position_current;
   pose.position.y=pose.position.y-0.15;
   geometry_msgs::Quaternion quat_msg;
-  tf::quaternionTFToMsg(tf::createQuaternionFromRPY(angles::from_degrees(-90),angles::from_degrees(-90),angles::from_degrees(0)),quat_msg);
+  tf::quaternionTFToMsg(tf::createQuaternionFromRPY(angles::from_degrees(-90),angles::from_degrees(0),angles::from_degrees(0)),quat_msg);
   pose.orientation=quat_msg;
   hand_target=pose;
 }
@@ -379,30 +310,13 @@ int main(int argc, char **argv)
   ros::AsyncSpinner spinner(1);
   spinner.start();
 
-/*
-  ros::Publisher planning_scene_diff_publisher = nh.advertise<moveit_msgs::PlanningScene>("planning_scene", 1);
-  ros::Publisher pub_seq = nh.advertise<std_msgs::Header>("/ur_manipulation/sequence",1);
-  ros::Publisher pub_fail = nh.advertise<std_msgs::Header>("/ur_manipulation/failure_counter",1);
-  */
+
 
   MoveRobot robot_obj;
   robot_obj.initialiseMoveit(nh);
-  /*seher_obj.printBasicInfo();
-  ROS_INFO("---------------------------");
-  //seher_obj.addCollissionObjects();
-  ROS_INFO("Moving to home pose");
-  seher_obj.moveToNamedTarget("home");
+  
 
-  ROS_INFO("Starting PnP");
-  ROS_INFO("---------------------------");
-  */
-
- ros::Subscriber distance_sub = nh.subscribe("/distance_calculation/minimal_distance",1, distanceCallback);
- //ros::Publisher speed_pub=nh.advertise<std_msgs::Float64>("/speed_scaling_factor",1);
-
- 
-
-    geometry_msgs::Pose target_pose1;
+  geometry_msgs::Pose target_pose1;
   target_pose1.position.x = 0.3;
   target_pose1.position.y = 0.4; //0.4
   target_pose1.position.z = 0.05;
@@ -414,48 +328,24 @@ int main(int argc, char **argv)
   target_pose1.position.x = 0.05;
   int seq = 0;
   bool switcher=true;
-  /*std_msgs::Float64 low;
-  std_msgs::Float64 fast;
-  low.data=0.06;
-  fast.data=0.25;*/
-  robot_obj.startRobot();
+ 
   robot_obj.moveToTarget((switcher)?target_pose1:target_pose2);
   while(ros::ok())
   {
-    //ROS_INFO_STREAM("----------------------SEQ " << seq++ << "-------------------------------------");
     
   
-      if (!robot_obj.getOnTarget()){
-          if (robot_obj.getObstacle()){
-              if (robot_obj.getStatus()){
-                  robot_obj.stopRobot();
-              }
-              
-          }
-          else {
-              if (!robot_obj.getStatus()){
-                  //speed_pub.publish((switcher)?low:fast);
-                  robot_obj.startRobot();
-                  //robot_obj.moveToTarget((switcher)?target_pose1:target_pose2);
-              }
-              else {
-                  robot_obj.sleepSafeFor(0.01);
-              }
-          }
-
-      } else {
-        if (!robot_obj.getHandoverFlag()){
-          switcher = !switcher;
-          robot_obj.moveToTarget((switcher)?target_pose1:target_pose2);
-      } else {
-        if (!robot_obj.getStatus()){
-          robot_obj.computePoseToHand();
-          robot_obj.moveToTarget(robot_obj.getHandTarget());
-          ROS_INFO_STREAM("Go To Hand");
-        }
+      
+  if (!robot_obj.getHandoverFlag()){
+    switcher = !switcher;
+    robot_obj.moveToTarget((switcher)?target_pose1:target_pose2);
+  } else {
           
-      }
+      robot_obj.moveToTarget(robot_obj.getHandTarget());
+      ROS_INFO_STREAM("Go To Hand");
     }
+          
+  
+
     try{
       hand_listener.lookupTransform("/world", "/cam3_link/left_hand",  
                                ros::Time(0), transform_hand);

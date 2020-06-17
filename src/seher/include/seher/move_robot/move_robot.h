@@ -43,13 +43,7 @@ bool moveToTarget(geometry_msgs::Pose target);
 moveit::planning_interface::MoveGroupInterface::Plan getCartesianPathPlanToPose(geometry_msgs::Pose target_pose, std::string display_label, double eef_step=0.01, double jump_threshold = 0.0);
 bool moveGroupExecutePlan(moveit::planning_interface::MoveGroupInterface::Plan my_plan);
 void adjustTrajectoryToFixTimeSequencing(moveit_msgs::RobotTrajectory &trajectory);
-void stopRobot();
-void startRobot();
-bool getOnTarget();
-bool getObstacle();
 void updateStatus();
-void setObstacle(bool is_obstacle);
-bool getStatus();
 float distanceComputing (geometry_msgs::Point point1, geometry_msgs::Point point2);
 void update_hand_position(tf::StampedTransform transform);
 bool is_in_the_cell(tf::StampedTransform transform);
@@ -65,10 +59,6 @@ const robot_state::JointModelGroup* joint_model_group ;
 moveit_visual_tools::MoveItVisualTools *visual_tools;
 Eigen::Isometry3d text_pose = Eigen::Isometry3d::Identity();
 const int IO_SERVICE_FUN_LEVEL_ = 1;   // Not exactly sure what this is, but 1 seems to work. If it fails, try 2.
-bool onTarget; //true if move to target has succeeded
-bool obstacle; //true if obstacle close to TCP
-bool status; //true if robot moving, false if robot stopped
-float adjusted_speed;
 ros::Time hand_timer; //timer to know if the hand is static in the workcell, to trigger the handover
 ros::Duration hand_timer_threshold; //time after whose tool handover phase is triggered
 geometry_msgs::Point hand_position_current; //current hand position 

@@ -101,6 +101,9 @@ target_link_libraries(clustering ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 add_executable(pointcloud_statistical_outlier_removal_filter src/pointcloud_statistical_outlier_removal_filter/pointcloud_statistical_outlier_removal_filter.cpp)
 target_link_libraries(pointcloud_statistical_outlier_removal_filter ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
 
+add_executable(collision_avoidance_robot src/collision_avoidance_robot/collision_avoidance_robot.cpp)
+target_link_libraries(collision_avoidance_robot ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
