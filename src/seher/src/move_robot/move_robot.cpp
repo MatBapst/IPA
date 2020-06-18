@@ -278,7 +278,7 @@ void MoveRobot::update_handover_status(tf::StampedTransform hand_tf){
     }
     if (ros::Time::now()-hand_timer>hand_timer_threshold) {
         if(!handover_flag) {
-        ROS_INFO_STREAM("handover triggered");
+        ROS_WARN_STREAM("handover triggered");
         //computePoseToHand();
         }
         handover_flag=true;
