@@ -14,25 +14,31 @@ ros::Publisher pub;
 void filter_cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 {
     sensor_msgs::PointCloud2 output;
+   
+    
     pcl::PCLPointCloud2* input_pcl2 (new pcl::PCLPointCloud2 ());
     pcl_conversions::toPCL(*input, *input_pcl2);
     pcl::PointCloud<pcl::PointXYZ>::Ptr input_xyz (new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr output1 (new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr output_xyz (new pcl::PointCloud<pcl::PointXYZ>);
     pcl::fromPCLPointCloud2(*input_pcl2,*input_xyz);
-    pcl::RadiusOutlierRemoval<pcl::PointXYZ> ror_filter;
-    ror_filter.setInputCloud(input_xyz);
-    ror_filter.setRadiusSearch(0.15);
-    ror_filter.setMinNeighborsInRadius(120);
-    ror_filter.filter(*output1);
-    pcl::StatisticalOutlierRemoval<pcl::PointXYZ> filter;
-    filter.setInputCloud(output1);
-    filter.setMeanK(50);
-    filter.setStddevMulThresh (0.5); //0.05
-    filter.filter(*output_xyz);
-    pcl::PCLPointCloud2::Ptr output_pcl2 (new pcl::PCLPointCloud2 ());
-    pcl::toPCLPointCloud2(*output_xyz, *output_pcl2);
-    pcl_conversions::fromPCL(*output_pcl2, output);
+    if (!input_xyz->empty()){
+      pcl::RadiusOutlierRemoval<pcl::PointXYZ> ror_filter;
+      ror_filter.setInputCloud(input_xyz);
+      ror_filter.setRadiusSearch(0.15);
+      ror_filter.setMinNeighborsInRadius(120);
+      ror_filter.filter(*output1);
+      pcl::StatisticalOutlierRemoval<pcl::PointXYZ> filter;
+      filter.setInputCloud(output1);
+      filter.setMeanK(50);
+      filter.setStddevMulThresh (0.5); 
+      filter.filter(*output_xyz);
+      pcl::PCLPointCloud2::Ptr output_pcl2 (new pcl::PCLPointCloud2 ());
+      pcl::toPCLPointCloud2(*output_xyz, *output_pcl2);
+      pcl_conversions::fromPCL(*output_pcl2, output);
+    } else {
+      output=*input;
+    }
     pub.publish(output);
 
 
