@@ -104,6 +104,9 @@ target_link_libraries(pointcloud_statistical_outlier_removal_filter ${catkin_LIB
 add_executable(collision_avoidance_robot src/collision_avoidance_robot/collision_avoidance_robot.cpp)
 target_link_libraries(collision_avoidance_robot ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
 
+add_executable(handover_grasping_detector src/handover_grasping_detector/handover_grasping_detector.cpp)
+target_link_libraries(handover_grasping_detector ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
