@@ -107,6 +107,9 @@ target_link_libraries(collision_avoidance_robot ${catkin_LIBRARIES} ${Boost_LIBR
 add_executable(handover_grasping_detector src/handover_grasping_detector/handover_grasping_detector.cpp)
 target_link_libraries(handover_grasping_detector ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
 
+add_executable(handover_tool_in_hand_detector src/handover_tool_in_hand_detector/handover_tool_in_hand_detector.cpp)
+target_link_libraries(handover_tool_in_hand_detector ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
