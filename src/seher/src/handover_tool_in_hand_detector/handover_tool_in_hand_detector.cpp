@@ -17,19 +17,30 @@
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
 #include <pcl_ros/transforms.h>
-
+#include <visualization_msgs/Marker.h>
+#include <pcl/common/common.h>
+#include <pcl/filters/statistical_outlier_removal.h>
 
 tf::TransformListener* hand_listener;  
 
-const Eigen::Vector4f min_box =Eigen::Vector4f(-0.15,-0.15,-0.15,1);
-const Eigen::Vector4f max_box =Eigen::Vector4f(0.15,0.15,0.15,1);
+// out box
+const Eigen::Vector4f min_box =Eigen::Vector4f(-0.2,-0.2,-0.2,1);
+const Eigen::Vector4f max_box =Eigen::Vector4f(0.2,0.2,0.2,1);
+
+
+
+
 
 ros::Publisher pub;
+ros::Publisher point_pub;
 
 void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 {
     tf::StampedTransform transform_hand;
+    tf::StampedTransform transform_elbow;
     sensor_msgs::PointCloud2 output;
+    
+    
     try{
       hand_listener->lookupTransform("/world", "/cam3_link/left_hand",  
                                ros::Time(0), transform_hand);
@@ -55,16 +66,71 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
         cropFilter.setRotation(r_f);
         cropFilter.setInputCloud(cloudPtr);
         cropFilter.filter(*cloud_filtered);
+
         
+        //crop the rest of the arm
+        hand_listener->lookupTransform("/world", "/cam3_link/left_elbow",  
+                               ros::Time(0), transform_elbow);
+        Eigen::Vector3f t_elb=Eigen::Vector3f(transform_elbow.getOrigin().x(),transform_elbow.getOrigin().y(),transform_elbow.getOrigin().z());
+        Eigen::Quaterniond q_elb;
+        tf::quaternionTFToEigen(transform_elbow.getRotation(), q_elb);
+        Eigen::Vector3d r_elb=q.toRotationMatrix().eulerAngles(2,1,0);
+        Eigen::Vector3f r_f_elb=Eigen::Vector3f(r_elb[0],r_elb[1],r_elb[2]);
+
+        pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered_2 (new pcl::PointCloud<pcl::PointXYZ>);
+        pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered_3 (new pcl::PointCloud<pcl::PointXYZ>);
+        pcl::PointCloud<pcl::PointXYZ> cloud_filtered_pcl;
+        pcl::fromPCLPointCloud2(*cloud_filtered,*cloud_filtered_2);
+
+
+        pcl::StatisticalOutlierRemoval<pcl::PointXYZ> filter;
+        filter.setInputCloud(cloud_filtered_2);
+        filter.setMeanK(30);
+        filter.setStddevMulThresh (1); 
+        filter.filter(*cloud_filtered_3);
+
         
+        const pcl::PointCloud<pcl::PointXYZ> cloud_filtered_pcl_const=*cloud_filtered_3;
+
+        const Eigen::Vector4f elbow = Eigen::Vector4f(t_elb[0],t_elb[1],t_elb[2],1);
+        Eigen::Vector4f tool_max_point;
+
+        pcl::getMaxDistance(cloud_filtered_pcl_const, elbow, tool_max_point);
+
+        if (!isnan(tool_max_point[0])) {
+
+        
+          visualization_msgs::Marker points;
+          points.header.frame_id = "/world";
+          points.header.stamp  = ros::Time::now();
+          points.ns = "point";
+          points.action = visualization_msgs::Marker::ADD;
+          points.pose.orientation.w = 1.0;
+          points.id = 0;
+          points.type = visualization_msgs::Marker::POINTS;
+          points.scale.x = 0.02;
+          points.scale.y = 0.02;
+          points.color.r = 1.0f;
+          points.color.a = 1.0f;
+          geometry_msgs::Point p;
+          p.x = tool_max_point[0];
+          p.y = tool_max_point[1];
+          p.z = tool_max_point[2];
+
+          points.points.push_back(p);
+          point_pub.publish(points);
+        }
+
         pcl_conversions::fromPCL(*cloud_filtered, output);
+
     }
     catch (tf::TransformException ex){
       ROS_INFO_STREAM("no hand in cell");
+      output.header.frame_id="world";
 
     }
     
-
+    
     pub.publish(output);
     
 }
@@ -90,6 +156,7 @@ int main (int argc, char** argv)
   pub4 = nh.advertise<sensor_msgs::PointCloud2> ("/cam4/depth/color/points_computed", 1);*/
 
   pub = nh.advertise<sensor_msgs::PointCloud2> ("/handover/hand_pointcloud", 1);
+  point_pub = nh.advertise<visualization_msgs::Marker>("/handover/tool_max_point", 1);
   //listener.lookupTransform("/world", "/camL_link", ros::Time(0), transform);
   // Spin
   ros::spin ();
