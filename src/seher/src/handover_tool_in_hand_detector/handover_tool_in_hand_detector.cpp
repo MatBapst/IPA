@@ -191,7 +191,7 @@ int main (int argc, char** argv)
   pub4 = nh.advertise<sensor_msgs::PointCloud2> ("/cam4/depth/color/points_computed", 1);*/
 
   pub = nh.advertise<sensor_msgs::PointCloud2> ("/handover/hand_pointcloud", 1);
-  point_pub = nh.advertise<visualization_msgs::Marker>("/handover/tool_max_point", 1);
+  point_pub = nh.advertise<visualization_msgs::Marker>("/handover/tool_grasp_point", 1);
   //listener.lookupTransform("/world", "/camL_link", ros::Time(0), transform);
   // Spin
   ros::spin ();

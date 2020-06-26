@@ -647,7 +647,7 @@ Visualization Manager:
         Scene Alpha: 0.8999999761581421
         Scene Color: 50; 230; 50
         Scene Display Time: 0.20000000298023224
-        Show Scene Geometry: true
+        Show Scene Geometry: false
         Voxel Coloring: Z-Axis
         Voxel Rendering: Occupied Voxels
       Scene Robot:
@@ -734,6 +734,14 @@ Visualization Manager:
         Show Robot Visual: true
       Value: true
       Velocity_Scaling_Factor: 1
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /handover/tool_grasp_point
+      Name: Marker
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -762,25 +770,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 3.842933416366577
+      Distance: 3.2850875854492188
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0
-        Y: 0
-        Z: 0
+        X: -0.20955310761928558
+        Y: 0.4806716740131378
+        Z: 0.17090481519699097
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.3397979140281677
+      Pitch: 0.5597977638244629
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 1.5004196166992188
+      Yaw: 0.20542040467262268
     Saved: ~
 Window Geometry:
   Displays:

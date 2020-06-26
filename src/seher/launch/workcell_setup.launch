@@ -108,8 +108,12 @@
 
 <!-- launch the distance computing node -->
 
-
 <node name="distance_computing_node" pkg="seher" type="distance_calculation" />
 
+<!-- handover tool in hand detector -->
+
+<node name="handover_tool_in_hand_detector" pkg="seher" type="handover_tool_in_hand_detector" />
+
 </launch>
+
 

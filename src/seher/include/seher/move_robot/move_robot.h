@@ -64,6 +64,7 @@ ros::Duration hand_timer_threshold; //time after whose tool handover phase is tr
 geometry_msgs::Point hand_position_current; //current hand position 
 geometry_msgs::Point hand_position_old; //hand position at time t-1. to compare if the hand is static or not
 geometry_msgs::Pose hand_target;
+
 float hand_tolerance;   //tolerance between 2 hand positions to know if it is static or not
 bool handover_flag; //to trigger the handover when hand is static for 2 sec
 

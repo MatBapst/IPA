@@ -13,7 +13,9 @@
 
 
 
-
+geometry_msgs::Pose tool_grasping_pos;
+geometry_msgs::Pose tool_grasping_pos2;
+bool tool_flag=false;
 
 //constructor
 MoveRobot::MoveRobot()
@@ -232,10 +234,16 @@ void MoveRobot::updateStatus(){
           geometry_msgs::Pose current_pose = move_group->getCurrentPose().pose;
           
           
-          if( comparePoses(current_pose, hand_target, 0.08)) {
+          if( comparePoses(current_pose, hand_target, 0.05)) {
                 handover_flag=false;
                 ROS_INFO_STREAM("On hand position");
                 sleepSafeFor(5.0);
+                tool_grasping_pos.orientation=hand_target.orientation;
+                tool_flag=true;
+
+                
+                
+                
               } 
         
         }
@@ -279,6 +287,7 @@ void MoveRobot::update_handover_status(tf::StampedTransform hand_tf){
     if (ros::Time::now()-hand_timer>hand_timer_threshold) {
         if(!handover_flag) {
         ROS_WARN_STREAM("handover triggered");
+        tool_grasping_pos2=tool_grasping_pos;
         //computePoseToHand();
         }
         handover_flag=true;
@@ -305,6 +314,12 @@ geometry_msgs::Pose MoveRobot::getHandTarget(){
   return hand_target;
 }
 
+void grasp_cb (const visualization_msgs::MarkerConstPtr& input){
+  tool_grasping_pos.position.x=input->points[0].x;
+  tool_grasping_pos.position.y=input->points[0].y;
+  tool_grasping_pos.position.z=input->points[0].z;
+}
+
 
 int main(int argc, char **argv)
 {
@@ -315,7 +330,7 @@ int main(int argc, char **argv)
   ros::AsyncSpinner spinner(1);
   spinner.start();
 
-
+  ros::Subscriber sub = nh.subscribe("/handover/tool_grasp_point", 1, grasp_cb);
 
   MoveRobot robot_obj;
   robot_obj.initialiseMoveit(nh);
@@ -347,6 +362,7 @@ int main(int argc, char **argv)
       ROS_INFO_STREAM("Go To Hand");    
       robot_obj.executeCartesianTrajtoPose(robot_obj.getHandTarget());
       robot_obj.sleepSafeFor(1.0);
+
     }
           
   
@@ -362,6 +378,11 @@ int main(int argc, char **argv)
       //ros::Duration(1.0).sleep();
     }
     robot_obj.updateStatus();
+
+    if (tool_flag){
+      robot_obj.executeCartesianTrajtoPose(tool_grasping_pos);
+      tool_flag=false;
+    }
     
 
     
