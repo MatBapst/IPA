@@ -20,6 +20,9 @@
 #include <visualization_msgs/Marker.h>
 #include <pcl/common/common.h>
 #include <pcl/filters/statistical_outlier_removal.h>
+#include <pcl/kdtree/kdtree_flann.h>
+#include <vector>
+#include <pcl/common/centroid.h>
 
 tf::TransformListener* hand_listener;  
 
@@ -97,8 +100,40 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 
         pcl::getMaxDistance(cloud_filtered_pcl_const, elbow, tool_max_point);
 
-        if (!isnan(tool_max_point[0])) {
+       
 
+
+        if (!isnan(tool_max_point[0])) {
+            //search for the nearest points from max point to compute the centroid
+          
+          
+          pcl::KdTreeFLANN<pcl::PointXYZ> kdtree;
+          kdtree.setInputCloud (cloud_filtered_3);
+          pcl::PointXYZ searchPoint;
+          searchPoint.x=tool_max_point[0];
+          searchPoint.y=tool_max_point[1];
+          searchPoint.z=tool_max_point[2];
+          std::vector<int> pointIdxRadiusSearch;
+          std::vector<float> pointRadiusSquaredDistance;
+          float radius = 0.03;
+          pcl::PointCloud<pcl::PointXYZ>::Ptr max_cloud (new pcl::PointCloud<pcl::PointXYZ>);
+          if ( kdtree.radiusSearch (searchPoint, radius, pointIdxRadiusSearch, pointRadiusSquaredDistance) > 0 )
+            {
+              
+              max_cloud->width = pointIdxRadiusSearch.size ();
+              max_cloud->height = 1;
+              max_cloud->points.resize (max_cloud->width * max_cloud->height);
+              for (std::size_t i = 0; i < pointIdxRadiusSearch.size (); ++i) {
+                pcl::PointXYZ point;
+                max_cloud->points[i].x=cloud_filtered_3->points[ pointIdxRadiusSearch[i] ].x;
+                max_cloud->points[i].y=cloud_filtered_3->points[ pointIdxRadiusSearch[i] ].y;
+                max_cloud->points[i].z=cloud_filtered_3->points[ pointIdxRadiusSearch[i] ].z;
+                
+              }
+            }
+          const pcl::PointCloud<pcl::PointXYZ> max_cloud_const=*max_cloud;
+          Eigen::Matrix<double,4,1> centroid;
+          pcl::compute3DCentroid(max_cloud_const, centroid);
         
           visualization_msgs::Marker points;
           points.header.frame_id = "/world";
@@ -113,9 +148,9 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
           points.color.r = 1.0f;
           points.color.a = 1.0f;
           geometry_msgs::Point p;
-          p.x = tool_max_point[0];
-          p.y = tool_max_point[1];
-          p.z = tool_max_point[2];
+          p.x = centroid(0,0);
+          p.y = centroid(1,0);
+          p.z = centroid(2,0);
 
           points.points.push_back(p);
           point_pub.publish(points);
