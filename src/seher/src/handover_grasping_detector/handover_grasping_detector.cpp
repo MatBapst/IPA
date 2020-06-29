@@ -22,8 +22,8 @@
 
 tf::TransformListener* TCP_listener;  
 
-const Eigen::Vector4f min_box =Eigen::Vector4f(-0.15,-0.05,-0.05,1);
-const Eigen::Vector4f max_box =Eigen::Vector4f(0.05,0.05,0.05,1);
+const Eigen::Vector4f min_box =Eigen::Vector4f(-0.15,-0.05,-0.2,1); //0.15 0.05 0.2
+const Eigen::Vector4f max_box =Eigen::Vector4f(0.05,0.05,0.2,1);
 
 ros::Publisher pub;
 
@@ -68,8 +68,8 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 
   std::vector<pcl::PointIndices> cluster_indices;
   pcl::EuclideanClusterExtraction<pcl::PointXYZ> ec;
-  ec.setClusterTolerance (0.025); // 2cm
-  ec.setMinClusterSize (15);
+  ec.setClusterTolerance (0.017); // 2cm
+  ec.setMinClusterSize (20);
   ec.setMaxClusterSize (2000);
   ec.setSearchMethod (tree);
   ec.setInputCloud (cloud_filtered_2);

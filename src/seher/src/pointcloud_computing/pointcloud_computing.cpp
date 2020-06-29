@@ -74,7 +74,7 @@ const Eigen::Vector3f r4=Eigen::Vector3f(-0.496f,0.767f,0.2055f);
 
 const Eigen::Vector3f t_final=Eigen::Vector3f(-0.4f,-0.28f,0.05f);
 
-const float leaf_size=0.02;
+const float leaf_size=0.015;
 
 
 void cloud_cb2 (const sensor_msgs::PointCloud2ConstPtr& input)
