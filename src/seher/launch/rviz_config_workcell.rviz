@@ -259,6 +259,8 @@ Visualization Manager:
           Value: false
         tool0_controller:
           Value: false
+        tool_grasping_point:
+          Value: true
         upper_arm_link:
           Value: false
         world:
@@ -364,6 +366,8 @@ Visualization Manager:
                                   {}
                         tool0:
                           {}
+          tool_grasping_point:
+            {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -734,14 +738,6 @@ Visualization Manager:
         Show Robot Visual: true
       Value: true
       Velocity_Scaling_Factor: 1
-    - Class: rviz/Marker
-      Enabled: true
-      Marker Topic: /handover/tool_grasp_point
-      Name: Marker
-      Namespaces:
-        {}
-      Queue Size: 100
-      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48

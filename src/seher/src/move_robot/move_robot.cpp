@@ -9,24 +9,23 @@
 #include <ros/ros.h>
 #include <std_srvs/Trigger.h>
 #include <ur_msgs/SetSpeedSliderFraction.h>
+#include <std_msgs/Bool.h>
 
 
 
-
-geometry_msgs::Pose tool_grasping_pos;
-geometry_msgs::Pose tool_grasping_pos2;
-bool tool_flag=false;
+ros::Publisher handover_pub;
 
 //constructor
 MoveRobot::MoveRobot()
 {
 
-handover_flag=false;
+
 hand_position_current.z=-1.0;
 hand_position_old.z=-1.0;
 hand_timer=ros::Time::now();
 hand_timer_threshold=ros::Duration(3.0);
-hand_tolerance=0.03; //5 cm
+hand_tolerance=0.03; //3 cm
+_status = nominal_task;
 
 }
 
@@ -84,7 +83,7 @@ void MoveRobot::sleepSafeFor(double duration)
 void MoveRobot::executeCartesianTrajtoPose(geometry_msgs::Pose target)
 {
   int trial=0;
-  while(trial<10)
+  while(trial<20)
   {
     if(moveGroupExecutePlan(getCartesianPathPlanToPose(target)))
     {
@@ -94,9 +93,13 @@ void MoveRobot::executeCartesianTrajtoPose(geometry_msgs::Pose target)
     //failure_counter_++;
     trial++;
   }
-  ROS_ERROR_STREAM("Maxx execution attempts reached, aborting program");
-  ros::shutdown();
-  exit(-1);
+  ROS_ERROR_STREAM("Maxx execution attempts reached, error");
+  if (_status==nominal_task){
+    ROS_ERROR_STREAM("Aborting program");
+    ros::shutdown();
+    exit(-1);
+  }
+  
 }
 
 bool MoveRobot::moveGroupExecutePlan(moveit::planning_interface::MoveGroupInterface::Plan my_plan)
@@ -230,24 +233,36 @@ void MoveRobot::adjustTrajectoryToFixTimeSequencing(moveit_msgs::RobotTrajectory
 
 void MoveRobot::updateStatus(){
     
-        if (handover_flag) {
-          geometry_msgs::Pose current_pose = move_group->getCurrentPose().pose;
+  if (_status==handover_hand) {
+    geometry_msgs::Pose current_pose = move_group->getCurrentPose().pose;
+    
+    
+    if( comparePoses(current_pose, hand_target, 0.05)) {
           
-          
-          if( comparePoses(current_pose, hand_target, 0.05)) {
-                handover_flag=false;
-                ROS_INFO_STREAM("On hand position");
-                sleepSafeFor(5.0);
-                tool_grasping_pos.orientation=hand_target.orientation;
-                tool_flag=true;
+          ROS_INFO_STREAM("On hand position");
+          sleepSafeFor(1.0);
+          _status=handover_tool;
 
-                
-                
-                
-              } 
-        
-        }
-   
+          
+          
+          
+        } 
+  
+  }
+  if (_status==handover_tool){
+    geometry_msgs::Pose current_pose = move_group->getCurrentPose().pose;
+    
+    
+    if( comparePoses(current_pose, tool_target, 0.005)) {
+          _status=nominal_task;
+          ROS_WARN_STREAM("On tool position");
+          sleepSafeFor(3.0);
+            
+          
+          
+        } 
+  }
+
 }
 
 
@@ -277,7 +292,7 @@ bool MoveRobot::is_in_the_cell(tf::StampedTransform transform){
   return false;
 }
 
-void MoveRobot::update_handover_status(tf::StampedTransform hand_tf){
+void MoveRobot::update_handover_status(tf::StampedTransform hand_tf, tf::StampedTransform tool_tf){
   if (is_in_the_cell(hand_tf)){
     update_hand_position(hand_tf);
     computePoseToHand();
@@ -285,20 +300,22 @@ void MoveRobot::update_handover_status(tf::StampedTransform hand_tf){
       hand_timer=ros::Time::now();
     }
     if (ros::Time::now()-hand_timer>hand_timer_threshold) {
-        if(!handover_flag) {
+        if(_status==nominal_task) {
         ROS_WARN_STREAM("handover triggered");
-        tool_grasping_pos2=tool_grasping_pos;
+        
+        _status=handover_hand;
         //computePoseToHand();
+        computePoseToTool(tool_tf);
         }
-        handover_flag=true;
         
     }
   }
 }
 
-bool MoveRobot::getHandoverFlag(){
-  return handover_flag;
+enum status MoveRobot::getStatus(){
+  return _status;
 }
+
 
 void MoveRobot::computePoseToHand(){
   geometry_msgs::Pose pose;
@@ -310,15 +327,26 @@ void MoveRobot::computePoseToHand(){
   hand_target=pose;
 }
 
+void MoveRobot::computePoseToTool(tf::StampedTransform tool_tf){
+  geometry_msgs::Pose pose;
+  pose.position.x=tool_tf.getOrigin().x();
+  pose.position.y=tool_tf.getOrigin().y();
+  pose.position.z=tool_tf.getOrigin().z();
+  geometry_msgs::Quaternion quat_msg;
+  tf::quaternionTFToMsg(tf::createQuaternionFromRPY(angles::from_degrees(-90),angles::from_degrees(0),angles::from_degrees(0)),quat_msg);
+  pose.orientation=quat_msg;
+  tool_target=pose;
+}
+
 geometry_msgs::Pose MoveRobot::getHandTarget(){
   return hand_target;
 }
 
-void grasp_cb (const visualization_msgs::MarkerConstPtr& input){
-  tool_grasping_pos.position.x=input->points[0].x;
-  tool_grasping_pos.position.y=input->points[0].y;
-  tool_grasping_pos.position.z=input->points[0].z;
+geometry_msgs::Pose MoveRobot::getToolTarget(){
+  return tool_target;
 }
+
+
 
 
 int main(int argc, char **argv)
@@ -326,11 +354,12 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "move_robot");
   ros::NodeHandle nh;
   tf::StampedTransform transform_hand;
+  tf::StampedTransform transform_tool;
   tf::TransformListener hand_listener;
   ros::AsyncSpinner spinner(1);
   spinner.start();
 
-  ros::Subscriber sub = nh.subscribe("/handover/tool_grasp_point", 1, grasp_cb);
+  handover_pub =nh.advertise<std_msgs::Bool>("/handover/approach_flag",1);
 
   MoveRobot robot_obj;
   robot_obj.initialiseMoveit(nh);
@@ -352,25 +381,43 @@ int main(int argc, char **argv)
   robot_obj.executeCartesianTrajtoPose((switcher)?target_pose1:target_pose2);
   while(ros::ok())
   {
-    
-  
-      
-  if (!robot_obj.getHandoverFlag()){
-    switcher = !switcher;
-    robot_obj.executeCartesianTrajtoPose((switcher)?target_pose1:target_pose2);
-  } else {
-      ROS_INFO_STREAM("Go To Hand");    
+  std_msgs::Bool flag;  
+  switch(robot_obj.getStatus()){
+    case nominal_task :
+      flag.data=false;
+      handover_pub.publish(flag);
+      switcher = !switcher;
+      robot_obj.executeCartesianTrajtoPose((switcher)?target_pose1:target_pose2);
+      break;
+
+    case handover_hand :
+      flag.data=false;
+      handover_pub.publish(flag);
+      ROS_WARN_STREAM("Go To Hand");    
       robot_obj.executeCartesianTrajtoPose(robot_obj.getHandTarget());
       robot_obj.sleepSafeFor(1.0);
+      
+      
+      break;
 
-    }
-          
-  
-
-    try{
+    case handover_tool :
+      flag.data=true;
+      handover_pub.publish(flag);
+      robot_obj.executeCartesianTrajtoPose(robot_obj.getToolTarget());
+      ROS_WARN_STREAM("Go To Tool");
+      robot_obj.sleepSafeFor(1.0);
+      
+      
+      break;
+  }
+      
+      try{
       hand_listener.lookupTransform("/world", "/cam3_link/left_hand",  
                                ros::Time(0), transform_hand);
-      robot_obj.update_handover_status(transform_hand);
+      hand_listener.lookupTransform("/world", "/tool_grasping_point",  
+                               ros::Time(0), transform_tool);               
+
+      robot_obj.update_handover_status(transform_hand, transform_tool);
     }
     catch (tf::TransformException ex){
       //ROS_ERROR("%s",ex.what());
@@ -379,10 +426,7 @@ int main(int argc, char **argv)
     }
     robot_obj.updateStatus();
 
-    if (tool_flag){
-      robot_obj.executeCartesianTrajtoPose(tool_grasping_pos);
-      tool_flag=false;
-    }
+   
     
 
     

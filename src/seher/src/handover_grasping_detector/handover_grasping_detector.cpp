@@ -17,7 +17,8 @@
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
 #include <pcl_ros/transforms.h>
-
+#include <pcl/kdtree/kdtree.h>
+#include <pcl/segmentation/extract_clusters.h>
 
 tf::TransformListener* TCP_listener;  
 
@@ -59,10 +60,61 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
     cropFilter.setInputCloud(cloudPtr);
     cropFilter.filter(*cloud_filtered);
     
-    sensor_msgs::PointCloud2 output;
-    pcl_conversions::fromPCL(*cloud_filtered, output);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered_2 (new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::fromPCLPointCloud2(*cloud_filtered,*cloud_filtered_2);
+
+    pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ>);
+  tree->setInputCloud (cloud_filtered_2);
+
+  std::vector<pcl::PointIndices> cluster_indices;
+  pcl::EuclideanClusterExtraction<pcl::PointXYZ> ec;
+  ec.setClusterTolerance (0.025); // 2cm
+  ec.setMinClusterSize (15);
+  ec.setMaxClusterSize (2000);
+  ec.setSearchMethod (tree);
+  ec.setInputCloud (cloud_filtered_2);
+  ec.extract (cluster_indices);
+
+  std::vector<sensor_msgs::PointCloud2::Ptr> pc2_clusters;
+  std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr > clusters;
+
+  int j = 0;
+   
+  sensor_msgs::PointCloud2 output; 
+  ROS_INFO_STREAM("Number of clusters : " << cluster_indices.size());
+  if (!cluster_indices.empty()) {
+  for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin (); it != cluster_indices.end (); ++it)
+  {
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_cluster (new pcl::PointCloud<pcl::PointXYZ>);
+    for (std::vector<int>::const_iterator pit = it->indices.begin (); pit != it->indices.end (); ++pit)
+      cloud_cluster->points.push_back (cloud_filtered_2->points[*pit]); //*
+    cloud_cluster->width = cloud_cluster->points.size ();
+    cloud_cluster->height = 1;
+    cloud_cluster->is_dense = true;
+
+    //std::cout << "PointCloud representing the Cluster: " << cloud_cluster->points.size () << " data points." << std::endl;
+
+    clusters.push_back(cloud_cluster);
+    sensor_msgs::PointCloud2::Ptr tempROSMsg(new sensor_msgs::PointCloud2);
+    pcl::toROSMsg(*cloud_cluster, *tempROSMsg);
+    tempROSMsg->header.frame_id="world";
+    pc2_clusters.push_back(tempROSMsg);
+    output=*(pc2_clusters.at(0));
+  }
+  
+  }
+  else{
+      output.header.frame_id="world";
+      output.data.clear();
+      output.is_dense=true;
+  }
 
     pub.publish(output);
+
+    /*sensor_msgs::PointCloud2 output;
+    pcl_conversions::fromPCL(*cloud_filtered, output);
+
+    pub.publish(output);*/
     
 }
 

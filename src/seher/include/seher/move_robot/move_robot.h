@@ -23,7 +23,11 @@
 #include "std_msgs/Float32.h"
 
 
+enum status {nominal_task, handover_hand, handover_tool};
+
+
 class MoveRobot {
+
 
 
 public:
@@ -47,10 +51,12 @@ void updateStatus();
 float distanceComputing (geometry_msgs::Point point1, geometry_msgs::Point point2);
 void update_hand_position(tf::StampedTransform transform);
 bool is_in_the_cell(tf::StampedTransform transform);
-void update_handover_status(tf::StampedTransform hand_tf);
-bool getHandoverFlag();
+void update_handover_status(tf::StampedTransform hand_tf, tf::StampedTransform tool_tf);
+enum status getStatus();
 void computePoseToHand();
 geometry_msgs::Pose getHandTarget();
+void computePoseToTool(tf::StampedTransform tool_tf);
+geometry_msgs::Pose getToolTarget();
 
 private:
 
@@ -64,9 +70,11 @@ ros::Duration hand_timer_threshold; //time after whose tool handover phase is tr
 geometry_msgs::Point hand_position_current; //current hand position 
 geometry_msgs::Point hand_position_old; //hand position at time t-1. to compare if the hand is static or not
 geometry_msgs::Pose hand_target;
-
+geometry_msgs::Pose tool_target;
+status _status;
 float hand_tolerance;   //tolerance between 2 hand positions to know if it is static or not
-bool handover_flag; //to trigger the handover when hand is static for 2 sec
+
+ //status of the robot
 
 //workcell limits
 const float WORKCELL_XMAX=0.46;
@@ -75,6 +83,7 @@ const float WORKCELL_YMIN=-0.28;
 const float WORKCELL_YMAX=1.19;
 const float WORKCELL_ZMIN=0.0;
 const float WORKCELL_ZMAX=1.0;
+
 
 
 

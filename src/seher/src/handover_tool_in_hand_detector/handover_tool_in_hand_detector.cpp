@@ -23,6 +23,7 @@
 #include <pcl/kdtree/kdtree_flann.h>
 #include <vector>
 #include <pcl/common/centroid.h>
+#include <tf/transform_broadcaster.h>
 
 tf::TransformListener* hand_listener;  
 
@@ -35,7 +36,7 @@ const Eigen::Vector4f max_box =Eigen::Vector4f(0.2,0.2,0.2,1);
 
 
 ros::Publisher pub;
-ros::Publisher point_pub;
+
 
 void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 {
@@ -134,26 +135,16 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
           const pcl::PointCloud<pcl::PointXYZ> max_cloud_const=*max_cloud;
           Eigen::Matrix<double,4,1> centroid;
           pcl::compute3DCentroid(max_cloud_const, centroid);
-        
-          visualization_msgs::Marker points;
-          points.header.frame_id = "/world";
-          points.header.stamp  = ros::Time::now();
-          points.ns = "point";
-          points.action = visualization_msgs::Marker::ADD;
-          points.pose.orientation.w = 1.0;
-          points.id = 0;
-          points.type = visualization_msgs::Marker::POINTS;
-          points.scale.x = 0.02;
-          points.scale.y = 0.02;
-          points.color.r = 1.0f;
-          points.color.a = 1.0f;
-          geometry_msgs::Point p;
-          p.x = centroid(0,0);
-          p.y = centroid(1,0);
-          p.z = centroid(2,0);
 
-          points.points.push_back(p);
-          point_pub.publish(points);
+          static tf::TransformBroadcaster br;
+          tf::Transform transform;
+          tf::Quaternion tf_q;
+          tf::quaternionEigenToTF(q,tf_q);
+          transform.setOrigin(tf::Vector3(centroid(0,0), centroid(1,0), centroid(2,0)));
+          
+          transform.setRotation(tf_q);
+          br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "/world", "/tool_grasping_point"));
+          
         }
 
         pcl_conversions::fromPCL(*cloud_filtered, output);
@@ -191,7 +182,7 @@ int main (int argc, char** argv)
   pub4 = nh.advertise<sensor_msgs::PointCloud2> ("/cam4/depth/color/points_computed", 1);*/
 
   pub = nh.advertise<sensor_msgs::PointCloud2> ("/handover/hand_pointcloud", 1);
-  point_pub = nh.advertise<visualization_msgs::Marker>("/handover/tool_grasp_point", 1);
+  
   //listener.lookupTransform("/world", "/camL_link", ros::Time(0), transform);
   // Spin
   ros::spin ();

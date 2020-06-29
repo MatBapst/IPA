@@ -5,7 +5,7 @@
 #include <ros/ros.h>
 #include <std_srvs/Trigger.h>
 #include <ur_msgs/SetSpeedSliderFraction.h>
-
+#include <std_msgs/Bool.h>
 
 //threshold distance between robot and obstacle to stop the robot
 float dist_threshold_low=0.15; //20 cm
@@ -19,6 +19,7 @@ float adjusted_speed=max_robot_speed;
 
 float distance_a = (max_robot_speed-0.1)/(speed_distance-dist_threshold_low);
 float distance_b = max_robot_speed-distance_a*speed_distance;
+bool handover_flag=false;
 
 void distanceCallback (const std_msgs::Float32::ConstPtr& dst){
     distance=dst->data;
@@ -29,6 +30,17 @@ void distanceCallback (const std_msgs::Float32::ConstPtr& dst){
     if (distance>=dist_threshold_up) {
         near_obstacle=false;
     }
+}
+
+void handoverCallback (const std_msgs::Bool::ConstPtr& flag){
+  if (flag->data){
+    handover_flag=true;
+    
+  }
+  else {
+    handover_flag=false;
+  }
+  
 }
 
 void startRobot(){
@@ -64,6 +76,14 @@ void updateSpeed(){
 
 }
 
+void setSpeed(float wanted_speed){
+    ur_msgs::SetSpeedSliderFraction speed;
+    
+    speed.request.speed_slider_fraction = wanted_speed;
+    ros::service::call("/ur_hardware_interface/set_speed_slider",speed);
+
+}
+
 
 
 int main(int argc, char **argv)
@@ -77,18 +97,27 @@ int main(int argc, char **argv)
 
 
  ros::Subscriber distance_sub = nh.subscribe("/distance_calculation/minimal_distance",1, distanceCallback);
+ ros::Subscriber handover_sub=nh.subscribe("/handover/approach_flag",1, handoverCallback);
  
   while(ros::ok())
   {
-    updateSpeed();
+    if (handover_flag){
+      startRobot();
+      setSpeed(0.05);
+    } else {
+      updateSpeed();
+    }
+    
 
-    if (near_obstacle && status){
+    if (near_obstacle && status && !handover_flag){
         stopRobot();
         
     }
-    if (!near_obstacle && !status){
+    if (!near_obstacle && !status && !handover_flag){
         startRobot();
     }
+
+    
 
     
     ros::spinOnce();
