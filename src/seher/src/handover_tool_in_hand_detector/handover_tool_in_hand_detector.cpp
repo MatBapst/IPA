@@ -24,6 +24,7 @@
 #include <vector>
 #include <pcl/common/centroid.h>
 #include <tf/transform_broadcaster.h>
+#include <angles/angles.h>
 
 tf::TransformListener* hand_listener;  
 
@@ -139,13 +140,37 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
           Eigen::Matrix<double,4,1> centroid;
           pcl::compute3DCentroid(max_cloud_const, centroid);
 
+
+          const pcl::PointCloud<pcl::PointXYZ> cloud_filtered_3_const=*cloud_filtered_3;
+          Eigen::Matrix<double,4,1> hand_centroid;
+          pcl::compute3DCentroid(cloud_filtered_3_const, hand_centroid);
+          //get the angle to grasp the tool
+          //compute the tool vector
+          const Eigen::Vector3f tool_vector = Eigen::Vector3f(centroid(0,0)-transform_hand.getOrigin().x(), centroid(1,0)-transform_hand.getOrigin().y(), centroid(2,0)-transform_hand.getOrigin().z());
+          const Eigen::Vector3f x_vector = Eigen::Vector3f(1,0,0);
+          const Eigen::Vector3f y_vector = Eigen::Vector3f(0,1,0);
+          const Eigen::Vector3f z_vector = Eigen::Vector3f(0,0,1);
+          
+          //for roll
+          
+          double R_angle = std::acos((tool_vector-tool_vector.dot(x_vector)*x_vector).normalized().dot(y_vector));
+
+          //for pitch
+          
+          double P_angle = std::acos((tool_vector-tool_vector.dot(y_vector)*y_vector).normalized().dot(x_vector));
+
+          
+
+
+
+
           static tf::TransformBroadcaster br;
           tf::Transform transform;
-          tf::Quaternion tf_q;
-          tf::quaternionEigenToTF(q,tf_q);
+          //tf::Quaternion tf_q;
+          //tf::quaternionEigenToTF(q,tf_q);
           transform.setOrigin(tf::Vector3(centroid(0,0), centroid(1,0), centroid(2,0)));
           
-          transform.setRotation(tf_q);
+          transform.setRotation(tf::createQuaternionFromRPY(R_angle+angles::from_degrees(-180),-P_angle+angles::from_degrees(90),0.0));
           br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "/world", "/tool_grasping_point"));
           
         }

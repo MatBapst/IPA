@@ -20,6 +20,7 @@
 
 #include <pcl/kdtree/kdtree_flann.h>
 #include <pcl/segmentation/extract_clusters.h>
+#include <std_msgs/Bool.h>
 
 tf::TransformListener* TCP_listener;  
 
@@ -30,6 +31,7 @@ const int cluster_points_threshold=240;
 const float max_distance_threshold=0.05;
 
 ros::Publisher pub;
+ros::Publisher pub_grasp;
 
 
 float distanceComputing (tf::StampedTransform TCP1, tf::StampedTransform TCP2){
@@ -174,11 +176,13 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
       output.data.clear();
       output.is_dense=true;
   }*/
-
+  std_msgs::Bool flag; 
+  flag.data=false;
   if (cluster_flag && max_distance_flag && hand_distance_flag){
     on_tool_flag=true;
+    flag.data=true;
   }
-
+  pub_grasp.publish(flag);
   //ROS_INFO_STREAM("General Flag: " << on_tool_flag);
     //pub.publish(output);
 
@@ -212,6 +216,7 @@ int main (int argc, char** argv)
   pub4 = nh.advertise<sensor_msgs::PointCloud2> ("/cam4/depth/color/points_computed", 1);*/
 
   pub = nh.advertise<sensor_msgs::PointCloud2> ("/handover/TCP_pointcloud", 1);
+  pub_grasp = nh.advertise<std_msgs::Bool> ("/handover/grasp_flag", 1);
   //listener.lookupTransform("/world", "/camL_link", ros::Time(0), transform);
   // Spin
   ros::spin ();
