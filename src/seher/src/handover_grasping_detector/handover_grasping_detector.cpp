@@ -17,19 +17,60 @@
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
 #include <pcl_ros/transforms.h>
-#include <pcl/kdtree/kdtree.h>
+
+#include <pcl/kdtree/kdtree_flann.h>
 #include <pcl/segmentation/extract_clusters.h>
 
 tf::TransformListener* TCP_listener;  
 
-const Eigen::Vector4f min_box =Eigen::Vector4f(-0.15,-0.05,-0.2,1); //0.15 0.05 0.2
-const Eigen::Vector4f max_box =Eigen::Vector4f(0.05,0.05,0.2,1);
+const Eigen::Vector4f min_box =Eigen::Vector4f(-0.05,-0.03,-0.03,1); //0.15 0.05 0.2
+const Eigen::Vector4f max_box =Eigen::Vector4f(0.0,0.03,0.03,1);
+
+const int cluster_points_threshold=240;
+const float max_distance_threshold=0.05;
 
 ros::Publisher pub;
 
+
+float distanceComputing (tf::StampedTransform TCP1, tf::StampedTransform TCP2){
+    float distance,x,y,z,x2,y2,z2;
+    x=TCP1.getOrigin().x();
+    y=TCP1.getOrigin().y();
+    z=TCP1.getOrigin().z();
+    x2=TCP2.getOrigin().x();
+    y2=TCP2.getOrigin().y();
+    z2=TCP2.getOrigin().z();
+    distance= sqrt(pow(x2-x,2)+pow(y2-y,2)+pow(z2-z,2));
+    return distance;
+}
+
+float distanceComputing_points (pcl::PointXYZ point, tf::StampedTransform TCP){
+    float distance,x,y,z;
+    x=TCP.getOrigin().x();
+    y=TCP.getOrigin().y();
+    z=TCP.getOrigin().z();
+    distance= sqrt(pow(point.x-x,2)+pow(point.y-y,2)+pow(point.z-z,2));
+    return distance;
+}
+
 void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 {
+    //flags to determine if it is grasped or not
+    bool cluster_flag=false;
+    bool hand_distance_flag=false;
+    bool max_distance_flag=false;
+    bool on_tool_flag=false;
+
     tf::StampedTransform transform_TCP;
+    tf::StampedTransform transform_hand;
+    try{
+      TCP_listener->lookupTransform("/world", "/cam3_link/left_hand",  
+                               ros::Time(0), transform_hand);
+    }
+    catch (tf::TransformException ex){
+      //ROS_WARN_STREAM("no hand detected");
+      
+    }
     try{
       TCP_listener->lookupTransform("/world", "/egp50_pincer_link",  
                                ros::Time(0), transform_TCP);
@@ -37,6 +78,11 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
     catch (tf::TransformException ex){
       ROS_ERROR("%s",ex.what());
       ros::Duration(1.0).sleep();
+    }
+    float TCP_hand_distance=distanceComputing(transform_hand, transform_TCP);
+    //ROS_INFO_STREAM("Distance between hand and TCP: " << TCP_hand_distance);
+    if (TCP_hand_distance > 0.1 && TCP_hand_distance < 0.25){
+        hand_distance_flag=true;
     }
     Eigen::Vector3f t=Eigen::Vector3f(transform_TCP.getOrigin().x(),transform_TCP.getOrigin().y(),transform_TCP.getOrigin().z());
     Eigen::Quaterniond q;
@@ -52,7 +98,7 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 
     pcl::CropBox<pcl::PCLPointCloud2> cropFilter;
     
-    //cropFilter.setTransform(trans2);
+    
     cropFilter.setMin(min_box);
     cropFilter.setMax(max_box);
     cropFilter.setTranslation(t);
@@ -64,25 +110,45 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
     pcl::fromPCLPointCloud2(*cloud_filtered,*cloud_filtered_2);
 
     pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ>);
-  tree->setInputCloud (cloud_filtered_2);
+    tree->setInputCloud (cloud_filtered_2);
+  float max=0;
+  int nb_points=0;
+  for (int pit = 0; pit < cloud_filtered_2->size(); ++pit){
+    float dist =distanceComputing_points(cloud_filtered_2->at(pit), transform_TCP);
+    if (dist > max ){
+      max=dist;
+    }
+  }
 
+  if (max < max_distance_threshold){
+    max_distance_flag=true;
+  }
+
+  //ROS_INFO_STREAM("max distance in the cropped cloud: " << max);
   std::vector<pcl::PointIndices> cluster_indices;
   pcl::EuclideanClusterExtraction<pcl::PointXYZ> ec;
-  ec.setClusterTolerance (0.017); // 2cm
-  ec.setMinClusterSize (20);
+  ec.setClusterTolerance (0.004); // 4 mm
+  ec.setMinClusterSize (30);
   ec.setMaxClusterSize (2000);
   ec.setSearchMethod (tree);
   ec.setInputCloud (cloud_filtered_2);
   ec.extract (cluster_indices);
 
-  std::vector<sensor_msgs::PointCloud2::Ptr> pc2_clusters;
-  std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr > clusters;
+  
+
+  //std::vector<sensor_msgs::PointCloud2::Ptr> pc2_clusters;
+  //std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr > clusters;
 
   int j = 0;
    
   sensor_msgs::PointCloud2 output; 
-  ROS_INFO_STREAM("Number of clusters : " << cluster_indices.size());
-  if (!cluster_indices.empty()) {
+  //ROS_INFO_STREAM("Number of clusters : " << cluster_indices.size());
+  //ROS_INFO_STREAM("nb of points in cluster: " << cluster_indices[0].indices.size());
+  if (cluster_indices.size()==1 && cluster_indices[0].indices.size()>=cluster_points_threshold ){
+    
+    cluster_flag=true;
+  }
+  /*if (!cluster_indices.empty()) {
   for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin (); it != cluster_indices.end (); ++it)
   {
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_cluster (new pcl::PointCloud<pcl::PointXYZ>);
@@ -107,16 +173,23 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
       output.header.frame_id="world";
       output.data.clear();
       output.is_dense=true;
+  }*/
+
+  if (cluster_flag && max_distance_flag && hand_distance_flag){
+    on_tool_flag=true;
   }
 
-    pub.publish(output);
+  //ROS_INFO_STREAM("General Flag: " << on_tool_flag);
+    //pub.publish(output);
 
-    /*sensor_msgs::PointCloud2 output;
-    pcl_conversions::fromPCL(*cloud_filtered, output);
+    //sensor_msgs::PointCloud2 output2;
+    //pcl_conversions::fromPCL(*cloud_filtered, output);
 
-    pub.publish(output);*/
+    //pub.publish(output);
     
 }
+
+
 
 
 int main (int argc, char** argv)
@@ -130,7 +203,7 @@ int main (int argc, char** argv)
 
   // Create a ROS subscriber for the input point cloud
 
-  ros::Subscriber sub = nh.subscribe ("/cameras/depth_pointcloud_fusion", 1, cloud_cb); 
+  ros::Subscriber sub = nh.subscribe ("/cameras/raw_depth_pointcloud_fusion", 1, cloud_cb); 
   
 
   // Create a ROS publisher for the output point cloud

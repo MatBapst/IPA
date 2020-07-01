@@ -25,6 +25,8 @@
 
 
 ros::Publisher pub;
+ros::Publisher pub_raw;
+
 
 ros::Subscriber sub1;
 ros::Subscriber sub2;
@@ -45,6 +47,13 @@ sensor_msgs::PointCloud2 pcl_1;
 sensor_msgs::PointCloud2 pcl_2;
 sensor_msgs::PointCloud2 pcl_3;
 sensor_msgs::PointCloud2 pcl_4;
+
+sensor_msgs::PointCloud2 pcl_1_raw;
+sensor_msgs::PointCloud2 pcl_2_raw;
+sensor_msgs::PointCloud2 pcl_3_raw;
+sensor_msgs::PointCloud2 pcl_4_raw;
+
+
 
 
 
@@ -74,14 +83,16 @@ const Eigen::Vector3f r4=Eigen::Vector3f(-0.496f,0.767f,0.2055f);
 
 const Eigen::Vector3f t_final=Eigen::Vector3f(-0.4f,-0.28f,0.05f);
 
-const float leaf_size=0.015;
+const float leaf_size=0.02;
 
 
 void cloud_cb2 (const sensor_msgs::PointCloud2ConstPtr& input)
 {
   // Create a container for the data.
   sensor_msgs::PointCloud2 inter4;
-
+  sensor_msgs::PointCloud2 raw2;
+  sensor_msgs::PointCloud2 pcl_24_raw;
+  sensor_msgs::PointCloud2 raw_final;
   
   
  
@@ -116,19 +127,11 @@ void cloud_cb2 (const sensor_msgs::PointCloud2ConstPtr& input)
   sor.setLeafSize (leaf_size, leaf_size, leaf_size);
   sor.filter (*voxel_cloud);
 
-// Outlier Removal filter
+// Conversion to pcl::pointXYZ
 pcl::PointCloud<pcl::PointXYZ>::Ptr inter2 (new pcl::PointCloud<pcl::PointXYZ>);   //inter pointcloud used for conversions
 
   pcl::PointCloud<pcl::PointXYZ>::Ptr inter(new pcl::PointCloud<pcl::PointXYZ>);
   pcl::fromPCLPointCloud2(*voxel_cloud,*inter);
-//pcl_conversions::fromPCL(*voxel_cloud, inter);
-
-/*pcl::StatisticalOutlierRemoval<pcl::PointXYZ> filter;
-filter.setInputCloud(inter);
-filter.setMeanK(50);
-filter.setStddevMulThresh (1.0);
-filter.filter(*inter2);*/
-
 
 //conversions to sensor_msgs
 
@@ -136,20 +139,25 @@ filter.filter(*inter2);*/
 pcl::PCLPointCloud2::Ptr inter3 (new pcl::PCLPointCloud2 ());
 pcl::toPCLPointCloud2(*inter, *inter3);
 pcl_conversions::fromPCL(*inter3, inter4);
-
+pcl_conversions::fromPCL(*cloud_filtered, raw2);
 //transforming to world frame
 
 pcl_ros::transformPointCloud("world", inter4, pcl_2, *listener2);
+pcl_ros::transformPointCloud("world", raw2, pcl_2_raw, *listener2);
 
 
 
-//pcl::toPCLPointCloud2(*inter3, pcl_L);
 
 //concatenate pointcloud
-//pcl::concatenatePointCloud(pcl_2,pcl_3,pcl_pre_fusion);
-//pcl::concatenatePointCloud(pcl_pre_fusion,pcl_4,pcl_pre_fusion2);
+
 pcl::concatenatePointCloud(pcl_2,pcl_4,pcl_pre_fusion2);
 pcl::concatenatePointCloud(pcl_pre_fusion2,pcl_1,pcl_fusion);
+
+//for the non voxelized
+pcl::concatenatePointCloud(pcl_2_raw,pcl_4_raw,pcl_24_raw);
+pcl::concatenatePointCloud(pcl_24_raw,pcl_1_raw,raw_final);
+
+pub_raw.publish(raw_final);
 
 pcl::PCLPointCloud2* cloud_final = new pcl::PCLPointCloud2;
  pcl::PCLPointCloud2ConstPtr cloud_finalPtr(cloud_final);
@@ -180,6 +188,7 @@ pcl::PCLPointCloud2* cloud_final = new pcl::PCLPointCloud2;
 void cloud_cb3 (const sensor_msgs::PointCloud2ConstPtr& input)
 {
   sensor_msgs::PointCloud2 inter4;
+  sensor_msgs::PointCloud2 raw3;
   
  pcl::PCLPointCloud2* cloud = new pcl::PCLPointCloud2;
  pcl::PCLPointCloud2ConstPtr cloudPtr(cloud);
@@ -231,9 +240,10 @@ filter.filter(*inter2);*/
 pcl::PCLPointCloud2::Ptr inter3 (new pcl::PCLPointCloud2 ());
 pcl::toPCLPointCloud2(*inter, *inter3);
 pcl_conversions::fromPCL(*inter3, inter4);
+pcl_conversions::fromPCL(*cloud_filtered, raw3);
 //transforming to world frame
 listener3->waitForTransform("world", inter4.header.frame_id, ros::Time(0), ros::Duration(5.0));
-pcl_ros::transformPointCloud("world", inter4, pcl_3, *listener3);
+pcl_ros::transformPointCloud("world", raw3, pcl_3_raw, *listener3);
 
 //pcl::toPCLPointCloud2(*inter3, pcl_R);
 
@@ -245,6 +255,7 @@ pcl_ros::transformPointCloud("world", inter4, pcl_3, *listener3);
 void cloud_cb4 (const sensor_msgs::PointCloud2ConstPtr& input)
 {
   sensor_msgs::PointCloud2 inter4;
+  sensor_msgs::PointCloud2 raw4;
   
  pcl::PCLPointCloud2* cloud = new pcl::PCLPointCloud2;
  pcl::PCLPointCloud2ConstPtr cloudPtr(cloud);
@@ -296,10 +307,11 @@ filter.filter(*inter2);*/
 pcl::PCLPointCloud2::Ptr inter3 (new pcl::PCLPointCloud2 ());
 pcl::toPCLPointCloud2(*inter, *inter3);
 pcl_conversions::fromPCL(*inter3, inter4);
+pcl_conversions::fromPCL(*cloud_filtered, raw4);
 //transforming to world frame
 listener4->waitForTransform("world", inter4.header.frame_id, ros::Time(0), ros::Duration(5.0));
 pcl_ros::transformPointCloud("world", inter4, pcl_4, *listener4);
-
+pcl_ros::transformPointCloud("world", raw4, pcl_4_raw, *listener4);
 //pcl::toPCLPointCloud2(*inter3, pcl_R);
 
   // Publish the data.
@@ -309,6 +321,7 @@ pcl_ros::transformPointCloud("world", inter4, pcl_4, *listener4);
 void cloud_cb1 (const sensor_msgs::PointCloud2ConstPtr& input)
 {
   sensor_msgs::PointCloud2 inter4;
+  sensor_msgs::PointCloud2 raw1;
   
  pcl::PCLPointCloud2* cloud = new pcl::PCLPointCloud2;
  pcl::PCLPointCloud2ConstPtr cloudPtr(cloud);
@@ -362,9 +375,11 @@ filter.filter(*inter2);*/
 pcl::PCLPointCloud2::Ptr inter3 (new pcl::PCLPointCloud2 ());
 pcl::toPCLPointCloud2(*inter, *inter3);
 pcl_conversions::fromPCL(*inter3, inter4);
+pcl_conversions::fromPCL(*cloud_filtered, raw1);
 //transforming to world frame
 listener1->waitForTransform("world", inter4.header.frame_id, ros::Time(0), ros::Duration(5.0));
 pcl_ros::transformPointCloud("world", inter4, pcl_1, *listener1);
+pcl_ros::transformPointCloud("world", raw1, pcl_1_raw, *listener1);
 
 //pcl::toPCLPointCloud2(*inter3, pcl_R);
 
@@ -400,6 +415,7 @@ listener4=&lstnr4;
   pub4 = nh.advertise<sensor_msgs::PointCloud2> ("/cam4/depth/color/points_computed", 1);*/
 
   pub = nh.advertise<sensor_msgs::PointCloud2> ("/cameras/depth_pointcloud_fusion", 1);
+  pub_raw = nh.advertise<sensor_msgs::PointCloud2> ("/cameras/raw_depth_pointcloud_fusion", 1);
   //listener.lookupTransform("/world", "/camL_link", ros::Time(0), transform);
   // Spin
   ros::spin ();

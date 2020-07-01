@@ -72,7 +72,7 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
         cropFilter.filter(*cloud_filtered);
 
         
-        //crop the rest of the arm
+        
         hand_listener->lookupTransform("/world", "/cam3_link/left_elbow",  
                                ros::Time(0), transform_elbow);
         Eigen::Vector3f t_elb=Eigen::Vector3f(transform_elbow.getOrigin().x(),transform_elbow.getOrigin().y(),transform_elbow.getOrigin().z());
@@ -86,13 +86,16 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
         pcl::PointCloud<pcl::PointXYZ> cloud_filtered_pcl;
         pcl::fromPCLPointCloud2(*cloud_filtered,*cloud_filtered_2);
 
-
-        pcl::StatisticalOutlierRemoval<pcl::PointXYZ> filter;
+        if (!cloud_filtered_2->empty()){
+          pcl::StatisticalOutlierRemoval<pcl::PointXYZ> filter;
         filter.setInputCloud(cloud_filtered_2);
         filter.setMeanK(30);
         filter.setStddevMulThresh (1); 
         filter.filter(*cloud_filtered_3);
-
+        } else {
+          *cloud_filtered_3=*cloud_filtered_2;
+        }
+        
         
         const pcl::PointCloud<pcl::PointXYZ> cloud_filtered_pcl_const=*cloud_filtered_3;
 
@@ -173,7 +176,7 @@ int main (int argc, char** argv)
 
   // Create a ROS subscriber for the input point cloud
 
-  ros::Subscriber sub = nh.subscribe ("/cameras/depth_pointcloud_fusion", 1, cloud_cb); 
+  ros::Subscriber sub = nh.subscribe ("/cameras/raw_depth_pointcloud_fusion", 1, cloud_cb); 
   
 
   // Create a ROS publisher for the output point cloud

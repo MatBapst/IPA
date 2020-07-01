@@ -83,7 +83,7 @@ void MoveRobot::sleepSafeFor(double duration)
 void MoveRobot::executeCartesianTrajtoPose(geometry_msgs::Pose target)
 {
   int trial=0;
-  while(trial<20)
+  while(trial<10)
   {
     if(moveGroupExecutePlan(getCartesianPathPlanToPose(target)))
     {
@@ -95,9 +95,7 @@ void MoveRobot::executeCartesianTrajtoPose(geometry_msgs::Pose target)
   }
   ROS_ERROR_STREAM("Maxx execution attempts reached, error");
   if (_status==nominal_task){
-    ROS_ERROR_STREAM("Aborting program");
-    ros::shutdown();
-    exit(-1);
+    sleepSafeFor(1.0);
   }
   
 }
