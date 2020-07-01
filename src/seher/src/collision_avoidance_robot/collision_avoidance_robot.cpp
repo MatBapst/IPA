@@ -6,6 +6,7 @@
 #include <std_srvs/Trigger.h>
 #include <ur_msgs/SetSpeedSliderFraction.h>
 #include <std_msgs/Bool.h>
+#include "ur_msgs/SetIO.h"
 
 //threshold distance between robot and obstacle to stop the robot
 float dist_threshold_low=0.15; //20 cm
@@ -20,6 +21,8 @@ float adjusted_speed=max_robot_speed;
 float distance_a = (max_robot_speed-0.1)/(speed_distance-dist_threshold_low);
 float distance_b = max_robot_speed-distance_a*speed_distance;
 bool handover_flag=false;
+bool grasp_flag=false;
+const int IO_SERVICE_FUN_LEVEL_ = 1;
 
 void distanceCallback (const std_msgs::Float32::ConstPtr& dst){
     distance=dst->data;
@@ -41,6 +44,14 @@ void handoverCallback (const std_msgs::Bool::ConstPtr& flag){
     handover_flag=false;
   }
   
+}
+
+void graspCallback (const std_msgs::Bool::ConstPtr& flag) {
+  if (flag->data){
+    grasp_flag=true;
+  } else {
+    grasp_flag=false;
+  }
 }
 
 void startRobot(){
@@ -84,6 +95,68 @@ void setSpeed(float wanted_speed){
 
 }
 
+bool gripperOpen(ros::NodeHandle nh)
+{
+  ur_msgs::SetIO io_msg;
+  io_msg.request.fun = static_cast<int8_t>(IO_SERVICE_FUN_LEVEL_);
+  io_msg.request.pin = static_cast<int8_t>(1);  //Pin 1 is open
+  io_msg.request.state = 1;
+  ros::ServiceClient client = nh.serviceClient<ur_msgs::SetIO>("/ur_hardware_interface/set_io");
+
+  if(client.call(io_msg))
+  {
+    ROS_INFO_STREAM("Open gripper initialise : " << ((io_msg.response.success==0)?"Failed":"Succeeded") );
+    sleepSafeFor(0.5);
+    io_msg.request.state = 0;
+    if(client.call(io_msg))
+    {
+      ROS_INFO_STREAM("Open gripper conclude : " << ((io_msg.response.success==0)?"Failed":"Succeeded") );
+      return true;
+    }
+    else
+    {
+      ROS_INFO_STREAM("Open gripper conclude : Failed");
+      return false;
+    }
+  }
+  else
+  {
+    ROS_INFO_STREAM("Open gripper initialise : Failed");
+    return false;
+  }
+}
+
+bool gripperClose(ros::NodeHandle nh)
+{
+  ur_msgs::SetIO io_msg;
+  io_msg.request.fun = static_cast<int8_t>(IO_SERVICE_FUN_LEVEL_);
+  io_msg.request.pin = static_cast<int8_t>(0);    //Pin 0 is close
+  io_msg.request.state = 1;
+  ros::ServiceClient client = nh.serviceClient<ur_msgs::SetIO>("/ur_hardware_interface/set_io");
+
+  if(client.call(io_msg))
+  {
+    ROS_INFO_STREAM("Close gripper initialise :  " << ((io_msg.response.success==0)?"Failed":"Succeeded") );
+    sleepSafeFor(0.5);
+    io_msg.request.state = 0;
+    if(client.call(io_msg))
+    {
+      ROS_INFO_STREAM("Close gripper conclude :  " << ((io_msg.response.success==0)?"Failed":"Succeeded") );
+      return true;
+    }
+    else
+    {
+      ROS_INFO_STREAM("Close gripper conclude : Failed");
+      return false;
+    }
+  }
+  else
+  {
+    ROS_INFO_STREAM("Close gripper initialise : Failed");
+    return false;
+  }
+}
+
 
 
 int main(int argc, char **argv)
@@ -98,6 +171,7 @@ int main(int argc, char **argv)
 
  ros::Subscriber distance_sub = nh.subscribe("/distance_calculation/minimal_distance",1, distanceCallback);
  ros::Subscriber handover_sub=nh.subscribe("/handover/approach_flag",1, handoverCallback);
+ ros::Subscriber grasp_sub=nh.subscribe("/handover/grasp_flag",1, graspCallback);
  
   while(ros::ok())
   {
@@ -117,6 +191,11 @@ int main(int argc, char **argv)
     }
     if (!near_obstacle && !status && !handover_flag){
         startRobot();
+    }
+
+    if (handover_flag && grasp_flag){
+      stopRobot();
+      gripperClose(nh);
     }
 
     

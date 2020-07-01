@@ -72,6 +72,8 @@
 
 <node name="tf_cam4_link" pkg="tf" type="static_transform_publisher" output="screen" args="0.428 -0.235 1.067 2.0944 0.7854 -1.5708 base_link cam4_link 50" />
 
+
+
 <!-- launch the robot -->
 
 <include file="$(find ur_manipulation)/launch/ur5e_bringup.launch" />

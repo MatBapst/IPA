@@ -331,7 +331,8 @@ void MoveRobot::computePoseToTool(tf::StampedTransform tool_tf){
   pose.position.y=tool_tf.getOrigin().y();
   pose.position.z=tool_tf.getOrigin().z();
   geometry_msgs::Quaternion quat_msg;
-  tf::quaternionTFToMsg(tf::createQuaternionFromRPY(angles::from_degrees(-90),angles::from_degrees(0),angles::from_degrees(0)),quat_msg);
+  tf::quaternionTFToMsg(tool_tf.getRotation(),quat_msg);
+  
   pose.orientation=quat_msg;
   tool_target=pose;
 }

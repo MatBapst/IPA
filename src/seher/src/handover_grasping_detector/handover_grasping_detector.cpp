@@ -74,7 +74,7 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
       
     }
     try{
-      TCP_listener->lookupTransform("/world", "/egp50_pincer_link",  
+      TCP_listener->lookupTransform("/world", "/egp_50_tip",  
                                ros::Time(0), transform_TCP);
     }
     catch (tf::TransformException ex){
@@ -183,7 +183,7 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
     flag.data=true;
   }
   pub_grasp.publish(flag);
-  //ROS_INFO_STREAM("General Flag: " << on_tool_flag);
+  ROS_INFO_STREAM("General Flag: " << on_tool_flag);
     //pub.publish(output);
 
     //sensor_msgs::PointCloud2 output2;
