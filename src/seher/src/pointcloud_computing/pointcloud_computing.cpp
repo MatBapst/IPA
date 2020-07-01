@@ -21,7 +21,7 @@
 
 //ros::Publisher pub1;
 //ros::Publisher pub2;
-//ros::Publisher pub4;
+//ros::Publisher pub3;
 
 
 ros::Publisher pub;
@@ -74,8 +74,8 @@ const Eigen::Vector3f r2=Eigen::Vector3f(-0.496f,0.767f,0.2055f);
 const Eigen::Vector3f t1=Eigen::Vector3f(-0.687f,0.0f,0.625f); //OK
 const Eigen::Vector3f r1=Eigen::Vector3f(0.49f,0.767f,-0.2f);
 
-const Eigen::Vector3f t3=Eigen::Vector3f(-0.025f,-0.05f,0.025f); 
-const Eigen::Vector3f r3=Eigen::Vector3f(0.95f,0.2f,1.249f);
+const Eigen::Vector3f t3=Eigen::Vector3f(0.95f,0.5f,0.95f); 
+const Eigen::Vector3f r3=Eigen::Vector3f(3.14f,1.57f,0.0f);
 
 const Eigen::Vector3f t4=Eigen::Vector3f(-0.462f,-0.75f,1.05f);  //OK
 const Eigen::Vector3f r4=Eigen::Vector3f(-0.496f,0.767f,0.2055f);
@@ -93,7 +93,7 @@ void cloud_cb2 (const sensor_msgs::PointCloud2ConstPtr& input)
   sensor_msgs::PointCloud2 raw2;
   sensor_msgs::PointCloud2 pcl_24_raw;
   sensor_msgs::PointCloud2 raw_final;
-  
+  sensor_msgs::PointCloud2 pcl_241_raw;
   
  
   
@@ -150,12 +150,14 @@ pcl_ros::transformPointCloud("world", raw2, pcl_2_raw, *listener2);
 
 //concatenate pointcloud
 
-pcl::concatenatePointCloud(pcl_2,pcl_4,pcl_pre_fusion2);
-pcl::concatenatePointCloud(pcl_pre_fusion2,pcl_1,pcl_fusion);
+pcl::concatenatePointCloud(pcl_2,pcl_4,pcl_pre_fusion);
+pcl::concatenatePointCloud(pcl_pre_fusion,pcl_1,pcl_pre_fusion2);
+pcl::concatenatePointCloud(pcl_pre_fusion2,pcl_3,pcl_fusion);
 
 //for the non voxelized
 pcl::concatenatePointCloud(pcl_2_raw,pcl_4_raw,pcl_24_raw);
-pcl::concatenatePointCloud(pcl_24_raw,pcl_1_raw,raw_final);
+pcl::concatenatePointCloud(pcl_24_raw,pcl_1_raw,pcl_241_raw);
+pcl::concatenatePointCloud(pcl_241_raw,pcl_3_raw,raw_final);
 
 pub_raw.publish(raw_final);
 
@@ -208,8 +210,10 @@ void cloud_cb3 (const sensor_msgs::PointCloud2ConstPtr& input)
   cropFilter.setInputCloud(cloudPtr);
   cropFilter.filter(*cloud_filtered);
   
-  
+  // sensor_msgs::PointCloud2 test3;
+  // pcl_conversions::fromPCL(*cloud_filtered, test3);
 
+  // pub3.publish(test3);
   
   // down sampling with voxelization
 
@@ -243,6 +247,7 @@ pcl_conversions::fromPCL(*inter3, inter4);
 pcl_conversions::fromPCL(*cloud_filtered, raw3);
 //transforming to world frame
 listener3->waitForTransform("world", inter4.header.frame_id, ros::Time(0), ros::Duration(5.0));
+pcl_ros::transformPointCloud("world", inter4, pcl_3, *listener3);
 pcl_ros::transformPointCloud("world", raw3, pcl_3_raw, *listener3);
 
 //pcl::toPCLPointCloud2(*inter3, pcl_R);
@@ -406,13 +411,13 @@ listener4=&lstnr4;
 
   sub1 = nh.subscribe ("/cam1/depth/color/points", 1, cloud_cb1); 
   sub2 = nh.subscribe ("/cam2/depth/color/points", 1, cloud_cb2);
-  //sub3= nh.subscribe ("/cam3/depth/color/points", 1, cloud_cb3);
+  sub3= nh.subscribe ("/cam3/depth/color/points", 1, cloud_cb3);
   sub4=nh.subscribe ("/cam4/depth/color/points", 1, cloud_cb4);
 
   // Create a ROS publisher for the output point cloud
   /*pub1 = nh.advertise<sensor_msgs::PointCloud2> ("/cam1/depth/color/points_computed", 1);
   pub2 = nh.advertise<sensor_msgs::PointCloud2> ("/cam2/depth/color/points_computed", 1);
-  pub4 = nh.advertise<sensor_msgs::PointCloud2> ("/cam4/depth/color/points_computed", 1);*/
+  pub3 = nh.advertise<sensor_msgs::PointCloud2> ("/cam3/depth/color/points_computed", 1);*/
 
   pub = nh.advertise<sensor_msgs::PointCloud2> ("/cameras/depth_pointcloud_fusion", 1);
   pub_raw = nh.advertise<sensor_msgs::PointCloud2> ("/cameras/raw_depth_pointcloud_fusion", 1);
