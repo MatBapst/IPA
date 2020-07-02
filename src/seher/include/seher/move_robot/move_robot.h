@@ -44,7 +44,7 @@ bool comparePoses(geometry_msgs::Pose pose1, geometry_msgs::Pose pose2, double d
 void sleepSafeFor(double duration);
 void executeCartesianTrajtoPose(geometry_msgs::Pose target);
 bool moveToTarget(geometry_msgs::Pose target);
-moveit::planning_interface::MoveGroupInterface::Plan getCartesianPathPlanToPose(geometry_msgs::Pose target_pose, double eef_step=0.01, double jump_threshold = 0.0);
+moveit::planning_interface::MoveGroupInterface::Plan getCartesianPathPlanToPose(geometry_msgs::Pose target_pose, double eef_step=0.01, double jump_threshold = 0.0); //0.01
 bool moveGroupExecutePlan(moveit::planning_interface::MoveGroupInterface::Plan my_plan);
 void adjustTrajectoryToFixTimeSequencing(moveit_msgs::RobotTrajectory &trajectory);
 void updateStatus();
@@ -57,6 +57,9 @@ void computePoseToHand();
 geometry_msgs::Pose getHandTarget();
 void computePoseToTool(tf::StampedTransform tool_tf);
 geometry_msgs::Pose getToolTarget();
+bool gripperClose();
+bool gripperOpen();
+
 
 private:
 
@@ -73,6 +76,7 @@ geometry_msgs::Pose hand_target;
 geometry_msgs::Pose tool_target;
 status _status;
 float hand_tolerance;   //tolerance between 2 hand positions to know if it is static or not
+ros::NodeHandle n;
 
  //status of the robot
 

@@ -25,13 +25,16 @@
 tf::TransformListener* TCP_listener;  
 
 const Eigen::Vector4f min_box =Eigen::Vector4f(-0.05,-0.03,-0.03,1); //0.15 0.05 0.2
-const Eigen::Vector4f max_box =Eigen::Vector4f(0.0,0.03,0.03,1);
+const Eigen::Vector4f max_box =Eigen::Vector4f(0.01,0.03,0.03,1);
 
-const int cluster_points_threshold=240;
+const int cluster_points_threshold=250;
 const float max_distance_threshold=0.05;
+const ros::Duration grasp_timer_threshold=ros::Duration(2.0);
 
 ros::Publisher pub;
 ros::Publisher pub_grasp;
+
+bool approach_flag=false;
 
 
 float distanceComputing (tf::StampedTransform TCP1, tf::StampedTransform TCP2){
@@ -55,8 +58,20 @@ float distanceComputing_points (pcl::PointXYZ point, tf::StampedTransform TCP){
     return distance;
 }
 
+void handoverCallback (const std_msgs::Bool::ConstPtr& flag){
+  if (flag->data){
+    approach_flag=true;
+    
+  }
+  else {
+    approach_flag=false;
+  }
+  
+}
+
 void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 {
+  if (approach_flag) {
     //flags to determine if it is grasped or not
     bool cluster_flag=false;
     bool hand_distance_flag=false;
@@ -176,20 +191,28 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
       output.data.clear();
       output.is_dense=true;
   }*/
+  ros::Time grasp_timer;
   std_msgs::Bool flag; 
   flag.data=false;
   if (cluster_flag && max_distance_flag && hand_distance_flag){
     on_tool_flag=true;
+    
+  }
+  if (!on_tool_flag){
+    grasp_timer=ros::Time::now();
+  }
+  if (ros::Time::now()-grasp_timer>grasp_timer_threshold) {
     flag.data=true;
   }
   pub_grasp.publish(flag);
-  ROS_INFO_STREAM("General Flag: " << on_tool_flag);
+  //ROS_INFO_STREAM("General Flag: " << on_tool_flag);
     //pub.publish(output);
 
     //sensor_msgs::PointCloud2 output2;
     //pcl_conversions::fromPCL(*cloud_filtered, output);
 
     //pub.publish(output);
+  }
     
 }
 
@@ -209,13 +232,13 @@ int main (int argc, char** argv)
 
   ros::Subscriber sub = nh.subscribe ("/cameras/raw_depth_pointcloud_fusion", 1, cloud_cb); 
   
-
+  ros::Subscriber handover_sub=nh.subscribe("/handover/approach_flag",1, handoverCallback);
   // Create a ROS publisher for the output point cloud
   /*pub1 = nh.advertise<sensor_msgs::PointCloud2> ("/cam1/depth/color/points_computed", 1);
   pub2 = nh.advertise<sensor_msgs::PointCloud2> ("/cam2/depth/color/points_computed", 1);
   pub4 = nh.advertise<sensor_msgs::PointCloud2> ("/cam4/depth/color/points_computed", 1);*/
 
-  pub = nh.advertise<sensor_msgs::PointCloud2> ("/handover/TCP_pointcloud", 1);
+  //pub = nh.advertise<sensor_msgs::PointCloud2> ("/handover/TCP_pointcloud", 1);
   pub_grasp = nh.advertise<std_msgs::Bool> ("/handover/grasp_flag", 1);
   //listener.lookupTransform("/world", "/camL_link", ros::Time(0), transform);
   // Spin

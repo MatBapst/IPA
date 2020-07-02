@@ -15,6 +15,20 @@
 
 ros::Publisher handover_pub;
 
+bool grasp_flag=false;
+
+
+void graspCallback (const std_msgs::Bool::ConstPtr& flag){
+  if (flag->data){
+    grasp_flag=true;
+    
+  }
+  else {
+    grasp_flag=false;
+  }
+  
+} 
+
 //constructor
 MoveRobot::MoveRobot()
 {
@@ -46,7 +60,7 @@ void MoveRobot::initialiseMoveit(ros::NodeHandle nh)
   visual_tools->publishText(text_pose, "move Robot for seher", rvt::WHITE, rvt::XLARGE);
   visual_tools->trigger();
   //planning_scene_diff_publisher = nh.advertise<moveit_msgs::PlanningScene>("planning_scene", 1);
-
+  n=nh;
 }
 
 bool MoveRobot::comparePoses(geometry_msgs::Pose pose1, geometry_msgs::Pose pose2, double delta_posistion, double delta_orientation)
@@ -94,9 +108,9 @@ void MoveRobot::executeCartesianTrajtoPose(geometry_msgs::Pose target)
     trial++;
   }
   ROS_ERROR_STREAM("Maxx execution attempts reached, error");
-  if (_status==nominal_task){
-    sleepSafeFor(1.0);
-  }
+  
+  sleepSafeFor(1.0);
+  
   
 }
 
@@ -106,7 +120,7 @@ bool MoveRobot::moveGroupExecutePlan(moveit::planning_interface::MoveGroupInterf
   
   move_group->setStartStateToCurrentState();
   
-  return move_group->execute(my_plan)==moveit::planning_interface::MoveItErrorCode::SUCCESS;;
+  return move_group->execute(my_plan)==moveit::planning_interface::MoveItErrorCode::SUCCESS;
 }
 
 bool MoveRobot::moveToTarget(geometry_msgs::Pose target)
@@ -252,15 +266,80 @@ void MoveRobot::updateStatus(){
     
     
     if( comparePoses(current_pose, tool_target, 0.005)) {
-          _status=nominal_task;
+          //_status=nominal_task;
           ROS_WARN_STREAM("On tool position");
           sleepSafeFor(3.0);
+          if (grasp_flag){
+            gripperClose();
+          }
             
           
           
         } 
   }
 
+}
+
+bool MoveRobot::gripperOpen()
+{
+  ur_msgs::SetIO io_msg;
+  io_msg.request.fun = static_cast<int8_t>(IO_SERVICE_FUN_LEVEL_);
+  io_msg.request.pin = static_cast<int8_t>(1);  //Pin 1 is open
+  io_msg.request.state = 1;
+  ros::ServiceClient client = n.serviceClient<ur_msgs::SetIO>("/ur_hardware_interface/set_io");
+
+  if(client.call(io_msg))
+  {
+    ROS_INFO_STREAM("Open gripper initialise : " << ((io_msg.response.success==0)?"Failed":"Succeeded") );
+    sleepSafeFor(0.5);
+    io_msg.request.state = 0;
+    if(client.call(io_msg))
+    {
+      ROS_INFO_STREAM("Open gripper conclude : " << ((io_msg.response.success==0)?"Failed":"Succeeded") );
+      return true;
+    }
+    else
+    {
+      ROS_INFO_STREAM("Open gripper conclude : Failed");
+      return false;
+    }
+  }
+  else
+  {
+    ROS_INFO_STREAM("Open gripper initialise : Failed");
+    return false;
+  }
+}
+
+bool MoveRobot::gripperClose()
+{
+  ur_msgs::SetIO io_msg;
+  io_msg.request.fun = static_cast<int8_t>(IO_SERVICE_FUN_LEVEL_);
+  io_msg.request.pin = static_cast<int8_t>(0);    //Pin 0 is close
+  io_msg.request.state = 1;
+  ros::ServiceClient client = n.serviceClient<ur_msgs::SetIO>("/ur_hardware_interface/set_io");
+
+  if(client.call(io_msg))
+  {
+    ROS_INFO_STREAM("Close gripper initialise :  " << ((io_msg.response.success==0)?"Failed":"Succeeded") );
+    sleepSafeFor(0.5);
+    io_msg.request.state = 0;
+    if(client.call(io_msg))
+    {
+      ROS_INFO_STREAM("Close gripper conclude :  " << ((io_msg.response.success==0)?"Failed":"Succeeded") );
+      return true;
+    }
+    else
+    {
+      ROS_INFO_STREAM("Close gripper conclude : Failed");
+      return false;
+    }
+  }
+  else
+  {
+    ROS_INFO_STREAM("Close gripper initialise : Failed");
+    return false;
+  }
 }
 
 
@@ -315,6 +394,7 @@ enum status MoveRobot::getStatus(){
 }
 
 
+
 void MoveRobot::computePoseToHand(){
   geometry_msgs::Pose pose;
   pose.position=hand_position_current;
@@ -359,7 +439,7 @@ int main(int argc, char **argv)
   spinner.start();
 
   handover_pub =nh.advertise<std_msgs::Bool>("/handover/approach_flag",1);
-
+  ros::Subscriber grasp_sub=nh.subscribe("/handover/grasp_flag",1, graspCallback);
   MoveRobot robot_obj;
   robot_obj.initialiseMoveit(nh);
   

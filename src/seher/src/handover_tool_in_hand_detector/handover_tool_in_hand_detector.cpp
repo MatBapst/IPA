@@ -184,7 +184,7 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
           
         }
 
-        pcl_conversions::fromPCL(*cloud_filtered, output);
+        //pcl_conversions::fromPCL(*cloud_filtered, output);
 
     }
     catch (tf::TransformException ex){
@@ -194,7 +194,7 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
     }
     
     
-    pub.publish(output);
+    //pub.publish(output);
     
 }
 
@@ -218,7 +218,7 @@ int main (int argc, char** argv)
   pub2 = nh.advertise<sensor_msgs::PointCloud2> ("/cam2/depth/color/points_computed", 1);
   pub4 = nh.advertise<sensor_msgs::PointCloud2> ("/cam4/depth/color/points_computed", 1);*/
 
-  pub = nh.advertise<sensor_msgs::PointCloud2> ("/handover/hand_pointcloud", 1);
+  //pub = nh.advertise<sensor_msgs::PointCloud2> ("/handover/hand_pointcloud", 1);
   
   //listener.lookupTransform("/world", "/camL_link", ros::Time(0), transform);
   // Spin
