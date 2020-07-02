@@ -115,11 +115,11 @@
 
 <!-- handover tool in hand detector -->
 
-<!-- node name="handover_tool_in_hand_detector" pkg="seher" type="handover_tool_in_hand_detector" /-->
+<node name="handover_tool_in_hand_detector" pkg="seher" type="handover_tool_in_hand_detector" />
 
 <!-- handover grasping detector -->
 
-<!-- node name="handover_grasping_detector" pkg="seher" type="handover_grasping_detector" /-->
+<node name="handover_grasping_detector" pkg="seher" type="handover_grasping_detector" />
 
 </launch>
 

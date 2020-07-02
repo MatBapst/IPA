@@ -467,6 +467,7 @@ int main(int argc, char **argv)
       handover_pub.publish(flag);
       switcher = !switcher;
       robot_obj.executeCartesianTrajtoPose((switcher)?target_pose1:target_pose2);
+      robot_obj.sleepSafeFor(2.0);
       break;
 
     case handover_hand :
