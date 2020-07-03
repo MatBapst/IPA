@@ -23,7 +23,7 @@
 #include "std_msgs/Float32.h"
 
 
-enum status {nominal_task, handover_hand, handover_tool};
+enum status {nominal_task, handover_hand_pick, handover_tool_pick, handover_hand_place, handover_tool_place, place_tool, pick_tool};
 
 
 class MoveRobot {
@@ -59,6 +59,8 @@ void computePoseToTool(tf::StampedTransform tool_tf);
 geometry_msgs::Pose getToolTarget();
 bool gripperClose();
 bool gripperOpen();
+void placeTool();
+void pickTool();
 
 
 private:
@@ -74,9 +76,11 @@ geometry_msgs::Point hand_position_current; //current hand position
 geometry_msgs::Point hand_position_old; //hand position at time t-1. to compare if the hand is static or not
 geometry_msgs::Pose hand_target;
 geometry_msgs::Pose tool_target;
+geometry_msgs::Pose tool_place;
 status _status;
 float hand_tolerance;   //tolerance between 2 hand positions to know if it is static or not
 ros::NodeHandle n;
+
 
  //status of the robot
 

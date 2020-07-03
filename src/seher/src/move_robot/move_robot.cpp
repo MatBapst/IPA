@@ -61,6 +61,14 @@ void MoveRobot::initialiseMoveit(ros::NodeHandle nh)
   visual_tools->trigger();
   //planning_scene_diff_publisher = nh.advertise<moveit_msgs::PlanningScene>("planning_scene", 1);
   n=nh;
+  tool_place.position.x=-0.2;
+  tool_place.position.y=0.6;
+  tool_place.position.z=-0.05;
+  geometry_msgs::Quaternion quat_msg;
+  tf::quaternionTFToMsg(tf::createQuaternionFromRPY(angles::from_degrees(180),angles::from_degrees(0),angles::from_degrees(0)),quat_msg);
+  tool_place.orientation = quat_msg;
+
+
 }
 
 bool MoveRobot::comparePoses(geometry_msgs::Pose pose1, geometry_msgs::Pose pose2, double delta_posistion, double delta_orientation)
@@ -245,7 +253,7 @@ void MoveRobot::adjustTrajectoryToFixTimeSequencing(moveit_msgs::RobotTrajectory
 
 void MoveRobot::updateStatus(){
     
-  if (_status==handover_hand) {
+  if (_status==handover_hand_pick) {
     geometry_msgs::Pose current_pose = move_group->getCurrentPose().pose;
     
     
@@ -253,7 +261,7 @@ void MoveRobot::updateStatus(){
           
           ROS_INFO_STREAM("On hand position");
           sleepSafeFor(1.0);
-          _status=handover_tool;
+          _status=handover_tool_pick;
 
           
           
@@ -261,7 +269,7 @@ void MoveRobot::updateStatus(){
         } 
   
   }
-  if (_status==handover_tool){
+  if (_status==handover_tool_pick){
     geometry_msgs::Pose current_pose = move_group->getCurrentPose().pose;
     
     
@@ -270,7 +278,9 @@ void MoveRobot::updateStatus(){
           ROS_WARN_STREAM("On tool position");
           sleepSafeFor(3.0);
           if (grasp_flag){
-            gripperClose();
+            if (gripperClose()){
+              _status=place_tool;
+            }
           }
             
           
@@ -380,7 +390,7 @@ void MoveRobot::update_handover_status(tf::StampedTransform hand_tf, tf::Stamped
         if(_status==nominal_task) {
         ROS_WARN_STREAM("handover triggered");
         
-        _status=handover_hand;
+        _status=handover_hand_pick;
         //computePoseToHand();
         computePoseToTool(tool_tf);
         }
@@ -425,6 +435,39 @@ geometry_msgs::Pose MoveRobot::getToolTarget(){
   return tool_target;
 }
 
+void MoveRobot::placeTool(){
+  //executeCartesianTrajtoPose(hand_target);
+  sleepSafeFor(0.5);
+  float delta_z=0.1;
+  tool_place.position.z+=delta_z;
+  executeCartesianTrajtoPose(tool_place);
+  tool_place.position.z-=delta_z;
+  executeCartesianTrajtoPose(tool_place);
+  sleepSafeFor(0.5);
+  if (gripperOpen()){
+    tool_place.position.z+=delta_z;
+    executeCartesianTrajtoPose(tool_place);
+    tool_place.position.z-=delta_z;
+    _status=nominal_task;
+  }
+}
+
+void MoveRobot::pickTool(){
+  
+  float delta_z=0.1;
+  tool_place.position.z+=delta_z;
+  executeCartesianTrajtoPose(tool_place);
+  tool_place.position.z-=delta_z;
+  executeCartesianTrajtoPose(tool_place);
+  sleepSafeFor(0.5);
+  if (gripperClose()){
+    tool_place.position.z+=delta_z;
+    executeCartesianTrajtoPose(tool_place);
+    tool_place.position.z-=delta_z;
+    _status=handover_hand_place;
+  }
+}
+
 
 
 
@@ -458,7 +501,8 @@ int main(int argc, char **argv)
   bool switcher=true;
  
   robot_obj.executeCartesianTrajtoPose((switcher)?target_pose1:target_pose2);
-  while(ros::ok())
+  robot_obj.placeTool();
+  while(!ros::ok())
   {
   std_msgs::Bool flag;  
   switch(robot_obj.getStatus()){
@@ -470,7 +514,7 @@ int main(int argc, char **argv)
       robot_obj.sleepSafeFor(2.0);
       break;
 
-    case handover_hand :
+    case handover_hand_pick :
       flag.data=false;
       handover_pub.publish(flag);
       ROS_WARN_STREAM("Go To Hand");    
@@ -480,7 +524,7 @@ int main(int argc, char **argv)
       
       break;
 
-    case handover_tool :
+    case handover_tool_pick :
       flag.data=true;
       handover_pub.publish(flag);
       robot_obj.executeCartesianTrajtoPose(robot_obj.getToolTarget());
@@ -489,6 +533,12 @@ int main(int argc, char **argv)
       
       
       break;
+
+    case place_tool :
+    flag.data=true;
+    handover_pub.publish(flag);
+    robot_obj.placeTool();
+    ROS_WARN_STREAM("place tool");
   }
       
       try{
