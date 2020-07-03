@@ -18,6 +18,8 @@ ros::Publisher handover_pub;
 bool grasp_flag=false;
 
 
+
+
 void graspCallback (const std_msgs::Bool::ConstPtr& flag){
   if (flag->data){
     grasp_flag=true;
@@ -63,10 +65,11 @@ void MoveRobot::initialiseMoveit(ros::NodeHandle nh)
   n=nh;
   tool_place.position.x=-0.2;
   tool_place.position.y=0.6;
-  tool_place.position.z=-0.05;
+  tool_place.position.z=0.0;
   geometry_msgs::Quaternion quat_msg;
   tf::quaternionTFToMsg(tf::createQuaternionFromRPY(angles::from_degrees(180),angles::from_degrees(0),angles::from_degrees(0)),quat_msg);
   tool_place.orientation = quat_msg;
+  planning_scene_diff_publisher = nh.advertise<moveit_msgs::PlanningScene>("planning_scene", 1);
 
 
 }
@@ -102,14 +105,14 @@ void MoveRobot::sleepSafeFor(double duration)
 }
 
 
-void MoveRobot::executeCartesianTrajtoPose(geometry_msgs::Pose target)
+bool MoveRobot::executeCartesianTrajtoPose(geometry_msgs::Pose target)
 {
   int trial=0;
   while(trial<10)
   {
     if(moveGroupExecutePlan(getCartesianPathPlanToPose(target)))
     {
-      return;
+      return true;
     }
     //ROS_ERROR_STREAM("Execution to " << label << " trial " << trial++ << " failed. Reattempting");
     //failure_counter_++;
@@ -119,7 +122,7 @@ void MoveRobot::executeCartesianTrajtoPose(geometry_msgs::Pose target)
   
   sleepSafeFor(1.0);
   
-  
+  return false;
 }
 
 bool MoveRobot::moveGroupExecutePlan(moveit::planning_interface::MoveGroupInterface::Plan my_plan)
@@ -440,11 +443,16 @@ void MoveRobot::placeTool(){
   sleepSafeFor(0.5);
   float delta_z=0.1;
   tool_place.position.z+=delta_z;
-  executeCartesianTrajtoPose(tool_place);
+  if(!executeCartesianTrajtoPose(tool_place)){
+    return;
+  }
   tool_place.position.z-=delta_z;
-  executeCartesianTrajtoPose(tool_place);
+  if(!executeCartesianTrajtoPose(tool_place)){
+    return;
+  }
   sleepSafeFor(0.5);
   if (gripperOpen()){
+    addRemoveToolObject(false);
     tool_place.position.z+=delta_z;
     executeCartesianTrajtoPose(tool_place);
     tool_place.position.z-=delta_z;
@@ -456,11 +464,16 @@ void MoveRobot::pickTool(){
   
   float delta_z=0.1;
   tool_place.position.z+=delta_z;
-  executeCartesianTrajtoPose(tool_place);
+  if(!executeCartesianTrajtoPose(tool_place)){
+    return;
+  }
   tool_place.position.z-=delta_z;
-  executeCartesianTrajtoPose(tool_place);
+  if(!executeCartesianTrajtoPose(tool_place)){
+    return;
+  }
   sleepSafeFor(0.5);
   if (gripperClose()){
+    addRemoveToolObject(true);
     tool_place.position.z+=delta_z;
     executeCartesianTrajtoPose(tool_place);
     tool_place.position.z-=delta_z;
@@ -468,7 +481,44 @@ void MoveRobot::pickTool(){
   }
 }
 
+void MoveRobot::addRemoveToolObject(bool add){
+  moveit_msgs::AttachedCollisionObject attached_object;
+  attached_object.link_name = move_group->getEndEffectorLink();
+/* The header must contain a valid TF frame*/
+attached_object.object.header.frame_id = move_group->getEndEffectorLink();
+/* The id of the object */
+attached_object.object.id = "tool";
 
+/* A default pose */
+geometry_msgs::Pose pose;
+pose.orientation.w = 1.0;
+
+/* Define a box to be attached */
+shape_msgs::SolidPrimitive primitive;
+primitive.type = primitive.BOX;
+primitive.dimensions.resize(3);
+primitive.dimensions[0] = 0.015;
+primitive.dimensions[1] = 0.2;
+primitive.dimensions[2] = 0.015;
+
+
+pose.position.x = 0.0;
+pose.position.y = 0.08;
+pose.position.z = 0.0; 
+
+attached_object.object.primitives.push_back(primitive);
+attached_object.object.primitive_poses.push_back(pose);
+
+attached_object.object.operation = add ? attached_object.object.ADD : attached_object.object.REMOVE;
+attached_object.touch_links = std::vector<std::string>{ "egp_50_tip", "egp50_pincer_link", "egp50_body_link", "egp50_base_link" };
+
+moveit_msgs::PlanningScene planning_scene;
+planning_scene.robot_state.is_diff = true;
+planning_scene.is_diff = true;
+planning_scene.robot_state.attached_collision_objects.push_back(attached_object);
+planning_scene_diff_publisher.publish(planning_scene);
+
+}
 
 
 int main(int argc, char **argv)
@@ -502,6 +552,8 @@ int main(int argc, char **argv)
  
   robot_obj.executeCartesianTrajtoPose((switcher)?target_pose1:target_pose2);
   robot_obj.placeTool();
+  robot_obj.sleepSafeFor(3.0);
+  robot_obj.pickTool();
   while(!ros::ok())
   {
   std_msgs::Bool flag;  

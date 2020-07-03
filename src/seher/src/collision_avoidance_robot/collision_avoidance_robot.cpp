@@ -13,7 +13,7 @@ float dist_threshold_low=0.15; //20 cm
 float dist_threshold_up=0.3; //40 cm
 bool near_obstacle=false;
 bool status=false; //true if robot moving, false if robot stopped
-float max_robot_speed = 0.5; //corresponds to % of max robot speed like on the Teach Pendant
+float max_robot_speed = 0.2; //corresponds to % of max robot speed like on the Teach Pendant
 float distance; //minimal distance between TCP and obstacle
 float speed_distance=0.5; // max distance for adjusting the robot speed
 float adjusted_speed=max_robot_speed;

@@ -38,11 +38,13 @@ const std::string GROUP_MANIP = "manipulator";
 
 moveit::planning_interface::MoveGroupInterface *move_group;
 
+ros::Publisher planning_scene_diff_publisher;
+
 //methods
 void initialiseMoveit(ros::NodeHandle nh);
 bool comparePoses(geometry_msgs::Pose pose1, geometry_msgs::Pose pose2, double delta_posistion=0.05, double delta_orientation=0.01);
 void sleepSafeFor(double duration);
-void executeCartesianTrajtoPose(geometry_msgs::Pose target);
+bool executeCartesianTrajtoPose(geometry_msgs::Pose target);
 bool moveToTarget(geometry_msgs::Pose target);
 moveit::planning_interface::MoveGroupInterface::Plan getCartesianPathPlanToPose(geometry_msgs::Pose target_pose, double eef_step=0.01, double jump_threshold = 0.0); //0.01
 bool moveGroupExecutePlan(moveit::planning_interface::MoveGroupInterface::Plan my_plan);
@@ -61,6 +63,8 @@ bool gripperClose();
 bool gripperOpen();
 void placeTool();
 void pickTool();
+void addRemoveToolObject(bool add);
+
 
 
 private:

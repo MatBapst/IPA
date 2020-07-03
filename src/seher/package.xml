@@ -42,6 +42,8 @@
 <exec_depend>pcl_msgs</exec_depend>
 <exec_depend>ur_msgs</exec_depend>
 <exec_depend>tf_conversions</exec_depend>
+<exec_depend>robot_self_filter</exec_depend>
+<exec_depend>self_filter</exec_depend>
   <export>
   </export>
 </package>
