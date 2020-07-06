@@ -64,6 +64,7 @@ bool gripperOpen();
 void placeTool();
 void pickTool();
 void addRemoveToolObject(bool add);
+void computeGivePose(tf::StampedTransform hand_tf);
 
 
 
@@ -81,6 +82,7 @@ geometry_msgs::Point hand_position_old; //hand position at time t-1. to compare 
 geometry_msgs::Pose hand_target;
 geometry_msgs::Pose tool_target;
 geometry_msgs::Pose tool_place;
+geometry_msgs::Pose give_pose;
 status _status;
 float hand_tolerance;   //tolerance between 2 hand positions to know if it is static or not
 ros::NodeHandle n;

@@ -26,6 +26,7 @@
 #include <tf/transform_broadcaster.h>
 #include <angles/angles.h>
 #include <pcl/common/angles.h>
+#include <std_msgs/Bool.h>
 
 tf::TransformListener* hand_listener;  
 
@@ -33,11 +34,21 @@ tf::TransformListener* hand_listener;
 const Eigen::Vector4f min_box =Eigen::Vector4f(-0.2,-0.2,-0.2,1);
 const Eigen::Vector4f max_box =Eigen::Vector4f(0.2,0.2,0.2,1);
 
-
+const float distance_threshold = 0.15;
 
 
 
 ros::Publisher pub;
+ros::Publisher pub_handover_direction;
+
+
+
+
+float distanceComputing (Eigen::Vector4f point, Eigen::Matrix<double,4,1> point2){
+    float distance;
+    distance= sqrt(pow(point[0]-point2(0,0),2)+pow(point[1]-point2(1,0),2)+pow(point[2]-point2(2,0),2));
+    return distance;
+}
 
 
 void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
@@ -45,7 +56,8 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
     tf::StampedTransform transform_hand;
     tf::StampedTransform transform_elbow;
     sensor_msgs::PointCloud2 output;
-    
+    std_msgs::Bool flag; 
+    flag.data=true;
     
     try{
       hand_listener->lookupTransform("/world", "/cam3_link/left_hand",  
@@ -106,7 +118,7 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 
         pcl::getMaxDistance(cloud_filtered_pcl_const, elbow, tool_max_point);
 
-       
+        
 
 
         if (!isnan(tool_max_point[0])) {
@@ -161,7 +173,10 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
           double P_angle = std::acos((tool_vector-tool_vector.dot(y_vector)*y_vector).normalized().dot(x_vector));
 
           
-
+          //ROS_WARN_STREAM("distance between hand and max point: " << distanceComputing(tool_max_point, hand_centroid));
+          if (distanceComputing(tool_max_point, hand_centroid)> distance_threshold){
+            flag.data=false;
+          }
 
 
 
@@ -193,7 +208,7 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 
     }
     
-    
+    pub_handover_direction.publish(flag);
     //pub.publish(output);
     
 }
@@ -211,7 +226,7 @@ int main (int argc, char** argv)
   // Create a ROS subscriber for the input point cloud
 
   ros::Subscriber sub = nh.subscribe ("/cameras/raw_depth_pointcloud_fusion", 1, cloud_cb); 
-  
+  pub_handover_direction=nh.advertise<std_msgs::Bool> ("/handover/direction", 1);
 
   // Create a ROS publisher for the output point cloud
   /*pub1 = nh.advertise<sensor_msgs::PointCloud2> ("/cam1/depth/color/points_computed", 1);
