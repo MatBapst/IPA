@@ -65,7 +65,7 @@ void MoveRobot::initialiseMoveit(ros::NodeHandle nh)
   n=nh;
   tool_place.position.x=-0.2;
   tool_place.position.y=0.6;
-  tool_place.position.z=0.0;
+  tool_place.position.z=-0.015;
   geometry_msgs::Quaternion quat_msg;
   tf::quaternionTFToMsg(tf::createQuaternionFromRPY(angles::from_degrees(180),angles::from_degrees(0),angles::from_degrees(0)),quat_msg);
   tool_place.orientation = quat_msg;
@@ -108,7 +108,7 @@ void MoveRobot::sleepSafeFor(double duration)
 bool MoveRobot::executeCartesianTrajtoPose(geometry_msgs::Pose target)
 {
   int trial=0;
-  while(trial<10)
+  while(trial<20)
   {
     if(moveGroupExecutePlan(getCartesianPathPlanToPose(target)))
     {
@@ -475,7 +475,9 @@ void MoveRobot::pickTool(){
   if (gripperClose()){
     addRemoveToolObject(true);
     tool_place.position.z+=delta_z;
-    executeCartesianTrajtoPose(tool_place);
+    if(!executeCartesianTrajtoPose(tool_place)){
+      return;
+    }
     tool_place.position.z-=delta_z;
     _status=handover_hand_place;
   }
@@ -513,6 +515,12 @@ attached_object.object.operation = add ? attached_object.object.ADD : attached_o
 attached_object.touch_links = std::vector<std::string>{ "egp_50_tip", "egp50_pincer_link", "egp50_body_link", "egp50_base_link" };
 
 moveit_msgs::PlanningScene planning_scene;
+if (!add){
+  planning_scene.robot_state.attached_collision_objects.clear();
+  planning_scene.world.collision_objects.clear();
+  planning_scene.world.collision_objects.push_back(attached_object.object);
+}
+
 planning_scene.robot_state.is_diff = true;
 planning_scene.is_diff = true;
 planning_scene.robot_state.attached_collision_objects.push_back(attached_object);
@@ -553,6 +561,7 @@ int main(int argc, char **argv)
   robot_obj.executeCartesianTrajtoPose((switcher)?target_pose1:target_pose2);
   robot_obj.placeTool();
   robot_obj.sleepSafeFor(3.0);
+  robot_obj.executeCartesianTrajtoPose((switcher)?target_pose1:target_pose2);
   robot_obj.pickTool();
   while(!ros::ok())
   {

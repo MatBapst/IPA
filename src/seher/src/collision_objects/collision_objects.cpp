@@ -51,11 +51,11 @@ int main(int argc, char **argv)
   box_pose.orientation.w = 1.0;
   box_pose.position.x = -(BASE_OFFSET_FROM_LEFT_WALL_-BASE_OFFSET_FROM_RIGHT_WALL_)/2;  // Not perfectly symmetrical.
   box_pose.position.y = TOTAL_INNER_CELL_Y_DIMENSION_/2-BASE_OFFSET_FROM_BACK_WALL_; // Base is ofset by (0.1470/2-.275)
-  box_pose.position.z = -0.01; //Push it slightly down to avoid collission with base plate.
+  box_pose.position.z = -0.03; //Push it slightly down to avoid collission with base plate. //-0.03
 
   // Since we are attaching the object to the robot base
   // we want the collision checker to ignore collisions between the object and the robot base
-  object.touch_links = std::vector<std::string>{ "base_link"};
+  object.touch_links = std::vector<std::string>{ "base_link", "tool"};
   moveit_msgs::PlanningScene planning_scene;
 
   object.object.operation = object.object.ADD;
