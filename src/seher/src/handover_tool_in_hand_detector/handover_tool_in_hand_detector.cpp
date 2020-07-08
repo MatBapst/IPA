@@ -27,6 +27,8 @@
 #include <angles/angles.h>
 #include <pcl/common/angles.h>
 #include <std_msgs/Bool.h>
+#include "seher/move_robot/move_robot.h"
+#include <seher_msgs/handover.h>
 
 tf::TransformListener* hand_listener;  
 
@@ -39,9 +41,14 @@ const float distance_threshold = 0.15;
 
 
 ros::Publisher pub;
-ros::Publisher pub_handover_direction;
+ros::Publisher handover_pub;
 
+geometry_msgs::Point hand_position_current; //current hand position 
+geometry_msgs::Point hand_position_old; //hand position at time t-1. to compare if the hand is static or not
 
+ros::Time hand_timer; //timer to know if the hand is static in the workcell, to trigger the handover
+ros::Duration hand_timer_threshold=ros::Duration(3.0); //time after whose tool handover phase is triggered
+float hand_tolerance=0.05; //3 cm
 
 
 float distanceComputing (Eigen::Vector4f point, Eigen::Matrix<double,4,1> point2){
@@ -51,14 +58,38 @@ float distanceComputing (Eigen::Vector4f point, Eigen::Matrix<double,4,1> point2
 }
 
 
+bool is_in_the_cell(tf::StampedTransform transform){
+  if (transform.getOrigin().x()<WORKCELL_XMAX && transform.getOrigin().x()>WORKCELL_XMIN && transform.getOrigin().y()<WORKCELL_YMAX &&
+          transform.getOrigin().y()>WORKCELL_YMIN && transform.getOrigin().z()<WORKCELL_ZMAX && transform.getOrigin().z()>WORKCELL_ZMIN) {
+            return true;
+          }
+  return false;
+}
+
+void update_hand_position(tf::StampedTransform transform){
+  hand_position_old=hand_position_current;
+  geometry_msgs::Point point;
+  point.x=transform.getOrigin().x();
+  point.y=transform.getOrigin().y();
+  point.z=transform.getOrigin().z();
+  hand_position_current=point;
+}
+
+float distanceComputingPoints (geometry_msgs::Point point1, geometry_msgs::Point point2){
+    float distance;
+    
+    distance= sqrt(pow(point1.x-point2.x,2)+pow(point1.y-point2.y,2)+pow(point1.z-point2.z,2));
+    return distance;
+}
+
+
 void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 {
     tf::StampedTransform transform_hand;
     tf::StampedTransform transform_elbow;
     sensor_msgs::PointCloud2 output;
-    std_msgs::Bool flag; 
-    flag.data=true;
-    
+    seher_msgs::handover handover_data;
+    handover_data.direction=true;
     try{
       hand_listener->lookupTransform("/world", "/cam3_link/left_hand",  
                                ros::Time(0), transform_hand);
@@ -117,12 +148,14 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
         Eigen::Vector4f tool_max_point;
 
         pcl::getMaxDistance(cloud_filtered_pcl_const, elbow, tool_max_point);
-
+        Eigen::Matrix<double,4,1> hand_centroid;
+        pcl::compute3DCentroid(cloud_filtered_pcl_const, hand_centroid);
+        
         
 
-
-        if (!isnan(tool_max_point[0])) {
+        if (!isnan(tool_max_point[0]) && distanceComputing(tool_max_point, hand_centroid)> distance_threshold) {
             //search for the nearest points from max point to compute the centroid
+          
           
           
           pcl::KdTreeFLANN<pcl::PointXYZ> kdtree;
@@ -154,9 +187,8 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
           pcl::compute3DCentroid(max_cloud_const, centroid);
 
 
-          const pcl::PointCloud<pcl::PointXYZ> cloud_filtered_3_const=*cloud_filtered_3;
-          Eigen::Matrix<double,4,1> hand_centroid;
-          pcl::compute3DCentroid(cloud_filtered_3_const, hand_centroid);
+          
+          
           //get the angle to grasp the tool
           //compute the tool vector
           const Eigen::Vector3f tool_vector = Eigen::Vector3f(centroid(0,0)-transform_hand.getOrigin().x(), centroid(1,0)-transform_hand.getOrigin().y(), centroid(2,0)-transform_hand.getOrigin().z());
@@ -173,12 +205,7 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
           double P_angle = std::acos((tool_vector-tool_vector.dot(y_vector)*y_vector).normalized().dot(x_vector));
 
           
-          //ROS_WARN_STREAM("distance between hand and max point: " << distanceComputing(tool_max_point, hand_centroid));
-          if (distanceComputing(tool_max_point, hand_centroid)> distance_threshold){
-            flag.data=false;
-          }
-
-
+          
 
           static tf::TransformBroadcaster br;
           tf::Transform transform;
@@ -196,11 +223,29 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
           }
           
           br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "/world", "/tool_grasping_point"));
+          handover_data.direction=false;
           
         }
+        
+        tf::StampedTransform transform_tool;
+        
+        handover_data.trigger=false;
+        if (is_in_the_cell(transform_hand)){
+          update_hand_position(transform_hand);
+          
+          if (distanceComputingPoints (hand_position_current,hand_position_old)>hand_tolerance) {
+            hand_timer=ros::Time::now();
+          }
+          if (ros::Time::now()-hand_timer>hand_timer_threshold) {
+              
+          ROS_INFO_STREAM("handover triggered");
+          
+          handover_data.trigger=true;
+        
 
-        //pcl_conversions::fromPCL(*cloud_filtered, output);
-
+          }
+        }
+        handover_pub.publish(handover_data);
     }
     catch (tf::TransformException ex){
       ROS_INFO_STREAM("no hand in cell");
@@ -208,26 +253,29 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 
     }
     
-    pub_handover_direction.publish(flag);
-    //pub.publish(output);
+    
     
 }
 
 
+
+
 int main (int argc, char** argv)
 {
+  hand_position_current.z=-1.0;
+  hand_position_old.z=-1.0;
+  
   // Initialize ROS
   ros::init (argc, argv, "handover_tool_in_hand_detector");
   ros::NodeHandle nh;
-
+  hand_timer=ros::Time::now();
   tf::TransformListener lstnr(ros::Duration(5));
   hand_listener=&lstnr;  
 
   // Create a ROS subscriber for the input point cloud
 
   ros::Subscriber sub = nh.subscribe ("/cameras/raw_depth_pointcloud_fusion", 1, cloud_cb); 
-  pub_handover_direction=nh.advertise<std_msgs::Bool> ("/handover/direction", 1);
-
+  handover_pub=nh.advertise<seher_msgs::handover>("/handover/handover_data",1);
   // Create a ROS publisher for the output point cloud
   /*pub1 = nh.advertise<sensor_msgs::PointCloud2> ("/cam1/depth/color/points_computed", 1);
   pub2 = nh.advertise<sensor_msgs::PointCloud2> ("/cam2/depth/color/points_computed", 1);

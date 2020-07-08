@@ -21,9 +21,19 @@
 #include "ur_msgs/SetIO.h"
 #include <tf/transform_listener.h>
 #include "std_msgs/Float32.h"
+#include <seher_msgs/handover.h>
 
 
 enum status {nominal_task, handover_hand_pick, handover_tool_pick, handover_hand_place, handover_tool_place, place_tool, pick_tool};
+
+
+//workcell limits
+const float WORKCELL_XMAX=0.46;
+const float WORKCELL_XMIN=-0.5;
+const float WORKCELL_YMIN=-0.28;
+const float WORKCELL_YMAX=1.19;
+const float WORKCELL_ZMIN=0.0;
+const float WORKCELL_ZMAX=1.0;
 
 
 class MoveRobot {
@@ -53,7 +63,7 @@ void updateStatus();
 float distanceComputing (geometry_msgs::Point point1, geometry_msgs::Point point2);
 void update_hand_position(tf::StampedTransform transform);
 bool is_in_the_cell(tf::StampedTransform transform);
-void update_handover_status(tf::StampedTransform hand_tf, tf::StampedTransform tool_tf);
+void update_handover_status();
 enum status getStatus();
 void computePoseToHand();
 geometry_msgs::Pose getHandTarget();
@@ -75,28 +85,19 @@ const robot_state::JointModelGroup* joint_model_group ;
 moveit_visual_tools::MoveItVisualTools *visual_tools;
 Eigen::Isometry3d text_pose = Eigen::Isometry3d::Identity();
 const int IO_SERVICE_FUN_LEVEL_ = 1;   // Not exactly sure what this is, but 1 seems to work. If it fails, try 2.
-ros::Time hand_timer; //timer to know if the hand is static in the workcell, to trigger the handover
-ros::Duration hand_timer_threshold; //time after whose tool handover phase is triggered
 geometry_msgs::Point hand_position_current; //current hand position 
-geometry_msgs::Point hand_position_old; //hand position at time t-1. to compare if the hand is static or not
 geometry_msgs::Pose hand_target;
 geometry_msgs::Pose tool_target;
 geometry_msgs::Pose tool_place;
 geometry_msgs::Pose give_pose;
 status _status;
-float hand_tolerance;   //tolerance between 2 hand positions to know if it is static or not
 ros::NodeHandle n;
+ros::Publisher handover_dir_pub;
+ // if true handover from robot to human, else handover from human to robot
 
 
  //status of the robot
 
-//workcell limits
-const float WORKCELL_XMAX=0.46;
-const float WORKCELL_XMIN=-0.5;
-const float WORKCELL_YMIN=-0.28;
-const float WORKCELL_YMAX=1.19;
-const float WORKCELL_ZMIN=0.0;
-const float WORKCELL_ZMAX=1.0;
 
 
 

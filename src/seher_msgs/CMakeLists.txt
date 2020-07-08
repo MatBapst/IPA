@@ -51,6 +51,7 @@ DIRECTORY
 msgs  
 FILES
   distances.msg
+handover.msg
 #   Message2.msg
  )
 

@@ -5,7 +5,11 @@
 
 #include <Eigen/Dense>
 
-//#include <tf/quaternion.h>
+
+
+#include "tf/LinearMath/Scalar.h"
+#include "tf/LinearMath/Quaternion.h"
+#include "tf/LinearMath/Matrix3x3.h"
 #include "tf/transform_datatypes.h"
 #include <Eigen/Geometry>
 #include "Eigen/Core"
@@ -21,11 +25,11 @@
 #include <pcl/kdtree/kdtree_flann.h>
 #include <pcl/segmentation/extract_clusters.h>
 #include <std_msgs/Bool.h>
+#include <pcl/common/centroid.h>
 
 tf::TransformListener* TCP_listener;  
 
-const Eigen::Vector4f min_box =Eigen::Vector4f(-0.05,-0.03,-0.03,1); //0.15 0.05 0.2
-const Eigen::Vector4f max_box =Eigen::Vector4f(0.01,0.03,0.03,1);
+
 
 const int cluster_points_threshold=250;
 const float max_distance_threshold=0.05;
@@ -36,6 +40,8 @@ ros::Publisher pub_grasp;
 
 bool approach_flag=false;
 bool handover_dir_flag=true; // if true handover from robot to human, else handover from human to robot
+
+ros::Time grasp_timer;
 
 
 float distanceComputing (tf::StampedTransform TCP1, tf::StampedTransform TCP2){
@@ -59,7 +65,7 @@ float distanceComputing_points (pcl::PointXYZ point, tf::StampedTransform TCP){
     return distance;
 }
 
-void handoverCallback (const std_msgs::Bool::ConstPtr& flag){
+void handoverDirCallback (const std_msgs::Bool::ConstPtr& flag){
   if (flag->data){
     handover_dir_flag=true;
     
@@ -70,7 +76,7 @@ void handoverCallback (const std_msgs::Bool::ConstPtr& flag){
   
 }
 
-void handoverDirCallback (const std_msgs::Bool::ConstPtr& flag){
+void handoverCallback (const std_msgs::Bool::ConstPtr& flag){
   if (flag->data){
     approach_flag=true;
     
@@ -83,18 +89,19 @@ void handoverDirCallback (const std_msgs::Bool::ConstPtr& flag){
 
 void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 {
-  if (approach_flag) {
-    if (handover_dir_flag){
-
-    
-      //flags to determine if it is grasped or not
-      bool cluster_flag=false;
-      bool hand_distance_flag=false;
-      bool max_distance_flag=false;
-      bool on_tool_flag=false;
-
-      tf::StampedTransform transform_TCP;
-      tf::StampedTransform transform_hand;
+    if (approach_flag) {
+    ROS_INFO_STREAM("looking for grapsing");
+    tf::StampedTransform transform_TCP;
+    tf::StampedTransform transform_hand;
+    //tf::StampedTransform map_centroid;
+    try{
+        TCP_listener->lookupTransform("/world", "/egp_50_tip",  
+                                ros::Time(0), transform_TCP);
+      }
+      catch (tf::TransformException ex){
+        ROS_ERROR("%s",ex.what());
+        ros::Duration(1.0).sleep();
+      }
       try{
         TCP_listener->lookupTransform("/world", "/cam3_link/left_hand",  
                                 ros::Time(0), transform_hand);
@@ -103,24 +110,12 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
         //ROS_WARN_STREAM("no hand detected");
         
       }
-      try{
-        TCP_listener->lookupTransform("/world", "/egp_50_tip",  
-                                ros::Time(0), transform_TCP);
-      }
-      catch (tf::TransformException ex){
-        ROS_ERROR("%s",ex.what());
-        ros::Duration(1.0).sleep();
-      }
-      float TCP_hand_distance=distanceComputing(transform_hand, transform_TCP);
-      //ROS_INFO_STREAM("Distance between hand and TCP: " << TCP_hand_distance);
-      if (TCP_hand_distance > 0.1 && TCP_hand_distance < 0.25){
-          hand_distance_flag=true;
-      }
-      Eigen::Vector3f t=Eigen::Vector3f(transform_TCP.getOrigin().x(),transform_TCP.getOrigin().y(),transform_TCP.getOrigin().z());
-      Eigen::Quaterniond q;
-      tf::quaternionTFToEigen(transform_TCP.getRotation(), q);
-      Eigen::Vector3d r=q.toRotationMatrix().eulerAngles(2,1,0);
-      Eigen::Vector3f r_f=Eigen::Vector3f(r[0],r[1],r[2]);
+     Eigen::Vector3f t=Eigen::Vector3f(transform_TCP.getOrigin().x(),transform_TCP.getOrigin().y(),transform_TCP.getOrigin().z());
+     tfScalar roll,pitch,yaw;
+     const tf::Quaternion q=transform_TCP.getRotation();
+     tf::Matrix3x3(q).getRPY(roll,pitch,yaw);
+     Eigen::Vector3f r_f=Eigen::Vector3f(roll,pitch,yaw);
+     
       pcl::PCLPointCloud2* cloud = new pcl::PCLPointCloud2;
       pcl::PCLPointCloud2ConstPtr cloudPtr(cloud);
       pcl::PCLPointCloud2::Ptr cloud_filtered (new pcl::PCLPointCloud2 ());
@@ -129,6 +124,30 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
       pcl_conversions::toPCL(*input, *cloud);
 
       pcl::CropBox<pcl::PCLPointCloud2> cropFilter;
+
+
+      if (!handover_dir_flag){
+      ROS_INFO_STREAM("human to robot handover");
+      Eigen::Vector4f min_box =Eigen::Vector4f(-0.03,-0.03,-0.01,1); //0.15 0.05 0.2
+      Eigen::Vector4f max_box =Eigen::Vector4f(0.03,0.03,0.05,1);
+      //flags to determine if it is grasped or not
+      bool cluster_flag=false;
+      //bool hand_distance_flag=false;
+      bool max_distance_flag=false;
+      bool on_tool_flag=false;
+
+      
+      
+      
+      // try{
+      //   TCP_listener->lookupTransform("/world", "/occupancyMap_centroid",  
+      //                           ros::Time(0), map_centroid);
+      // }
+      // catch (tf::TransformException ex){
+        
+      // }
+     
+     
       
       
       cropFilter.setMin(min_box);
@@ -166,11 +185,7 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
     ec.setInputCloud (cloud_filtered_2);
     ec.extract (cluster_indices);
 
-    
-
-    //std::vector<sensor_msgs::PointCloud2::Ptr> pc2_clusters;
-    //std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr > clusters;
-
+   
     int j = 0;
     
     sensor_msgs::PointCloud2 output; 
@@ -180,36 +195,11 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
       
       cluster_flag=true;
     }
-    /*if (!cluster_indices.empty()) {
-    for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin (); it != cluster_indices.end (); ++it)
-    {
-      pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_cluster (new pcl::PointCloud<pcl::PointXYZ>);
-      for (std::vector<int>::const_iterator pit = it->indices.begin (); pit != it->indices.end (); ++pit)
-        cloud_cluster->points.push_back (cloud_filtered_2->points[*pit]); //*
-      cloud_cluster->width = cloud_cluster->points.size ();
-      cloud_cluster->height = 1;
-      cloud_cluster->is_dense = true;
-
-      //std::cout << "PointCloud representing the Cluster: " << cloud_cluster->points.size () << " data points." << std::endl;
-
-      clusters.push_back(cloud_cluster);
-      sensor_msgs::PointCloud2::Ptr tempROSMsg(new sensor_msgs::PointCloud2);
-      pcl::toROSMsg(*cloud_cluster, *tempROSMsg);
-      tempROSMsg->header.frame_id="world";
-      pc2_clusters.push_back(tempROSMsg);
-      output=*(pc2_clusters.at(0));
-    }
     
-    }
-    else{
-        output.header.frame_id="world";
-        output.data.clear();
-        output.is_dense=true;
-    }*/
-    ros::Time grasp_timer;
+    
     std_msgs::Bool flag; 
     flag.data=false;
-    if (cluster_flag && max_distance_flag && hand_distance_flag){
+    if (cluster_flag && max_distance_flag){
       on_tool_flag=true;
       
     }
@@ -223,12 +213,68 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
     //ROS_INFO_STREAM("General Flag: " << on_tool_flag);
       //pub.publish(output);
 
-      //sensor_msgs::PointCloud2 output2;
+      
+    } else {
+      // determine if hand is on tool in order to open gripper
+      ROS_INFO_STREAM("robot to human handover");
+      bool distance_hand_TCP=true;  //WARNING
+      bool distance_centroid=false;
+      bool nb_points=false;
+      bool hand_on_tool_flag=false;
+      Eigen::Vector4f min_box =Eigen::Vector4f(-0.03,-0.2,-0.01,1); //0.15 0.05 0.2
+      Eigen::Vector4f max_box =Eigen::Vector4f(0.03,0.2,0.05,1);  //0.03
+           
+      int nb_points_threshold = 750;
+      float dist_hand_TCP_threshold=0.25;
+      float dist_centroid_TCP_threshold=0.07;
+      cropFilter.setMin(min_box);
+      cropFilter.setMax(max_box);
+      cropFilter.setTranslation(t);
+      cropFilter.setRotation(r_f);
+      cropFilter.setInputCloud(cloudPtr);
+      cropFilter.filter(*cloud_filtered);
+
+      pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered_2 (new pcl::PointCloud<pcl::PointXYZ>);
+      pcl::fromPCLPointCloud2(*cloud_filtered,*cloud_filtered_2);
+      const pcl::PointCloud<pcl::PointXYZ> cloud_filtered_pcl_const=*cloud_filtered_2;
+      
+      if (distanceComputing(transform_hand, transform_TCP) < dist_hand_TCP_threshold){
+        distance_hand_TCP=true;
+      }
+      
+      if (cloud_filtered_2->size() > nb_points_threshold){
+        nb_points=true;
+      }
+      //ROS_INFO_STREAM("Number of points : " << cloud_filtered_2->size());
+
+      Eigen::Matrix<double,4,1> centroid;
+      pcl::compute3DCentroid(cloud_filtered_pcl_const, centroid);
+      pcl::PointXYZ point_centroid;
+      point_centroid.x=centroid(0,0);
+      point_centroid.y=centroid(1,0);
+      point_centroid.z=centroid(2,0);
+
+      //ROS_INFO_STREAM("distance centroid to TCP : " << distanceComputing_points(point_centroid, transform_TCP));
+      if (distanceComputing_points(point_centroid, transform_TCP)>dist_centroid_TCP_threshold){
+        distance_centroid=true;
+      }
+
+      hand_on_tool_flag=distance_hand_TCP && distance_centroid && nb_points;
+      std_msgs::Bool flag; 
+      flag.data=false;
+      if (!hand_on_tool_flag){
+        grasp_timer=ros::Time::now();
+      }
+      if (ros::Time::now()-grasp_timer>grasp_timer_threshold) {
+        flag.data=true;
+        
+      }
+      pub_grasp.publish(flag);
+      
+      //sensor_msgs::PointCloud2 output;
       //pcl_conversions::fromPCL(*cloud_filtered, output);
 
       //pub.publish(output);
-    } else {
-      // determine if hand is on tool in order to open gripper
     }
   }  
     
@@ -258,7 +304,7 @@ int main (int argc, char** argv)
   pub2 = nh.advertise<sensor_msgs::PointCloud2> ("/cam2/depth/color/points_computed", 1);
   pub4 = nh.advertise<sensor_msgs::PointCloud2> ("/cam4/depth/color/points_computed", 1);*/
 
-  //pub = nh.advertise<sensor_msgs::PointCloud2> ("/handover/TCP_pointcloud", 1);
+  pub = nh.advertise<sensor_msgs::PointCloud2> ("/handover/TCP_pointcloud", 1);
   pub_grasp = nh.advertise<std_msgs::Bool> ("/handover/grasp_flag", 1);
   //listener.lookupTransform("/world", "/camL_link", ros::Time(0), transform);
   // Spin

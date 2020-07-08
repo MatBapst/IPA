@@ -9,6 +9,10 @@
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
 #include "std_msgs/Float32.h"
+#include <pcl/common/centroid.h>
+#include <tf/transform_broadcaster.h>
+#include <pcl_conversions/pcl_conversions.h>
+#include <pcl/PCLPointCloud2.h>
 
 float min_distance;
 
@@ -39,6 +43,24 @@ void distanceCallback (const sensor_msgs::PointCloud2ConstPtr& input){
         }
 
     }
+    
+    // pcl::PCLPointCloud2::Ptr cloud_pcl (new pcl::PCLPointCloud2 ());
+
+    // // Pointcloud cropping : crop the area of the TCP
+    // pcl_conversions::toPCL(*input, *cloud_pcl);
+    // pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_xyz (new pcl::PointCloud<pcl::PointXYZ>);
+    // pcl::fromPCLPointCloud2(*cloud_pcl,*cloud_xyz);
+
+    // const pcl::PointCloud<pcl::PointXYZ> cloud_const=*cloud_xyz;
+    // Eigen::Matrix<double,4,1> occupancyMap_centroid;
+    // pcl::compute3DCentroid(cloud_const, occupancyMap_centroid);
+    // static tf::TransformBroadcaster br;
+    // tf::Transform transform;
+    // //tf::Quaternion tf_q;
+    // //tf::quaternionEigenToTF(q,tf_q);
+    // transform.setOrigin(tf::Vector3(occupancyMap_centroid(0,0), occupancyMap_centroid(1,0), occupancyMap_centroid(2,0)));
+    // transform.setRotation(tf::createQuaternionFromRPY(0, 0, 0));
+    // br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "/world", "/occupancyMap_centroid"));
 
 
 }
