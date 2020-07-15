@@ -89,6 +89,7 @@ void handoverCallback (const std_msgs::Bool::ConstPtr& flag){
 
 void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 {
+  //if(true){
     if (approach_flag) {
     ROS_INFO_STREAM("looking for grapsing");
     tf::StampedTransform transform_TCP;
@@ -125,7 +126,7 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 
       pcl::CropBox<pcl::PCLPointCloud2> cropFilter;
 
-
+//if (false) {
       if (!handover_dir_flag){
       ROS_INFO_STREAM("human to robot handover");
       Eigen::Vector4f min_box =Eigen::Vector4f(-0.03,-0.03,-0.01,1); //0.15 0.05 0.2
@@ -221,12 +222,12 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
       bool distance_centroid=false;
       bool nb_points=false;
       bool hand_on_tool_flag=false;
-      Eigen::Vector4f min_box =Eigen::Vector4f(-0.03,-0.2,-0.01,1); //0.15 0.05 0.2
+      Eigen::Vector4f min_box =Eigen::Vector4f(-0.03,-0.2,-0.05,1); //0.15 0.05 0.2
       Eigen::Vector4f max_box =Eigen::Vector4f(0.03,0.2,0.05,1);  //0.03
            
       int nb_points_threshold = 750;
       float dist_hand_TCP_threshold=0.25;
-      float dist_centroid_TCP_threshold=0.07;
+      float dist_centroid_TCP_threshold=0.06;
       cropFilter.setMin(min_box);
       cropFilter.setMax(max_box);
       cropFilter.setTranslation(t);
@@ -245,7 +246,7 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
       if (cloud_filtered_2->size() > nb_points_threshold){
         nb_points=true;
       }
-      //ROS_INFO_STREAM("Number of points : " << cloud_filtered_2->size());
+      ROS_INFO_STREAM("Number of points : " << cloud_filtered_2->size());
 
       Eigen::Matrix<double,4,1> centroid;
       pcl::compute3DCentroid(cloud_filtered_pcl_const, centroid);
@@ -254,7 +255,7 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
       point_centroid.y=centroid(1,0);
       point_centroid.z=centroid(2,0);
 
-      //ROS_INFO_STREAM("distance centroid to TCP : " << distanceComputing_points(point_centroid, transform_TCP));
+      ROS_INFO_STREAM("distance centroid to TCP : " << distanceComputing_points(point_centroid, transform_TCP));
       if (distanceComputing_points(point_centroid, transform_TCP)>dist_centroid_TCP_threshold){
         distance_centroid=true;
       }
