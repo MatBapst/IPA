@@ -7,6 +7,9 @@
 #include <ur_msgs/SetSpeedSliderFraction.h>
 #include <std_msgs/Bool.h>
 #include "ur_msgs/SetIO.h"
+#include <fstream>
+
+using namespace std;
 
 //threshold distance between robot and obstacle to stop the robot
 float dist_threshold_low=0.15; //20 cm
@@ -14,7 +17,7 @@ float dist_threshold_up=0.3; //40 cm
 bool near_obstacle=false;
 bool status=false; //true if robot moving, false if robot stopped
 float max_robot_speed = 0.5; //corresponds to % of max robot speed like on the Teach Pendant
-float distance; //minimal distance between TCP and obstacle
+float min_distance; //minimal distance between TCP and obstacle
 float speed_distance=0.5; // max distance for adjusting the robot speed
 float adjusted_speed=max_robot_speed;
 
@@ -24,12 +27,12 @@ bool handover_flag=false;
 
 
 void distanceCallback (const std_msgs::Float32::ConstPtr& dst){
-    distance=dst->data;
+    min_distance=dst->data;
 
-    if (distance<=dist_threshold_low){
+    if (min_distance<=dist_threshold_low){
         near_obstacle=true;
     }
-    if (distance>=dist_threshold_up) {
+    if (min_distance>=dist_threshold_up) {
         near_obstacle=false;
     }
 }
@@ -74,7 +77,7 @@ void stopRobot(){
 
 void updateSpeed(){
     ur_msgs::SetSpeedSliderFraction speed;
-    adjusted_speed=(adjusted_speed+distance_a*distance+distance_b)/2.0;
+    adjusted_speed=(adjusted_speed+distance_a*min_distance+distance_b)/2.0;
     speed.request.speed_slider_fraction = std::min(max_robot_speed, adjusted_speed);
     ros::service::call("/ur_hardware_interface/set_speed_slider",speed);
 
@@ -102,14 +105,19 @@ int main(int argc, char **argv)
   
   ros::AsyncSpinner spinner(1);
   spinner.start();
-
+  ros::Rate r(30);
 
  ros::Subscriber distance_sub = nh.subscribe("/distance_calculation/minimal_distance",1, distanceCallback);
  ros::Subscriber handover_sub=nh.subscribe("/handover/approach_flag",1, handoverCallback);
  
- 
+ //ofstream outfile;
+ //outfile.open("loop_time_collision_avoidance.dat");
+  //int i =0;
+    
   while(ros::ok())
   {
+    //outfile << i << " : " << ros::Time::now() << endl;
+    //i++;
     if (handover_flag){
       setSpeed(0.1);
       if (!status){
@@ -133,8 +141,10 @@ int main(int argc, char **argv)
 
     
     ros::spinOnce();
-    
+    r.sleep();
     
   }
+//outfile.close();
 return 0;
+
 }

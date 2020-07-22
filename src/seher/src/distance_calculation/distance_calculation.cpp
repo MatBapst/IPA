@@ -13,13 +13,15 @@
 #include <tf/transform_broadcaster.h>
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/PCLPointCloud2.h>
+#include <fstream>
 
 float min_distance;
 
 tf::StampedTransform transform_TCP;
 
-
-
+//using namespace std;
+//ofstream outfile;
+//int i =0;
 
 float distanceComputing (geometry_msgs::Point32 point, tf::StampedTransform TCP){
     float distance,x,y,z;
@@ -32,6 +34,9 @@ float distanceComputing (geometry_msgs::Point32 point, tf::StampedTransform TCP)
 
 
 void distanceCallback (const sensor_msgs::PointCloud2ConstPtr& input){
+
+    //outfile << i << " : " << ros::Time::now() << endl;
+    //i++;
     sensor_msgs::PointCloud pointcloud;
     sensor_msgs::convertPointCloud2ToPointCloud(*input, pointcloud);
     min_distance=100;
@@ -82,6 +87,10 @@ int main(int argc, char** argv){
 
    
   ros::Rate rate(30.0);
+
+  
+  //outfile.open("loop_time_final_pointcloud_callback.dat");
+  
   while (node.ok()){
     
     try{

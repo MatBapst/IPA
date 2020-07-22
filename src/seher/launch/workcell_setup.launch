@@ -119,7 +119,7 @@
 
 <!-- handover grasping detector -->
 
-<!--node name="handover_grasping_detector" pkg="seher" type="handover_grasping_detector" /-->
+<node name="handover_grasping_detector" pkg="seher" type="handover_grasping_detector" />
 
 </launch>
 

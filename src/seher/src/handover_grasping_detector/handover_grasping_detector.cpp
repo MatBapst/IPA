@@ -91,6 +91,7 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 {
   //if(true){
     if (approach_flag) {
+    sensor_msgs::PointCloud2 output;
     ROS_INFO_STREAM("looking for grapsing");
     tf::StampedTransform transform_TCP;
     tf::StampedTransform transform_hand;
@@ -157,7 +158,7 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
       cropFilter.setRotation(r_f);
       cropFilter.setInputCloud(cloudPtr);
       cropFilter.filter(*cloud_filtered);
-      
+      pcl_conversions::fromPCL(*cloud_filtered, output);
       pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered_2 (new pcl::PointCloud<pcl::PointXYZ>);
       pcl::fromPCLPointCloud2(*cloud_filtered,*cloud_filtered_2);
 
@@ -234,7 +235,7 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
       cropFilter.setRotation(r_f);
       cropFilter.setInputCloud(cloudPtr);
       cropFilter.filter(*cloud_filtered);
-
+      pcl_conversions::fromPCL(*cloud_filtered, output);
       pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered_2 (new pcl::PointCloud<pcl::PointXYZ>);
       pcl::fromPCLPointCloud2(*cloud_filtered,*cloud_filtered_2);
       const pcl::PointCloud<pcl::PointXYZ> cloud_filtered_pcl_const=*cloud_filtered_2;
@@ -275,8 +276,9 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
       //sensor_msgs::PointCloud2 output;
       //pcl_conversions::fromPCL(*cloud_filtered, output);
 
-      //pub.publish(output);
+      
     }
+    pub.publish(output);
   }  
     
 }
@@ -305,7 +307,7 @@ int main (int argc, char** argv)
   pub2 = nh.advertise<sensor_msgs::PointCloud2> ("/cam2/depth/color/points_computed", 1);
   pub4 = nh.advertise<sensor_msgs::PointCloud2> ("/cam4/depth/color/points_computed", 1);*/
 
-  pub = nh.advertise<sensor_msgs::PointCloud2> ("/handover/TCP_pointcloud", 1);
+  pub = nh.advertise<sensor_msgs::PointCloud2> ("/handover/grasp_pointcloud", 1);
   pub_grasp = nh.advertise<std_msgs::Bool> ("/handover/grasp_flag", 1);
   //listener.lookupTransform("/world", "/camL_link", ros::Time(0), transform);
   // Spin
