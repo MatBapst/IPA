@@ -7,10 +7,10 @@
 		<param name="uuid" value="16fab7e2-d112-4496-97dc-3b7aff27a2f7" />
 
 		<!-- Name for connection -->
-		<param name="name" value="ROS Bridge Demo" />
+		<param name="name" value="ROS Seher Robot" />
 
 		<!-- Description for connection -->
-		<param name="desc" value="The ROS Bridge" />
+		<param name="desc" value="Seher Robot data sending to MSB" />
 
 		<!-- Token for connection -->
 		<param name="token" value="5e0d9c54dacx" />

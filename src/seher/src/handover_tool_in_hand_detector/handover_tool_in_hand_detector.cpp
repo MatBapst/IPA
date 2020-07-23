@@ -216,12 +216,12 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
           float pitch_command_deg = pcl::rad2deg(-P_angle+angles::from_degrees(90));
           //ROS_WARN_STREAM("roll: " << roll_command_deg);
           //ROS_WARN_STREAM("pitch: " << pitch_command_deg);
-          if (roll_command_deg > -135 && roll_command_deg < -45 && pitch_command_deg < 45 && pitch_command_deg > -45) {
-            transform.setRotation(tf::createQuaternionFromRPY(R_angle+angles::from_degrees(-180), -P_angle+angles::from_degrees(90), 0));
-          } else {
-            transform.setRotation(tf::createQuaternionFromRPY(angles::from_degrees(-90),angles::from_degrees(0),angles::from_degrees(0)));
-          }
-          
+          // if (roll_command_deg > -135 && roll_command_deg < -45 && pitch_command_deg < 45 && pitch_command_deg > -45) {
+          //   transform.setRotation(tf::createQuaternionFromRPY(R_angle+angles::from_degrees(-180), -P_angle+angles::from_degrees(90), 0));
+          // } else {
+          //   transform.setRotation(tf::createQuaternionFromRPY(angles::from_degrees(-90),angles::from_degrees(0),angles::from_degrees(0)));
+          // }
+          transform.setRotation(tf::createQuaternionFromRPY(R_angle+angles::from_degrees(-180), -P_angle+angles::from_degrees(90), 0));
           br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "/world", "/tool_grasping_point"));
           handover_data.direction=false;
           

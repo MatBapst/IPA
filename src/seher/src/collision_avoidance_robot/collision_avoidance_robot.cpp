@@ -110,14 +110,14 @@ int main(int argc, char **argv)
  ros::Subscriber distance_sub = nh.subscribe("/distance_calculation/minimal_distance",1, distanceCallback);
  ros::Subscriber handover_sub=nh.subscribe("/handover/approach_flag",1, handoverCallback);
  
- //ofstream outfile;
- //outfile.open("loop_time_collision_avoidance.dat");
-  //int i =0;
+ ofstream outfile;
+ outfile.open("loop_time_collision_avoidance.dat");
+  int i =0;
     
   while(ros::ok())
   {
-    //outfile << i << " : " << ros::Time::now() << endl;
-    //i++;
+    outfile << i << " : " << ros::Time::now() << endl;
+    i++;
     if (handover_flag){
       setSpeed(0.1);
       if (!status){
@@ -144,7 +144,7 @@ int main(int argc, char **argv)
     r.sleep();
     
   }
-//outfile.close();
+outfile.close();
 return 0;
 
 }

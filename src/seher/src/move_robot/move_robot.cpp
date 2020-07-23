@@ -10,11 +10,14 @@
 #include <std_srvs/Trigger.h>
 #include <ur_msgs/SetSpeedSliderFraction.h>
 #include <std_msgs/Bool.h>
+#include <std_msgs/String.h>
+
 
 
 
 ros::Publisher handover_pub;
 ros::Publisher handover_dir_pub;
+ros::Publisher state_pub;
 
 bool grasp_flag=false;
 bool handover_flag=false;
@@ -646,6 +649,7 @@ int main(int argc, char **argv)
   ros::Subscriber handover_sub=nh.subscribe("/handover/handover_data",1,handoverDataCallback);
   
   handover_dir_pub=nh.advertise<std_msgs::Bool>("/handover/direction",1);
+  state_pub=nh.advertise<std_msgs::String>("/robot_state_machine/state",1);
   MoveRobot robot_obj;
   robot_obj.initialiseMoveit(nh);
   
@@ -668,16 +672,23 @@ int main(int argc, char **argv)
   while(ros::ok())
   {
   std_msgs::Bool flag;  
+  std_msgs::String state;
   switch(robot_obj.getStatus()){
     case nominal_task :
+      
+      state.data="Nominal task";
+      state_pub.publish(state);
       flag.data=false;
       handover_pub.publish(flag);
       switcher = !switcher;
       robot_obj.executeCartesianTrajtoPose((switcher)?target_pose1:target_pose2);
       robot_obj.sleepSafeFor(2.0);
+      
       break;
 
     case handover_hand_pick :
+      state.data="On hand to pick";
+      state_pub.publish(state);
       flag.data=false;
       handover_pub.publish(flag);
       ROS_WARN_STREAM("Go To Hand to pick tool");    
@@ -688,6 +699,8 @@ int main(int argc, char **argv)
       break;
 
     case handover_tool_pick :
+      state.data="Pick tool from hand";
+      state_pub.publish(state);
       flag.data=true;
       handover_pub.publish(flag);
       robot_obj.executeCartesianTrajtoPose(robot_obj.getToolTarget());
@@ -696,6 +709,8 @@ int main(int argc, char **argv)
       break;
 
     case place_tool :
+      state.data="Place tool in cell";
+      state_pub.publish(state);
       flag.data=false;
       handover_pub.publish(flag);
       ROS_WARN_STREAM("Place Tool");
@@ -705,6 +720,8 @@ int main(int argc, char **argv)
       break;
 
     case handover_hand_place :
+      state.data="On hand to place";
+      state_pub.publish(state);
       flag.data=false;
       handover_pub.publish(flag);
       ROS_WARN_STREAM("Go To Hand to place tool");    
@@ -714,6 +731,8 @@ int main(int argc, char **argv)
 
 
     case pick_tool :
+      state.data="Pick tool from cell";
+      state_pub.publish(state);
       flag.data=false;
       handover_pub.publish(flag);
       robot_obj.pickTool();
@@ -722,6 +741,8 @@ int main(int argc, char **argv)
       break;
 
     case handover_tool_place :
+      state.data="Place tool in hand";
+      state_pub.publish(state);
       flag.data=true;
       handover_pub.publish(flag);
       ROS_WARN_STREAM("Give Tool in hand");

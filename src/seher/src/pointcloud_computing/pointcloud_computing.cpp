@@ -17,7 +17,7 @@
 
 #include <pcl/kdtree/kdtree.h>
 #include <pcl/segmentation/extract_clusters.h>
-
+#include <fstream>
 
 //ros::Publisher pub1;
 //ros::Publisher pub2;
@@ -53,8 +53,9 @@ sensor_msgs::PointCloud2 pcl_2_raw;
 sensor_msgs::PointCloud2 pcl_3_raw;
 sensor_msgs::PointCloud2 pcl_4_raw;
 
-
-
+using namespace std;
+ofstream outfile;
+int i=0;
 
 
 
@@ -325,6 +326,11 @@ pcl_ros::transformPointCloud("world", raw4, pcl_4_raw, *listener4);
 
 void cloud_cb1 (const sensor_msgs::PointCloud2ConstPtr& input)
 {
+
+  outfile << i << " : " << ros::Time::now() << endl;
+  i++;
+
+
   sensor_msgs::PointCloud2 inter4;
   sensor_msgs::PointCloud2 raw1;
   
@@ -413,7 +419,7 @@ listener4=&lstnr4;
   sub2 = nh.subscribe ("/cam2/depth/color/points", 1, cloud_cb2);
   sub3= nh.subscribe ("/cam3/depth/color/points", 1, cloud_cb3);
   sub4=nh.subscribe ("/cam4/depth/color/points", 1, cloud_cb4);
-
+  outfile.open("loop_time_camera_acquisition_callback.dat");
   // Create a ROS publisher for the output point cloud
   /*pub1 = nh.advertise<sensor_msgs::PointCloud2> ("/cam1/depth/color/points_computed", 1);
   pub2 = nh.advertise<sensor_msgs::PointCloud2> ("/cam2/depth/color/points_computed", 1);
