@@ -13,10 +13,11 @@
 		<param name="desc" value="Seher Robot occupamcy map sending to MSB" />
 C
 		<!-- Token for connection -->
-		<param name="token" value="5e0d9c54dacx" />
+		<param name="token" value="tVuHXtMRgz" />
 
 		<!-- Topics to subscribe in ros -->
-		<param name="topics_sub" value="/cameras/depth_pointcloud_fusion_final" />
+		<param name="topics_sub" value="/cameras/depth_pointcloud_fusion_final,
+						/tf" />
 
 		<!-- Topics to publish in ROS -->
 		<param name="topics_pub" value="/distance_calculation/minimal_distance std_msgs/Float32" />

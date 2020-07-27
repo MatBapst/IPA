@@ -13,14 +13,15 @@
 		<param name="desc" value="External computer which perform the minimal distance calculation for Seher Robot" />
 C
 		<!-- Token for connection -->
-		<param name="token" value="5e0d9c54dacx" />
+		<param name="token" value="JT4eNGNwcJ" />
 
 		<!-- Topics to subscribe in ros -->
 		<param name="topics_sub" value="/distance_calculation/minimal_distance" />
 
 		<!-- Topics to publish in ROS -->
-		<param name="topics_pub" value="/cameras/depth_pointcloud_fusion_final sensor_msgs/PointCloud2" />
-
+		<param name="topics_pub" value="/cameras/depth_pointcloud_fusion_final sensor_msgs/PointCloud2,
+						/tf tf2_msgs/TFMessage" />
+		
 		<!-- Register all topics as string and send json to MSB -->
 		<param name="json_only" value="True" />
 	</node>

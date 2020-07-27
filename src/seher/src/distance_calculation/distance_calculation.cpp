@@ -96,7 +96,7 @@ int main(int argc, char** argv){
   while (node.ok()){
     
     try{
-      robot_listener.lookupTransform("/world", "/egp50_body_link",  
+      robot_listener.lookupTransform("/base_link", "/egp50_body_link",  
                                ros::Time(0), transform_TCP);
     }
     catch (tf::TransformException ex){
