@@ -1,4 +1,6 @@
 <launch>
+	<!-- TCP tf publisher for MSB externl distance calculation -->
+	<node name="tf_TCP_link" pkg="tf" type="static_transform_publisher" output="screen" args="0 0 0.072 0 0 0.707 0.707 wrist_3_link egp50_body_link 60" />
 	<node name="msb_ros_bridge" pkg="vfk_msb_client" type="msb_ros_bridge.py" output="screen">
 		<!-- MSB to connect to -->
 		<param name="host" value="ws://ws.msb.seher.dia.cell.vfk.fraunhofer.de" />
