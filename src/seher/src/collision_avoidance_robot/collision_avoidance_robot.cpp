@@ -10,7 +10,8 @@
 #include <fstream>
 
 using namespace std;
-
+ofstream outfile;
+ int i =0;
 //threshold distance between robot and obstacle to stop the robot
 float dist_threshold_low=0.15; //20 cm
 float dist_threshold_up=0.3; //40 cm
@@ -27,6 +28,8 @@ bool handover_flag=false;
 
 
 void distanceCallback (const std_msgs::Float32::ConstPtr& dst){
+    outfile << i << " : " << ros::Time::now() << endl;
+    i++;
     min_distance=dst->data;
 
     if (min_distance<=dist_threshold_low){
@@ -110,14 +113,13 @@ int main(int argc, char **argv)
  ros::Subscriber distance_sub = nh.subscribe("/distance_calculation/minimal_distance",1, distanceCallback);
  ros::Subscriber handover_sub=nh.subscribe("/handover/approach_flag",1, handoverCallback);
  
- ofstream outfile;
- outfile.open("loop_time_collision_avoidance.dat");
-  int i =0;
+ 
+ outfile.open("loop_time_min_distance_with_cloud.dat");
+ 
     
   while(ros::ok())
   {
-    outfile << i << " : " << ros::Time::now() << endl;
-    i++;
+    
     if (handover_flag){
       setSpeed(0.1);
       if (!status){

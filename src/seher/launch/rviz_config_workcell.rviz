@@ -151,8 +151,6 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        TCP_link:
-          Value: false
         base:
           Value: false
         base_link:
@@ -195,6 +193,36 @@ Visualization Manager:
           Value: true
         cam3_link:
           Value: true
+        cam3_link/head:
+          Value: false
+        cam3_link/left_elbow:
+          Value: false
+        cam3_link/left_foot:
+          Value: false
+        cam3_link/left_hand:
+          Value: true
+        cam3_link/left_hip:
+          Value: false
+        cam3_link/left_knee:
+          Value: false
+        cam3_link/left_shoulder:
+          Value: false
+        cam3_link/neck:
+          Value: false
+        cam3_link/right_elbow:
+          Value: false
+        cam3_link/right_foot:
+          Value: false
+        cam3_link/right_hand:
+          Value: true
+        cam3_link/right_hip:
+          Value: false
+        cam3_link/right_knee:
+          Value: false
+        cam3_link/right_shoulder:
+          Value: false
+        cam3_link/torso:
+          Value: false
         cam4_color_frame:
           Value: false
         cam4_color_optical_frame:
@@ -279,7 +307,36 @@ Visualization Manager:
                 cam2_infra2_optical_frame:
                   {}
             cam3_link:
-              {}
+              cam3_link/head:
+                {}
+              cam3_link/left_elbow:
+                {}
+              cam3_link/left_foot:
+                {}
+              cam3_link/left_hand:
+                {}
+              cam3_link/left_hip:
+                {}
+              cam3_link/left_knee:
+                {}
+              cam3_link/left_shoulder:
+                {}
+              cam3_link/neck:
+                {}
+              cam3_link/right_elbow:
+                {}
+              cam3_link/right_foot:
+                {}
+              cam3_link/right_hand:
+                {}
+              cam3_link/right_hip:
+                {}
+              cam3_link/right_knee:
+                {}
+              cam3_link/right_shoulder:
+                {}
+              cam3_link/torso:
+                {}
             cam4_link:
               cam4_color_frame:
                 cam4_color_optical_frame:
@@ -302,8 +359,6 @@ Visualization Manager:
                         ee_link:
                           egp50_base_link:
                             egp50_body_link:
-                              TCP_link:
-                                {}
                               egp50_pincer_link:
                                 egp_50_tip:
                                   {}
