@@ -15,6 +15,8 @@
 #include <pcl/PCLPointCloud2.h>
 #include <fstream>
 
+//CAN BE RUN ON EXTERNAL TO ROBOT SYSTEM COMPUTER 
+
 float min_distance;
 
 tf::StampedTransform transform_TCP;

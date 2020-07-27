@@ -4,22 +4,22 @@
 		<param name="host" value="ws://ws.msb.seher.dia.cell.vfk.fraunhofer.de" />
 
 		<!-- UUID for connection -->
-		<param name="uuid" value="16fab7e2-d112-4496-97dc-3b7aff27a2f7" />
+		<param name="uuid" value="c176495a-a3e2-491a-be91-7a16965ec2e9" />
 
 		<!-- Name for connection -->
 		<param name="name" value="ROS Seher Robot" />
 
 		<!-- Description for connection -->
-		<param name="desc" value="Seher Robot data sending to MSB" />
+		<param name="desc" value="Seher Robot occupamcy map sending to MSB" />
 C
 		<!-- Token for connection -->
 		<param name="token" value="5e0d9c54dacx" />
 
 		<!-- Topics to subscribe in ros -->
-		<param name="topics_sub" value="/distance_calculation/minimal_distance/send" />
+		<param name="topics_sub" value="/cameras/depth_pointcloud_fusion_final" />
 
 		<!-- Topics to publish in ROS -->
-		<param name="topics_pub" value="/distance_calculation/minimal_distance/receive sensor_msgs/PointCloud2" />
+		<param name="topics_pub" value="/distance_calculation/minimal_distance std_msgs/Float32" />
 
 		<!-- Register all topics as string and send json to MSB -->
 		<param name="json_only" value="True" />
