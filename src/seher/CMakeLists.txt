@@ -110,6 +110,9 @@ target_link_libraries(handover_grasping_detector ${catkin_LIBRARIES} ${Boost_LIB
 add_executable(handover_tool_in_hand_detector src/handover_tool_in_hand_detector/handover_tool_in_hand_detector.cpp)
 target_link_libraries(handover_tool_in_hand_detector ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
 
+add_executable(MSB_send_receive src/MSB_send_receive/MSB_send_receive.cpp)
+target_link_libraries(MSB_send_receive ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 

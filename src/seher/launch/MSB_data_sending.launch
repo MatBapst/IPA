@@ -16,11 +16,10 @@
 		<param name="token" value="5e0d9c54dacx" />
 
 		<!-- Topics to subscribe in ros -->
-		<param name="topics_sub" value="/distance_calculation/minimal_distance,
-						/robot_state_machine/state" />
+		<param name="topics_sub" value="/distance_calculation/minimal_distance/send" />
 
 		<!-- Topics to publish in ROS -->
-		<param name="topics_pub" value="/data_return std_msgs/Float32" />
+		<param name="topics_pub" value="/distance_calculation/minimal_distance/receive rosgraph_msgs/Clock" />
 
 		<!-- Register all topics as string and send json to MSB -->
 		<param name="json_only" value="True" />
