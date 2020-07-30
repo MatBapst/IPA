@@ -413,6 +413,8 @@ tf::TransformListener lstnr3(ros::Duration(5));
 listener3=&lstnr3;
 tf::TransformListener lstnr4(ros::Duration(5));
 listener4=&lstnr4;
+
+ros::Rate r(30);
   // Create a ROS subscriber for the input point cloud
 
   sub1 = nh.subscribe ("/cam1/depth/color/points", 1, cloud_cb1); 
@@ -429,6 +431,10 @@ listener4=&lstnr4;
   pub_raw = nh.advertise<sensor_msgs::PointCloud2> ("/cameras/raw_depth_pointcloud_fusion", 1);
   //listener.lookupTransform("/world", "/camL_link", ros::Time(0), transform);
   // Spin
-  ros::spin ();
+  while (nh.ok()){
+    ros::spinOnce();
+    r.sleep();
+  }
+  
 }
 

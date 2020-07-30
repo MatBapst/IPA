@@ -91,7 +91,7 @@ int main(int argc, char** argv){
   ros::Rate rate(30.0);
 
   
-  outfile.open("loop_time_final_pointcloud_callback.dat");
+  outfile.open("loop_time_occupancy_map_callback.dat");
   
   while (node.ok()){
     

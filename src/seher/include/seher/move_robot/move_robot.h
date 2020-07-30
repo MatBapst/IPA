@@ -75,6 +75,7 @@ void placeTool();
 void pickTool();
 void addRemoveToolObject(bool add);
 void computeGivePose(tf::StampedTransform hand_tf);
+void timeOut();
 
 
 
@@ -93,6 +94,8 @@ geometry_msgs::Pose give_pose;
 status _status;
 ros::NodeHandle n;
 ros::Publisher handover_dir_pub;
+ros::Time timer;
+ros::Duration timeout;
  // if true handover from robot to human, else handover from human to robot
 
 

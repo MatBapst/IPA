@@ -11,7 +11,9 @@
 
 using namespace std;
 ofstream outfile;
+ofstream outfile2;
  int i =0;
+ int j=0;
 //threshold distance between robot and obstacle to stop the robot
 float dist_threshold_low=0.15; //20 cm
 float dist_threshold_up=0.3; //40 cm
@@ -114,12 +116,13 @@ int main(int argc, char **argv)
  ros::Subscriber handover_sub=nh.subscribe("/handover/approach_flag",1, handoverCallback);
  
  
- outfile.open("loop_time_min_distance_with_cloud.dat");
- 
+ outfile.open("loop_time_min_distance.dat");
+ outfile2.open("loop_time_collision_avoidance_node.dat");
     
   while(ros::ok())
   {
-    
+    outfile2 << j << " : " << ros::Time::now() << endl;
+    j++;
     if (handover_flag){
       setSpeed(0.1);
       if (!status){
@@ -147,6 +150,7 @@ int main(int argc, char **argv)
     
   }
 outfile.close();
+outfile2.close();
 return 0;
 
 }

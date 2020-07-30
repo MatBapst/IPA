@@ -87,6 +87,8 @@ void MoveRobot::initialiseMoveit(ros::NodeHandle nh)
   tool_place.orientation = quat_msg;
   planning_scene_diff_publisher = nh.advertise<moveit_msgs::PlanningScene>("planning_scene", 1);
   handover_dir_pub=nh.advertise<std_msgs::Bool>("/handover/direction", 1);
+  timer=ros::Time::now();
+  timeout=ros::Duration(30);
 
 }
 
@@ -282,9 +284,11 @@ void MoveRobot::updateStatus(){
           sleepSafeFor(0.5);
           if (_status==handover_hand_pick){
             _status=handover_tool_pick;
+            timer=ros::Time::now();
           } else {
             
             _status=handover_tool_place;
+            timer=ros::Time::now();
           }
           
 
@@ -305,6 +309,7 @@ void MoveRobot::updateStatus(){
           if (grasp_flag){
             if (gripperClose()){
               _status=place_tool;
+              timer=ros::Time::now();
               ROS_WARN_STREAM("close_gripper");
               addRemoveToolObject(true);
             } else {
@@ -334,6 +339,7 @@ void MoveRobot::updateStatus(){
             if (gripperOpen()){
               _status=nominal_task;
               addRemoveToolObject(false);
+              timer=ros::Time::now();
             }
           }
     }
@@ -343,8 +349,34 @@ void MoveRobot::updateStatus(){
 
   if (_status==pick_tool){
     _status=handover_hand_place;
+    timer=ros::Time::now();
   }
 
+  if (ros::Time::now()-timer > timeout){
+    timeOut();
+  }
+
+}
+
+void MoveRobot::timeOut(){
+  ROS_WARN_STREAM("Blocked in state machine, timeout, going to nominal task");
+  switch(_status){
+    case handover_hand_place :
+      _status=place_tool;
+      break;
+    
+    case handover_tool_place :
+      _status=place_tool;
+      break;
+    
+    case handover_hand_pick :
+      _status=nominal_task;
+      break;
+    
+    case handover_tool_pick :
+      _status=nominal_task;
+    break;
+  }
 }
 
 bool MoveRobot::gripperOpen()
@@ -476,13 +508,15 @@ void MoveRobot::update_handover_status(){
 
   if (handover_direction) {
     _status=pick_tool;
-    
+    timer=ros::Time::now();
+
     ROS_WARN_STREAM("no tool in hand, so robot to human handover");
     flag.data=true;
     
     computeGivePose(transform_hand);
   } else {
     _status=handover_hand_pick;
+    timer=ros::Time::now();
     flag.data=false;
     ROS_WARN_STREAM("tool in hand, so human to robot handover");
     computePoseToTool(transform_tool);
@@ -563,6 +597,7 @@ void MoveRobot::placeTool(){
     executeCartesianTrajtoPose(tool_place);
     tool_place.position.z-=delta_z;
     _status=nominal_task;
+    timer=ros::Time::now();
   }
 }
 
@@ -586,6 +621,7 @@ void MoveRobot::pickTool(){
     }
     tool_place.position.z-=delta_z;
     _status=handover_hand_place;
+    timer=ros::Time::now();
   }
 }
 

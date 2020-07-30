@@ -111,7 +111,7 @@
 
 <!-- launch the distance computing node -->
 
-<!--node name="distance_computing_node" pkg="seher" type="distance_calculation" /-->
+<node name="distance_computing_node" pkg="seher" type="distance_calculation" />
 
 <!-- handover tool in hand detector -->
 
