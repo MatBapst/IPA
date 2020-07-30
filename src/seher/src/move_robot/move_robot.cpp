@@ -352,7 +352,7 @@ void MoveRobot::updateStatus(){
     timer=ros::Time::now();
   }
 
-  if (ros::Time::now()-timer > timeout){
+  if (ros::Time::now()-timer > timeout && _status != nominal_task){
     timeOut();
   }
 

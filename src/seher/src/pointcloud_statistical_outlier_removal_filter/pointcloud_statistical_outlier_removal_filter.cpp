@@ -15,7 +15,7 @@ void filter_cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 {
     sensor_msgs::PointCloud2 output;
    
-    
+    //ros::Time begin =ros::Time::now();
     pcl::PCLPointCloud2* input_pcl2 (new pcl::PCLPointCloud2 ());
     pcl_conversions::toPCL(*input, *input_pcl2);
     pcl::PointCloud<pcl::PointXYZ>::Ptr input_xyz (new pcl::PointCloud<pcl::PointXYZ>);
@@ -23,18 +23,21 @@ void filter_cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
     pcl::PointCloud<pcl::PointXYZ>::Ptr output_xyz (new pcl::PointCloud<pcl::PointXYZ>);
     pcl::fromPCLPointCloud2(*input_pcl2,*input_xyz);
     if (!input_xyz->empty()){
-      
+      //ros::Time t_inter=ros::Time::now();
       pcl::RadiusOutlierRemoval<pcl::PointXYZ> ror_filter;
       ror_filter.setInputCloud(input_xyz);
       ror_filter.setRadiusSearch(0.15);
       ror_filter.setMinNeighborsInRadius(160);
       ror_filter.filter(*output1);
+      //ROS_WARN_STREAM("Radius filter takes : "<< ros::Time::now()-t_inter);
       if (!output1->empty()){
+        //t_inter=ros::Time::now();
         pcl::StatisticalOutlierRemoval<pcl::PointXYZ> filter;
         filter.setInputCloud(output1);
         filter.setMeanK(50);
         filter.setStddevMulThresh (0.4); 
         filter.filter(*output_xyz);
+        //ROS_WARN_STREAM("Statistical filter takes : "<< ros::Time::now()-t_inter);
       } else {
         *output_xyz=*output1;
       }
@@ -46,7 +49,7 @@ void filter_cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
       output=*input;
     }
     pub.publish(output);
-
+    //ROS_WARN_STREAM("One processing takes : "<< ros::Time::now()-begin);
 
 }
 

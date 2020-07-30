@@ -96,6 +96,7 @@ void cloud_cb2 (const sensor_msgs::PointCloud2ConstPtr& input)
   sensor_msgs::PointCloud2 raw_final;
   sensor_msgs::PointCloud2 pcl_241_raw;
   
+ //ros::Time begin = ros::Time::now();
  
   
  pcl::PCLPointCloud2* cloud = new pcl::PCLPointCloud2;
@@ -107,7 +108,7 @@ void cloud_cb2 (const sensor_msgs::PointCloud2ConstPtr& input)
  pcl_conversions::toPCL(*input, *cloud);
 
   pcl::CropBox<pcl::PCLPointCloud2> cropFilter;
-  
+  //ros::Time t_inter=ros::Time::now();
   //cropFilter.setTransform(trans2);
   cropFilter.setMin(min_workcell);
   cropFilter.setMax(max_workcell);
@@ -115,6 +116,9 @@ void cloud_cb2 (const sensor_msgs::PointCloud2ConstPtr& input)
   cropFilter.setRotation(r2);
   cropFilter.setInputCloud(cloudPtr);
   cropFilter.filter(*cloud_filtered);
+
+  //ROS_WARN_STREAM("Cropping takes : " << ros::Time::now()-t_inter);
+  
   
   //sensor_msgs::PointCloud2 test2;
   //pcl_conversions::fromPCL(*cloud_filtered, test2);
@@ -123,10 +127,15 @@ void cloud_cb2 (const sensor_msgs::PointCloud2ConstPtr& input)
   pcl::PCLPointCloud2::Ptr voxel_cloud (new pcl::PCLPointCloud2 ());
 
   pcl::VoxelGrid<pcl::PCLPointCloud2> sor;
+  //t_inter=ros::Time::now();
   sor.setInputCloud (cloud_filtered);
   //sor.setDownsampleAllData(true);
   sor.setLeafSize (leaf_size, leaf_size, leaf_size);
   sor.filter (*voxel_cloud);
+
+
+  //ROS_WARN_STREAM("Voxelization takes : " << ros::Time::now()-t_inter);
+  
 
 // Conversion to pcl::pointXYZ
 pcl::PointCloud<pcl::PointXYZ>::Ptr inter2 (new pcl::PointCloud<pcl::PointXYZ>);   //inter pointcloud used for conversions
@@ -143,10 +152,13 @@ pcl_conversions::fromPCL(*inter3, inter4);
 pcl_conversions::fromPCL(*cloud_filtered, raw2);
 //transforming to world frame
 
+
+//t_inter=ros::Time::now();
 pcl_ros::transformPointCloud("world", inter4, pcl_2, *listener2);
 pcl_ros::transformPointCloud("world", raw2, pcl_2_raw, *listener2);
 
-
+//ROS_WARN_STREAM("Frame transformation takes : " << ros::Time::now()-t_inter);
+//t_inter=ros::Time::now();
 
 
 //concatenate pointcloud
@@ -159,6 +171,10 @@ pcl::concatenatePointCloud(pcl_pre_fusion2,pcl_3,pcl_fusion);
 pcl::concatenatePointCloud(pcl_2_raw,pcl_4_raw,pcl_24_raw);
 pcl::concatenatePointCloud(pcl_24_raw,pcl_1_raw,pcl_241_raw);
 pcl::concatenatePointCloud(pcl_241_raw,pcl_3_raw,raw_final);
+
+
+//ROS_WARN_STREAM("Concatenation takes : " << ros::Time::now()-t_inter);
+
 
 pub_raw.publish(raw_final);
 
@@ -173,18 +189,21 @@ pcl::PCLPointCloud2* cloud_final = new pcl::PCLPointCloud2;
   pcl::CropBox<pcl::PCLPointCloud2> cropFilter_world;
   
   //cropFilter.setTransform(trans2);
+  //t_inter=ros::Time::now();
   cropFilter_world.setMin(min_workcell);
   cropFilter_world.setMax(max_workcell_final);
   cropFilter_world.setTranslation(t_final);
   cropFilter_world.setInputCloud(cloud_finalPtr);
   cropFilter_world.filter(*cloud_final_filtered);
-
+  //ROS_WARN_STREAM("Final cropping takes : " << ros::Time::now()-t_inter);
   pcl_conversions::fromPCL(*cloud_final_filtered, pcl_fusion_final);
   // Publish the data.
   //pub2.publish (test2);
   //ROS_INFO_STREAM( "number of points before voxelization" << cloud_filtered->width*(cloud_filtered)->height);
   //ROS_INFO_STREAM( "number of points after voxelization" << pcl_L.width*pcl_L.height);
   pub.publish (pcl_fusion_final);
+
+  //ROS_WARN_STREAM("One pointcloud processing takes : " << ros::Time::now()-begin);
 }
 
 
