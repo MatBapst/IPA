@@ -41,7 +41,7 @@ int main(int argc, char** argv){
   ros::NodeHandle node;
 
 
-  ros::Subscriber distance_sub = node.subscribe("/cameras/depth_pointcloud_fusion_final",1, distanceCallback);
+  ros::Subscriber distance_sub = node.subscribe("/cameras/depth_pointcloud_fusion",1, distanceCallback);
   distance_send=node.advertise<sensor_msgs::PointCloud2>("/distance_calculation/minimal_distance/send",1);
   ros::Subscriber distance_get = node.subscribe("/distance_calculation/minimal_distance/receive",1, distanceReceiveCallback);
 
@@ -49,9 +49,7 @@ int main(int argc, char** argv){
   
   outfile.open("MSB_send_receive.dat");
   
-  while (node.ok()){
-      ros::spinOnce();
-  }
+  ros::spin();
     
 
   outfile.close();

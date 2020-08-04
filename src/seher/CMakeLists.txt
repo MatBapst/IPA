@@ -113,6 +113,12 @@ target_link_libraries(handover_tool_in_hand_detector ${catkin_LIBRARIES} ${Boost
 add_executable(MSB_send_receive src/MSB_send_receive/MSB_send_receive.cpp)
 target_link_libraries(MSB_send_receive ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
 
+add_executable(MSB_send_time src/MSB_send_time/MSB_send_time.cpp)
+target_link_libraries(MSB_send_time ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
+
+add_executable(MSB_receive_time src/MSB_receive_time/MSB_receive_time.cpp)
+target_link_libraries(MSB_receive_time ${catkin_LIBRARIES} ${Boost_LIBRARIES})  
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
