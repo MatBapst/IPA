@@ -40,10 +40,10 @@ To launch the workcell setup :
 - build (catkin_make_isolated necessary) and source the repository
 - roslaunch seher workcell_setup.launch
 
-To launch the robot moving demonstration with speed reduction and stopping when approaching :
+To launch the robot moving demonstration with speed reduction and stopping when approaching as well as the tool handover function :
 - roslaunch seher move_robot
 
-Hint!! robot has to be in Remote Control mode when launching the workcell setup. This must be activated from Teach Pendant.
+Hint!! robot has to be in Remote Control mode when launching the workcell setup. This must be activated from Teach Pendant. AND External Control URCaps must be put in the program on Teach Pendant.
 
 For the cloud/MSB part:
 - To send/receive data to/from the MSB: roslaunch seher MSB_data_sending.launch
