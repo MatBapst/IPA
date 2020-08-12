@@ -1,3 +1,7 @@
+/*This node sends and receives data from/to the MSB and writes the delay in a .dat file.
+*/
+
+
 #include <ros/ros.h>
 #include "std_msgs/Float32.h"
 #include "rosgraph_msgs/Clock.h"
@@ -15,9 +19,7 @@ int i=0;
 ros::Publisher distance_send;
 
 void distanceCallback (const sensor_msgs::PointCloud2ConstPtr& input){
-    //std_msgs::Float32 dist;
-    //dist.data=dst->data;
-    //rosgraph_msgs::Clock time_send;
+    //sending the cloud
     sensor_msgs::PointCloud2 cloud;
     cloud=*input;
     cloud.header.stamp=ros::Time::now();
@@ -26,6 +28,7 @@ void distanceCallback (const sensor_msgs::PointCloud2ConstPtr& input){
 }
 
 void distanceReceiveCallback (const sensor_msgs::PointCloud2ConstPtr& t){
+    //receiving the cloud and writting the delay in the file
     t_receive=ros::Time::now();
     delay=t_receive-t->header.stamp;
     outfile << i << " : " << delay << endl;

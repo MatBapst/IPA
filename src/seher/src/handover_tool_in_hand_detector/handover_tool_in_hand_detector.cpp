@@ -1,3 +1,7 @@
+/* This node tests if  handover is triggered and if a tool is hold in the hand.
+It publishes the trigger and the direction of the handover as well as the tool grasping pose.
+*/
+
 #include <pcl/filters/crop_box.h>
 #include <ros/ros.h>
 // PCL specific includes
@@ -5,7 +9,7 @@
 
 #include <Eigen/Dense>
 
-//#include <tf/quaternion.h>
+
 #include "tf/transform_datatypes.h"
 #include <Eigen/Geometry>
 #include "Eigen/Core"
@@ -48,10 +52,11 @@ geometry_msgs::Point hand_position_old; //hand position at time t-1. to compare 
 
 ros::Time hand_timer; //timer to know if the hand is static in the workcell, to trigger the handover
 ros::Duration hand_timer_threshold=ros::Duration(3.0); //time after whose tool handover phase is triggered
-float hand_tolerance=0.05; //3 cm
+float hand_tolerance=0.05; // cm
 
 
 float distanceComputing (Eigen::Vector4f point, Eigen::Matrix<double,4,1> point2){
+    //compute the distance between 2 points
     float distance;
     distance= sqrt(pow(point[0]-point2(0,0),2)+pow(point[1]-point2(1,0),2)+pow(point[2]-point2(2,0),2));
     return distance;
@@ -59,6 +64,7 @@ float distanceComputing (Eigen::Vector4f point, Eigen::Matrix<double,4,1> point2
 
 
 bool is_in_the_cell(tf::StampedTransform transform){
+  //tests if the hand is in the cell
   if (transform.getOrigin().x()<WORKCELL_XMAX && transform.getOrigin().x()>WORKCELL_XMIN && transform.getOrigin().y()<WORKCELL_YMAX &&
           transform.getOrigin().y()>WORKCELL_YMIN && transform.getOrigin().z()<WORKCELL_ZMAX && transform.getOrigin().z()>WORKCELL_ZMIN) {
             return true;
@@ -67,6 +73,7 @@ bool is_in_the_cell(tf::StampedTransform transform){
 }
 
 void update_hand_position(tf::StampedTransform transform){
+  //update the hand position
   hand_position_old=hand_position_current;
   geometry_msgs::Point point;
   point.x=transform.getOrigin().x();
@@ -85,6 +92,7 @@ float distanceComputingPoints (geometry_msgs::Point point1, geometry_msgs::Point
 
 void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 {
+    //gets the raw pointcloud and crops it around the hand
     tf::StampedTransform transform_hand;
     tf::StampedTransform transform_elbow;
     sensor_msgs::PointCloud2 output;
@@ -103,7 +111,7 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
         pcl::PCLPointCloud2ConstPtr cloudPtr(cloud);
         pcl::PCLPointCloud2::Ptr cloud_filtered (new pcl::PCLPointCloud2 ());
 
-        // Pointcloud cropping : crop the area of the TCP
+        // Pointcloud cropping : crop the area of the hand
         pcl_conversions::toPCL(*input, *cloud);
 
         pcl::CropBox<pcl::PCLPointCloud2> cropFilter;
@@ -132,6 +140,7 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
         pcl::fromPCLPointCloud2(*cloud_filtered,*cloud_filtered_2);
 
         if (!cloud_filtered_2->empty()){
+          //apply a statistical filter to the cloud around the hand
           pcl::StatisticalOutlierRemoval<pcl::PointXYZ> filter;
         filter.setInputCloud(cloud_filtered_2);
         filter.setMeanK(30);
@@ -147,16 +156,18 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
         const Eigen::Vector4f elbow = Eigen::Vector4f(t_elb[0],t_elb[1],t_elb[2],1);
         Eigen::Vector4f tool_max_point;
 
+        //get the maximum distance in the cropped cloud from elbow
         pcl::getMaxDistance(cloud_filtered_pcl_const, elbow, tool_max_point);
+        //get the centroid of the human cropped pointcloud
         Eigen::Matrix<double,4,1> hand_centroid;
         pcl::compute3DCentroid(cloud_filtered_pcl_const, hand_centroid);
         
         
 
         if (!isnan(tool_max_point[0]) && distanceComputing(tool_max_point, hand_centroid)> distance_threshold) {
-            //search for the nearest points from max point to compute the centroid
-          
-          
+            
+          //search for the nearest points from max point to compute the centroid
+          // and so to get the tool grasping position
           
           pcl::KdTreeFLANN<pcl::PointXYZ> kdtree;
           kdtree.setInputCloud (cloud_filtered_3);
@@ -184,6 +195,7 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
             }
           const pcl::PointCloud<pcl::PointXYZ> max_cloud_const=*max_cloud;
           Eigen::Matrix<double,4,1> centroid;
+          //compute the centroid 
           pcl::compute3DCentroid(max_cloud_const, centroid);
 
 
@@ -192,6 +204,7 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
           //get the angle to grasp the tool
           //compute the tool vector
           const Eigen::Vector3f tool_vector = Eigen::Vector3f(centroid(0,0)-transform_hand.getOrigin().x(), centroid(1,0)-transform_hand.getOrigin().y(), centroid(2,0)-transform_hand.getOrigin().z());
+          //unit vectors
           const Eigen::Vector3f x_vector = Eigen::Vector3f(1,0,0);
           const Eigen::Vector3f y_vector = Eigen::Vector3f(0,1,0);
           const Eigen::Vector3f z_vector = Eigen::Vector3f(0,0,1);
@@ -209,18 +222,11 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
 
           static tf::TransformBroadcaster br;
           tf::Transform transform;
-          //tf::Quaternion tf_q;
-          //tf::quaternionEigenToTF(q,tf_q);
+          
           transform.setOrigin(tf::Vector3(centroid(0,0), centroid(1,0), centroid(2,0)));
           float roll_command_deg = pcl::rad2deg(R_angle+angles::from_degrees(-180));
           float pitch_command_deg = pcl::rad2deg(-P_angle+angles::from_degrees(90));
-          //ROS_WARN_STREAM("roll: " << roll_command_deg);
-          //ROS_WARN_STREAM("pitch: " << pitch_command_deg);
-          // if (roll_command_deg > -135 && roll_command_deg < -45 && pitch_command_deg < 45 && pitch_command_deg > -45) {
-          //   transform.setRotation(tf::createQuaternionFromRPY(R_angle+angles::from_degrees(-180), -P_angle+angles::from_degrees(90), 0));
-          // } else {
-          //   transform.setRotation(tf::createQuaternionFromRPY(angles::from_degrees(-90),angles::from_degrees(0),angles::from_degrees(0)));
-          // }
+          //publish the handover and the tool grasping pose
           transform.setRotation(tf::createQuaternionFromRPY(R_angle+angles::from_degrees(-180), -P_angle+angles::from_degrees(90), 0));
           br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "/world", "/tool_grasping_point"));
           handover_data.direction=false;
@@ -228,7 +234,7 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
         }
         
         tf::StampedTransform transform_tool;
-        
+        //without tool in hand
         handover_data.trigger=false;
         if (is_in_the_cell(transform_hand)){
           update_hand_position(transform_hand);
@@ -278,14 +284,10 @@ int main (int argc, char** argv)
 
   ros::Subscriber sub = nh.subscribe ("/cameras/raw_depth_pointcloud_fusion", 1, cloud_cb); 
   handover_pub=nh.advertise<seher_msgs::handover>("/handover/handover_data",1);
-  // Create a ROS publisher for the output point cloud
-  /*pub1 = nh.advertise<sensor_msgs::PointCloud2> ("/cam1/depth/color/points_computed", 1);
-  pub2 = nh.advertise<sensor_msgs::PointCloud2> ("/cam2/depth/color/points_computed", 1);
-  pub4 = nh.advertise<sensor_msgs::PointCloud2> ("/cam4/depth/color/points_computed", 1);*/
+  
 
   pub = nh.advertise<sensor_msgs::PointCloud2> ("/handover/hand_pointcloud", 1);
   
-  //listener.lookupTransform("/world", "/camL_link", ros::Time(0), transform);
-  // Spin
+  
   ros::spin ();
 }

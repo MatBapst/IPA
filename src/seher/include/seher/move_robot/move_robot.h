@@ -1,3 +1,6 @@
+// template of the robot class
+
+
 #ifndef MOVE_SIM_ROBOT_H
 #define MOVE_SIM_ROBOT_H
 
@@ -23,7 +26,7 @@
 #include "std_msgs/Float32.h"
 #include <seher_msgs/handover.h>
 
-
+//states of the robot state machine
 enum status {nominal_task, handover_hand_pick, handover_tool_pick, handover_hand_place, handover_tool_place, place_tool, pick_tool};
 
 
@@ -87,27 +90,16 @@ moveit_visual_tools::MoveItVisualTools *visual_tools;
 Eigen::Isometry3d text_pose = Eigen::Isometry3d::Identity();
 const int IO_SERVICE_FUN_LEVEL_ = 1;   // Not exactly sure what this is, but 1 seems to work. If it fails, try 2.
 geometry_msgs::Point hand_position_current; //current hand position 
-geometry_msgs::Pose hand_target;
-geometry_msgs::Pose tool_target;
-geometry_msgs::Pose tool_place;
-geometry_msgs::Pose give_pose;
-status _status;
+geometry_msgs::Pose hand_target;  //hand approach target for the handover
+geometry_msgs::Pose tool_target;  //tool target for the handover
+geometry_msgs::Pose tool_place;  
+geometry_msgs::Pose give_pose;  //position for giving the tool to the hand
+status _status;  //status of the state machine
 ros::NodeHandle n;
 ros::Publisher handover_dir_pub;
 ros::Time timer;
 ros::Duration timeout;
- // if true handover from robot to human, else handover from human to robot
-
-
- //status of the robot
-
-
-
-
-
-
-
-
+ 
 };
 
 #endif

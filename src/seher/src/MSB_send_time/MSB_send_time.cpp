@@ -1,3 +1,8 @@
+/* This node sends current time to ROS topics.
+It is used to send it to the MSB and then measure the send/receive delay.
+*/
+
+
 #include <ros/ros.h>
 #include "std_msgs/Float32.h"
 #include "rosgraph_msgs/Clock.h"
@@ -27,7 +32,7 @@ int main(int argc, char** argv){
   time_pub=node.advertise<rosgraph_msgs::Clock>("/MSB_time/send",1);
   
    
-  ros::Rate r(30);
+  ros::Rate r(30);  //sending with 30 Hz
   
   
   while (node.ok()){

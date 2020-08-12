@@ -1,3 +1,9 @@
+/*This node subscribes to a time topic pubished by the MSB.
+It is used to measure the send/receive delay from the MSB.
+Getting time is in each loop written in a .dat file.
+*/
+
+
 #include <ros/ros.h>
 #include "std_msgs/Float32.h"
 #include "rosgraph_msgs/Clock.h"
@@ -19,7 +25,7 @@ int i=0;
 void timeCallback (const rosgraph_msgs::ClockConstPtr& t){
     t_receive=ros::Time::now();
     delay=t_receive-t->clock;
-    outfile << i << " : " << delay << endl;
+    outfile << i << " : " << delay << endl;  //write each time in a file
     i++;
 
 

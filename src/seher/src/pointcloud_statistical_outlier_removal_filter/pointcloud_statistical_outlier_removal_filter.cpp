@@ -1,3 +1,8 @@
+/*This node realizes the filtering of the cloud in order to get the final occupancy map of the workcell.
+It takes as input the cloud, applies a radius outlier filter, then a statistical outlier filter and publishes the occupancy map in the ROS topics.
+*/
+
+
 #include <ros/ros.h>
 // PCL specific includes
 #include <sensor_msgs/PointCloud2.h>
@@ -16,14 +21,19 @@ void filter_cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
     sensor_msgs::PointCloud2 output;
    
     //ros::Time begin =ros::Time::now();
+
+    //needed conversions
     pcl::PCLPointCloud2* input_pcl2 (new pcl::PCLPointCloud2 ());
     pcl_conversions::toPCL(*input, *input_pcl2);
     pcl::PointCloud<pcl::PointXYZ>::Ptr input_xyz (new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr output1 (new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr output_xyz (new pcl::PointCloud<pcl::PointXYZ>);
     pcl::fromPCLPointCloud2(*input_pcl2,*input_xyz);
+
     if (!input_xyz->empty()){
       //ros::Time t_inter=ros::Time::now();
+
+      //radius outlier removal filter from PCL library
       pcl::RadiusOutlierRemoval<pcl::PointXYZ> ror_filter;
       ror_filter.setInputCloud(input_xyz);
       ror_filter.setRadiusSearch(0.15);
@@ -32,6 +42,8 @@ void filter_cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
       //ROS_WARN_STREAM("Radius filter takes : "<< ros::Time::now()-t_inter);
       if (!output1->empty()){
         //t_inter=ros::Time::now();
+
+        //statistical outlier removal filter from PCL library
         pcl::StatisticalOutlierRemoval<pcl::PointXYZ> filter;
         filter.setInputCloud(output1);
         filter.setMeanK(50);
@@ -41,7 +53,8 @@ void filter_cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
       } else {
         *output_xyz=*output1;
       }
-      
+
+      //needed conversions before publishing      
       pcl::PCLPointCloud2::Ptr output_pcl2 (new pcl::PCLPointCloud2 ());
       pcl::toPCLPointCloud2(*output_xyz, *output_pcl2);
       pcl_conversions::fromPCL(*output_pcl2, output);

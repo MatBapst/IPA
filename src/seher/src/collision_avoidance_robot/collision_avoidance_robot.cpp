@@ -1,3 +1,7 @@
+/*This node controls the robot start/stop command as well as the speed of the robot, depending on the minimal distance
+It subscribes to the minimal distance and directly controls the robot through the appropriate ROS services calls.
+*/
+
 #include "tf/transform_datatypes.h"
 #include <std_msgs/Header.h>
 #include <std_msgs/Int64.h>
@@ -24,8 +28,11 @@ float min_distance; //minimal distance between TCP and obstacle
 float speed_distance=0.5; // max distance for adjusting the robot speed
 float adjusted_speed=max_robot_speed;
 
+//coefficients computing which are used to linearly adapt the speed of the robot
 float distance_a = (max_robot_speed-0.1)/(speed_distance-dist_threshold_low);
 float distance_b = max_robot_speed-distance_a*speed_distance;
+
+//to know if a handover is running.
 bool handover_flag=false;
 
 
@@ -35,10 +42,10 @@ void distanceCallback (const std_msgs::Float32::ConstPtr& dst){
     min_distance=dst->data;
 
     if (min_distance<=dist_threshold_low){
-        near_obstacle=true;
+        near_obstacle=true;  //setting flag to true
     }
     if (min_distance>=dist_threshold_up) {
-        near_obstacle=false;
+        near_obstacle=false;  //setting flag to false when distance becomes big enough again
     }
 }
 
@@ -56,6 +63,7 @@ void handoverCallback (const std_msgs::Bool::ConstPtr& flag){
 
 
 void startRobot(){
+  //starts the robot
   ROS_WARN_STREAM("Robot Starting");
   std_srvs::Trigger trig;
   ros::service::call("/ur_hardware_interface/dashboard/play",trig); //to start the robot
@@ -73,6 +81,7 @@ void sleepSafeFor(double duration)
 }
 
 void stopRobot(){
+    //stops the robot
     ROS_WARN_STREAM("Robot Stopping");
     std_srvs::Trigger trig;
     ros::service::call("/ur_hardware_interface/dashboard/pause",trig); //to stop the robot
@@ -81,6 +90,7 @@ void stopRobot(){
 }
 
 void updateSpeed(){
+    //computes the new adapted speed of the robot
     ur_msgs::SetSpeedSliderFraction speed;
     adjusted_speed=(adjusted_speed+distance_a*min_distance+distance_b)/2.0;
     speed.request.speed_slider_fraction = std::min(max_robot_speed, adjusted_speed);
@@ -89,6 +99,7 @@ void updateSpeed(){
 }
 
 void setSpeed(float wanted_speed){
+    //sets the speed of the robot
     ur_msgs::SetSpeedSliderFraction speed;
     
     speed.request.speed_slider_fraction = wanted_speed;
@@ -117,12 +128,13 @@ int main(int argc, char **argv)
  
  
  outfile.open("loop_time_min_distance_cb_with_cloud.dat");
- //outfile2.open("loop_time_collision_avoidance_node.dat");
+ 
     
   while(ros::ok())
   {
-    //outfile2 << j << " : " << ros::Time::now() << endl;
-    //j++;
+    
+
+    //if a handover is running, robot will be near the hand. So, to perform it, speed is strongly reduced to 10% but collision avoidance is disabled.
     if (handover_flag){
       setSpeed(0.1);
       if (!status){

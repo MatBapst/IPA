@@ -1,3 +1,8 @@
+/*
+This node was a test for clustering the occupancy map but was abandoned because it was too slow.
+*/
+
+
 #include <pcl/filters/crop_box.h>
 #include <ros/ros.h>
 // PCL specific includes

@@ -5,6 +5,20 @@ Seher Project
 
 Robot Human Collaboration
 
+Abstract: This repo is the source code of the software for a human robot collaboration demonstrator.
+HW: A UR5e robot and 4 Realsense D435 cameras
+SW environment: Linux Ubuntu 18.04 and ROS Melodic
+The demonstrator has following functions:
+
+- An occupancy map of the workcell is built and represented in Rviz, based on the camera sensors.
+- Minimal distance is computed between robot TCP and the occupancy map
+- Based on the minimal distance, the robot is slowed down or stopped if the human comes too near to it.
+- Thanks to a human skeleton tracker, the human hand position is tracked 
+- An autonomous tool handover between the robot and the human and vice-versa can be performed, when triggered by the human.
+- The robot behaviour is based on a state machine.
+- The connection is established between the ROS system and the MSB. Data can be sent and received.
+- The minimal distance calculation can be performed from remote computer through MSB.
+
 The developed codes and launch files are in the package "seher" and "seher_msgs". "cob_people_perception" has been modified too.
 
 Necessary packages which have to be cloned in your repository :
@@ -19,30 +33,23 @@ Necessary packages which have to be cloned in your repository :
 Install OpenNI2 wrapper for realsense as described in https://github.com/IntelRealSense/librealsense/tree/master/wrappers/openni2 (for human body tracking)
 
 With current gripper, set "pincer_height" property to 0.042 in ur_manipulation/urdf/egp50.urdf.xacro.
-Timeout in UR_driver set to 0.1 instead of 0.02.
+Timeout in Universal_Robots_ROS_Driver/ur_robot_driver/resources/ros_control.urscript Ln107 set to 0.1 instead of 0.02, in order to avoid TCP connection dropping because of non real-time system.
 
 To launch the workcell setup :
-- build (catkin_make_isolated necessary) and source the repository
 - clone the above given repos.
+- build (catkin_make_isolated necessary) and source the repository
 - roslaunch seher workcell_setup.launch
 
-To run the robot moving demonstration with speed reduction and stopping when approaching :
-- rosrun seher move_robot
+To launch the robot moving demonstration with speed reduction and stopping when approaching :
+- roslaunch seher move_robot
 
-Hint!! robot has to be in Remote Control mode. This must be activated from Teach Pendant.
+Hint!! robot has to be in Remote Control mode when launching the workcell setup. This must be activated from Teach Pendant.
 
-SIM BRANCH : working with a gazebo simulated ur5e robot for home setup.
+For the cloud/MSB part:
+- To send/receive data to/from the MSB: roslaunch seher MSB_data_sending.launch
+Hint: vfk_msb_client is required in workspace/src
 
-For the home setup :
+-To send the occupancy map and the robot positions to the MSB: roslaunch seher MSB_distance_calculation_sender
 
-both cameras are placed in parallel and separetad by 47 cm apporximately
-
-They visualize the scene at a depth of 1.5 m, the scene is cropped and voxelized.
-
-To launch the home setup :
-
--build and source the repository
-- roslaunch seher home_setup.launch to launch all the setup + moveit + distanceCalcualtion node
-
-Then to launch the robot moving node with distance monitoring :
-- rosrun seher move_sim_robot (in new terminal)
+-From a remote computer, to get the occupancy map and the robot positions from the MSB and to then send the minimal distance to the MSB: roslaunch seher MSB_distance_calculation_receiver
+And then, also run the distance computing node: rosrun seher distance_calculation

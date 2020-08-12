@@ -1,3 +1,7 @@
+/* This node is the state machine of the robot. It performs the nominal task and the handover when it is triggered.
+Trajectory are planned thanks to MoveIT planner.
+*/
+
 #include "seher/move_robot/move_robot.h"
 #include "tf/transform_datatypes.h"
 #include <angles/angles.h>
@@ -19,13 +23,14 @@ ros::Publisher handover_pub;
 ros::Publisher handover_dir_pub;
 ros::Publisher state_pub;
 
-bool grasp_flag=false;
-bool handover_flag=false;
-bool handover_direction=false;
+bool grasp_flag=false;   //grasping flag
+bool handover_flag=false; //handover flag
+bool handover_direction=false;  //handover direction
 
 tf::TransformListener* hand_listener;  
 
 void graspCallback (const std_msgs::Bool::ConstPtr& flag){
+  //to know if the grasping is confirmed
   if (flag->data){
     grasp_flag=true;
     
@@ -37,6 +42,7 @@ void graspCallback (const std_msgs::Bool::ConstPtr& flag){
 } 
 
 void handoverDataCallback (const seher_msgs::handover::ConstPtr& data){
+  //to know if handover has been triggered
   if (data->trigger){
     handover_flag=true;
 
@@ -66,6 +72,7 @@ MoveRobot::~MoveRobot() {}
 
 void MoveRobot::initialiseMoveit(ros::NodeHandle nh)
 {
+  //initialize
   namespace rvt = rviz_visual_tools;
   move_group = new moveit::planning_interface::MoveGroupInterface(GROUP_MANIP);
   joint_model_group = move_group->getCurrentState()->getJointModelGroup(GROUP_MANIP);
@@ -79,6 +86,7 @@ void MoveRobot::initialiseMoveit(ros::NodeHandle nh)
   visual_tools->trigger();
   //planning_scene_diff_publisher = nh.advertise<moveit_msgs::PlanningScene>("planning_scene", 1);
   n=nh;
+  //tool place position in the cell
   tool_place.position.x=-0.2;
   tool_place.position.y=0.6;
   tool_place.position.z=-0.015;
@@ -94,6 +102,7 @@ void MoveRobot::initialiseMoveit(ros::NodeHandle nh)
 
 bool MoveRobot::comparePoses(geometry_msgs::Pose pose1, geometry_msgs::Pose pose2, double delta_posistion, double delta_orientation)
 {
+  //to compare if 2 poses are same
 
   if (  abs(pose1.position.x-pose2.position.x ) <= delta_posistion
         && abs(pose1.position.y-pose2.position.y ) <= delta_posistion
@@ -273,7 +282,7 @@ void MoveRobot::adjustTrajectoryToFixTimeSequencing(moveit_msgs::RobotTrajectory
 
 
 void MoveRobot::updateStatus(){
-    
+  // update the status of the state machine, handles the state transitions
   if (_status==handover_hand_pick || _status==handover_hand_place) {
     geometry_msgs::Pose current_pose = move_group->getCurrentPose().pose;
     
@@ -284,7 +293,7 @@ void MoveRobot::updateStatus(){
           sleepSafeFor(0.5);
           if (_status==handover_hand_pick){
             _status=handover_tool_pick;
-            timer=ros::Time::now();
+            timer=ros::Time::now();  //timer is re initialized for timeout control
           } else {
             
             _status=handover_tool_place;
@@ -338,7 +347,7 @@ void MoveRobot::updateStatus(){
           if (grasp_flag){
             if (gripperOpen()){
               _status=nominal_task;
-              addRemoveToolObject(false);
+              addRemoveToolObject(false); //remove tool from planner
               timer=ros::Time::now();
             }
           }
@@ -351,7 +360,7 @@ void MoveRobot::updateStatus(){
     _status=handover_hand_place;
     timer=ros::Time::now();
   }
-
+  //control if there is a timeout
   if (ros::Time::now()-timer > timeout && _status != nominal_task){
     timeOut();
   }
@@ -359,6 +368,7 @@ void MoveRobot::updateStatus(){
 }
 
 void MoveRobot::timeOut(){
+  //to handle the timeout action
   ROS_WARN_STREAM("Blocked in state machine, timeout, going to nominal task");
   switch(_status){
     case handover_hand_place :
@@ -381,6 +391,7 @@ void MoveRobot::timeOut(){
 
 bool MoveRobot::gripperOpen()
 {
+  //open the gripper
   ur_msgs::SetIO io_msg;
   io_msg.request.fun = static_cast<int8_t>(IO_SERVICE_FUN_LEVEL_);
   io_msg.request.pin = static_cast<int8_t>(1);  //Pin 1 is open
@@ -412,6 +423,7 @@ bool MoveRobot::gripperOpen()
 
 bool MoveRobot::gripperClose()
 {
+  //to close the gripper
   ur_msgs::SetIO io_msg;
   io_msg.request.fun = static_cast<int8_t>(IO_SERVICE_FUN_LEVEL_);
   io_msg.request.pin = static_cast<int8_t>(0);    //Pin 0 is close
@@ -445,6 +457,7 @@ bool MoveRobot::gripperClose()
 
 
 float MoveRobot::distanceComputing (geometry_msgs::Point point1, geometry_msgs::Point point2){
+    //computes the distance between 2 points
     float distance;
     
     distance= sqrt(pow(point1.x-point2.x,2)+pow(point1.y-point2.y,2)+pow(point1.z-point2.z,2));
@@ -452,7 +465,7 @@ float MoveRobot::distanceComputing (geometry_msgs::Point point1, geometry_msgs::
 }
 
 void MoveRobot::update_hand_position(tf::StampedTransform transform){
-  
+  //update the hand position
   geometry_msgs::Point point;
   point.x=transform.getOrigin().x();
   point.y=transform.getOrigin().y();
@@ -461,6 +474,7 @@ void MoveRobot::update_hand_position(tf::StampedTransform transform){
 }
 
 bool MoveRobot::is_in_the_cell(tf::StampedTransform transform){
+  //controls if the position of the hand is in the cell or not
   if (transform.getOrigin().x()<WORKCELL_XMAX && transform.getOrigin().x()>WORKCELL_XMIN && transform.getOrigin().y()<WORKCELL_YMAX &&
           transform.getOrigin().y()>WORKCELL_YMIN && transform.getOrigin().z()<WORKCELL_ZMAX && transform.getOrigin().z()>WORKCELL_ZMIN) {
             return true;
@@ -469,6 +483,7 @@ bool MoveRobot::is_in_the_cell(tf::StampedTransform transform){
 }
 
 void MoveRobot::update_handover_status(){
+  // update the state of the handover and the hand/tool positions
   if (handover_flag){
   handover_flag=false;
   
@@ -537,6 +552,7 @@ enum status MoveRobot::getStatus(){
 
 
 void MoveRobot::computePoseToHand(){
+  // computes the approach position of the hand before handover
   geometry_msgs::Pose pose;
   pose.position=hand_position_current;
   pose.position.y=pose.position.y-0.15;
@@ -547,6 +563,7 @@ void MoveRobot::computePoseToHand(){
 }
 
 void MoveRobot::computePoseToTool(tf::StampedTransform tool_tf){
+  // gets the tool position and orientation for picking in hand
   geometry_msgs::Pose pose;
   pose.position.x=tool_tf.getOrigin().x();
   pose.position.y=tool_tf.getOrigin().y();
@@ -559,6 +576,7 @@ void MoveRobot::computePoseToTool(tf::StampedTransform tool_tf){
 }
 
 void MoveRobot::computeGivePose(tf::StampedTransform hand_tf){
+  // computes the position to give the tool to the hand
   geometry_msgs::Pose pose;
   pose.position.x=hand_tf.getOrigin().x();
   pose.position.y=hand_tf.getOrigin().y();
@@ -579,7 +597,8 @@ geometry_msgs::Pose MoveRobot::getToolTarget(){
 }
 
 void MoveRobot::placeTool(){
-  //executeCartesianTrajtoPose(hand_target);
+  // place the tool at fixed place in the cell
+  
   sleepSafeFor(0.5);
   float delta_z=0.1;
   tool_place.position.z+=delta_z;
@@ -602,7 +621,7 @@ void MoveRobot::placeTool(){
 }
 
 void MoveRobot::pickTool(){
-  
+  //pick tool from fixed place in the cell
   float delta_z=0.1;
   tool_place.position.z+=delta_z;
   if(!executeCartesianTrajtoPose(tool_place)){
@@ -626,6 +645,9 @@ void MoveRobot::pickTool(){
 }
 
 void MoveRobot::addRemoveToolObject(bool add){
+
+  // add/remove the tool from the MoveIT planner
+  // i.e. attach/detach it from the robot
   moveit_msgs::AttachedCollisionObject attached_object;
   attached_object.link_name = move_group->getEndEffectorLink();
 /* The header must contain a valid TF frame*/
@@ -658,6 +680,7 @@ attached_object.touch_links = std::vector<std::string>{ "egp_50_tip", "egp50_pin
 
 moveit_msgs::PlanningScene planning_scene;
 if (!add){
+  //to detach it
   planning_scene.robot_state.attached_collision_objects.clear();
   planning_scene.world.collision_objects.clear();
   planning_scene.world.collision_objects.push_back(attached_object.object);
@@ -689,7 +712,7 @@ int main(int argc, char **argv)
   MoveRobot robot_obj;
   robot_obj.initialiseMoveit(nh);
   
-
+  //point A for nominal task
   geometry_msgs::Pose target_pose1;
   target_pose1.position.x = 0.3;
   target_pose1.position.y = 0.4; //0.4
@@ -697,7 +720,7 @@ int main(int argc, char **argv)
   geometry_msgs::Quaternion quat_msg;
   tf::quaternionTFToMsg(tf::createQuaternionFromRPY(angles::from_degrees(180),angles::from_degrees(0),angles::from_degrees(0)),quat_msg);
   target_pose1.orientation = quat_msg;
-
+  //point B for nominal task
   geometry_msgs::Pose target_pose2 = target_pose1;
   target_pose1.position.x = 0.05;
   int seq = 0;
@@ -707,6 +730,7 @@ int main(int argc, char **argv)
   
   while(ros::ok())
   {
+  //here is the state machine
   std_msgs::Bool flag;  
   std_msgs::String state;
   switch(robot_obj.getStatus()){
