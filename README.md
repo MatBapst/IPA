@@ -19,7 +19,7 @@ Necessary packages which have to be cloned in your repository :
 Install OpenNI2 wrapper for realsense as described in https://github.com/IntelRealSense/librealsense/tree/master/wrappers/openni2 (for human body tracking)
 
 With current gripper, set "pincer_height" property to 0.042 in ur_manipulation/urdf/egp50.urdf.xacro.
-
+Timeout in UR_driver set to 0.1 instead of 0.02.
 
 To launch the workcell setup :
 - build (catkin_make_isolated necessary) and source the repository
