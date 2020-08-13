@@ -13,6 +13,7 @@ Packages needed to launch the simulated robot on Gazebo:
 - git clone https://github.com/ipa-kut/universal_robot -b sim
 - git clone https://github.com/ipa-kut/ur5e_egp50_moveit_config -b sim
 - git clone https://github.com/ipa-kut/ur_manipulation -b sim
+
 instead of these mentioned for the workcell setup (master branch)
 
 
